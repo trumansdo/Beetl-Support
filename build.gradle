@@ -1,0 +1,63 @@
+buildscript {
+    repositories {
+        maven{ url'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
+        maven{ url'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven {
+            url 'http://dl.bintray.com/jetbrains/intellij-plugin-service'
+        }
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+        mavenCentral()
+    }
+}
+
+plugins {
+    id "org.jetbrains.intellij" version "0.4.2"
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+
+repositories {
+    maven{ url'http://maven.aliyun.com/nexus/content/groups/public/' }
+    maven{ url'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+intellij {
+    version '183.4284.148'
+    type 'IC'
+    pluginName 'Beetl-Support'
+    sandboxDirectory "${rootProject.rootDir}/idea-sandbox"
+    updateSinceUntilBuild false
+    downloadSources  false
+}
+patchPluginXml {
+    changeNotes """
+      Add change notes here.<br>
+      <em>most HTML tags may be used</em>"""
+}
+sourceSets {
+    main {
+        java.srcDirs 'src/main/java', 'gen'
+        java.exclude '**/grammar/debugger/**'
+        resources.srcDirs 'src/main/resources'
+    }
+    test {
+        java.srcDir 'tests'
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+group 'com.ibeetl'
+version '1.0-SNAPSHOT'

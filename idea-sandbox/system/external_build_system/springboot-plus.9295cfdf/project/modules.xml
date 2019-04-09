@@ -1,0 +1,9 @@
+<project>
+  <component name="ExternalModuleListStorage">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/admin.iml" filepath="$PROJECT_DIR$/admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/admin-console/admin-console.iml" filepath="$PROJECT_DIR$/admin-console/admin-console.iml" />
+      <module fileurl="file://$PROJECT_DIR$/admin-core/admin-core.iml" filepath="$PROJECT_DIR$/admin-core/admin-core.iml" />
+    </modules>
+  </component>
+</project>

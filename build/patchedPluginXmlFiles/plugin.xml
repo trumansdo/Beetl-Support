@@ -1,0 +1,19 @@
+<idea-plugin>
+  <version>1.0-SNAPSHOT</version>
+  <change-notes>
+      Add change notes here.&lt;br&gt;
+      &lt;em&gt;most HTML tags may be used&lt;/em&gt;</change-notes>
+  <id>com.beetl.BeetlX</id>
+  <name>Plugin display name here</name>
+  <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+  <description>
+    Enter short description for your plugin here.&lt;br&gt;
+    &lt;em&gt;most HTML tags may be used&lt;/em&gt;
+    </description>
+  <extensions defaultExtensionNs="com.intellij">
+    <lang.parserDefinition language="Test" implementationClass="com.beetl.test.parserDefinition.TestParserDefinition"/>
+    <fileTypeFactory implementation="com.beetl.test.parserDefinition.TestFileTypeFactory"/>
+    <fileTypeFactory implementation="com.beetl.lang.BeetlFileTypeFactory"/>
+  </extensions>
+  <actions/>
+</idea-plugin>

@@ -1,0 +1,18 @@
+<application>
+  <component name="DimensionService">
+    <location key="FileChooserDialogImpl.0.0.1920.1080" x="727" y="154" />
+    <location key="NewModule_or_Project.wizard.0.0.1920.1080" x="585" y="111" />
+    <location key="WELCOME_SCREEN.0.0.1920.1080" x="947" y="436" />
+    <location key="com.intellij.ide.util.TipDialog.0.0.1920.1080" x="599" y="346" />
+    <location key="#com.intellij.internal.psiView.PsiViewerDialog.0.0.1920.1080" x="390" y="229" />
+    <location key="ProcessPopupWindow.0.0.1920.1080" x="513" y="392" />
+    <location key="search.everywhere.popup.0.0.1920.1080" x="623" y="239" />
+    <location key="SettingsEditor.0.0.1920.1080" x="285" y="184" />
+    <location key="new project wizard.0.0.1920.1080" x="411" y="223" />
+    <location key="IDE.errors.dialog.0.0.1920.1080" x="160" y="337" />
+    <size key="#com.intellij.internal.psiView.PsiViewerDialog.0.0.1920.1080" width="834" height="600" />
+    <size key="ProcessPopupWindow.0.0.1920.1080" width="942" height="320" />
+    <size key="search.everywhere.popup.0.0.1920.1080" width="672" height="678" />
+    <size key="IDE.errors.dialog.0.0.1920.1080" width="840" height="648" />
+  </component>
+</application>
