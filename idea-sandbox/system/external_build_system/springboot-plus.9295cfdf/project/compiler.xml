@@ -1,9 +1,0 @@
-<project>
-  <component name="ExternalCompilerConfiguration">
-    <bytecodeTargetLevel>
-      <module name="admin" target="1.8" />
-      <module name="admin-console" target="1.8" />
-      <module name="admin-core" target="1.8" />
-    </bytecodeTargetLevel>
-  </component>
-</project>
