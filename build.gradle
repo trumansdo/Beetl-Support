@@ -54,7 +54,11 @@ sourceSets {
         java.srcDir 'tests'
     }
 }
-
+processResources {
+    from('src/main/java') {
+        include '**/*.png'
+    }
+}
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
