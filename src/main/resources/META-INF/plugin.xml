@@ -1,11 +1,17 @@
 <idea-plugin>
-    <id>com.beetl.BeetlX</id>
-    <name>Plugin display name here</name>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+    <id>com.ibeetl.Beetl-Support</id>
+    <name>Beetl-Support</name>
+    <vendor email="trumansdo@foxmail.com" url=""></vendor>
 
     <description><![CDATA[
-    Enter short description for your plugin here.<br>
-    <em>most HTML tags may be used</em>
+    辅助Beetl框架工作。<br>
+    <em>主要功能如下：</em>
+    <ul>
+        <li>1. 语法高亮</li>
+        <li>2. 代码提示</li>
+        <li>3. 错误提示</li>
+        <li>4. 格式化</li>
+    </ul>
     ]]></description>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
@@ -15,6 +21,7 @@
     -->
 
     <extensions defaultExtensionNs="com.intellij">
+        <fileTypeFactory implementation="com.intellij.ibeetl.psi.files.BtlFileTypeFactory"/>
     </extensions>
     <actions>
     </actions>
