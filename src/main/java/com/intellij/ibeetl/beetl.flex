@@ -27,18 +27,17 @@ WS = [\ \t\f]
 
 LINE_COMMENT = "//" [^\r\n]*
 MULTILINE_COMMENT = "/*" ( ([^"*"]|[\r\n])* ("*"+ [^"*""/"] )? )* ("*" | "*"+"/")?
-
-LETTER = \u0024 | [\u0041-\u005a] | \u005f | [\u0061..\u007a] | [\u00c0..\u00d6] | [\u00d8..\u00f6] | [\u00f8..\u00ff] | [\u0100..\u1fff] | [\u3040..\u318f] | [\u3300..\u337f] | [\u3400..\u3d2d] | [\u4e00..\u9fff] | [\uf900..\ufaff]
-
-DIGIT =  [:digit:]
+//Java首字母允许的符号
+LETTER = [:jletter:]
+DIGIT =  [0-9]
 
 HEX_DIGIT = [0-9A-Fa-f]
-INT_DIGIT = [0-9]
 OCT_DIGIT = [0-7]
 
+/*是否高精度数值*/
 NUM_TYPE_SUFFIX = [hH]
 //十进制
-NUM_INT = "0" | ([1-9] {INT_DIGIT}*) {NUM_TYPE_SUFFIX}?
+NUM_INT = "0" | ([1-9] {DIGIT}*) {NUM_TYPE_SUFFIX}?
 //十六进制
 NUM_HEX = ("0x" | "0X") {HEX_DIGIT}+ {NUM_TYPE_SUFFIX}?
 //八进制
@@ -72,11 +71,14 @@ NUM_FLOAT = (
 				{DIGIT}+
 				{NUM_TYPE_SUFFIX}?
 			)
-
-IDENT = {LETTER} ({LETTER} | {DIGIT} )*
-
-STR =      "\""
-STRING = {STR} ( [^\"\\\n\r] | "\\" ("\\" | {STR} [0-8xuU] ) )* {STR}?
+/*
+[:jletterdigit:]
+Java允许的非首字母的字符
+*/
+IDENT = [:jletter:] [:jletterdigit:]*
+/*双引号和单引号*/
+STR = [\u0022\u0027]
+STRING = {STR} ( [^\"\'\\\n\r] | "\\" ("\\" | {STR} [0-8xuU] ) )* {STR}?
 
 %state MAYBE_SEMICOLON
 
