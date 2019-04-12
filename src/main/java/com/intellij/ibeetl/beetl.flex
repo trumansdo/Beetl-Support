@@ -75,10 +75,16 @@ NUM_FLOAT = (
 [:jletterdigit:]
 Java允许的非首字母的字符
 */
-IDENT = [:jletter:] [:jletterdigit:]*
+IDENTIFIER = [:jletter:] [:jletterdigit:]*
 /*双引号和单引号*/
-STR = [\u0022\u0027]
-STRING = {STR} ( [^\"\'\\\n\r] | "\\" ("\\" | {STR} [0-8xuU] ) )* {STR}?
+QUOTE_STR = [\u0022\u0027]
+/*Unicode 转义 序列*/
+UNICODE_ESCAPE = "\\" {HEX_DIGIT} {HEX_DIGIT} {HEX_DIGIT} {HEX_DIGIT}
+/*八进制转义序列*/
+OCTAL_ESCAPE = "\\" [0-3]? [0-7]? [0-7]
+/*转义序列*/
+ESCAPE_SEQUENCE = "\\" [btnfr\"\'\\] | {UNICODE_ESCAPE} | {OCTAL_ESCAPE}
+STRING = {QUOTE_STR} ( {ESCAPE_SEQUENCE} | [^\"\'\\\n\r] )* {QUOTE_STR}?
 
 %state MAYBE_SEMICOLON
 
@@ -204,7 +210,7 @@ STRING = {STR} ( [^\"\'\\\n\r] | "\\" ("\\" | {STR} [0-8xuU] ) )* {STR}?
 	"false"                                   { return FALSE; }
 	"in"                                      { return FOR_IN; }
 
-	{IDENT}                                   { yybegin(MAYBE_SEMICOLON); return IDENTIFIER; }
+	{IDENTIFIER}                              { yybegin(MAYBE_SEMICOLON); return IDENTIFIER; }
 
 	{NUM_FLOAT}                               { yybegin(MAYBE_SEMICOLON); return FLOAT; }
 	{NUM_OCT}                                 { yybegin(MAYBE_SEMICOLON); return OCT; }
