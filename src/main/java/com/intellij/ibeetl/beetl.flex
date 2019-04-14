@@ -1,10 +1,10 @@
 package com.intellij.ibeetl.lexer;
 
 import com.intellij.lexer.FlexLexer;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.ibeetl.GoTypes;
+import com.intellij.psi.TokenType;import com.intellij.psi.tree.IElementType;
+import com.intellij.ibeetl.BtlTypes;
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
-import static com.intellij.ibeetl.GoParserDefinition.*;
+import static com.intellij.ibeetl.BtlParserDefinition.*;
 
 %%
 
@@ -18,12 +18,14 @@ import static com.intellij.ibeetl.GoParserDefinition.*;
 %implements FlexLexer
 %unicode
 %public
+%line
+%column
 
 %function advance
 %type IElementType
 
 NL = \R
-WS = [\ \t\f]
+WS = [\ \r\t\f]
 
 LINE_COMMENT = "//" [^\r\n]*
 MULTILINE_COMMENT = "/*" ( ([^"*"]|[\r\n])* ("*"+ [^"*""/"] )? )* ("*" | "*"+"/")?
@@ -89,141 +91,130 @@ STRING = {QUOTE_STR} ( {ESCAPE_SEQUENCE} | [^\"\'\\\n\r] )* {QUOTE_STR}?
 %state MAYBE_SEMICOLON
 
 %%
-
+/*
+yybegin()方法是切换分析器状态
+目前有两个状态：YYINITIAL、MAYBE_SEMICOLON
+MAYBE_SEMICOLON：表明当前匹配的字符之后可能具有的词法状态
+*/
 <YYINITIAL> {
-	{WS}                                      { return WS; }
-	{NL}+                                     { return NLS; }
+	{WS}                                      { return BtlParserDefinition.WS; }
+	{NL}+                                     { return BtlParserDefinition.NLS; }
 
-	{LINE_COMMENT}                            { return LINE_COMMENT; }
-	{MULTILINE_COMMENT}                       { return MULTILINE_COMMENT; }
+	{LINE_COMMENT}                            { return BtlParserDefinition.LINE_COMMENT; }
+	{MULTILINE_COMMENT}                       { return BtlParserDefinition.MULTILINE_COMMENT; }
 
-	{STRING}                                  { yybegin(MAYBE_SEMICOLON); return STRING; }
+	{STRING}                                  { return BtlTypes.STRING; }
 
-	"'\\'"                                    { yybegin(MAYBE_SEMICOLON); return BAD_CHARACTER; }
-	"'" [^\\] "'"?                            { yybegin(MAYBE_SEMICOLON); return CHAR; }
-	"'" \n "'"?                               { yybegin(MAYBE_SEMICOLON); return CHAR; }
-	"'\\"  {OCT_DIGIT} {3} "'"?               { yybegin(MAYBE_SEMICOLON); return CHAR; }
-	"'\\x" {HEX_DIGIT} {2} "'"?               { yybegin(MAYBE_SEMICOLON); return CHAR; }
-	"'\\u" {HEX_DIGIT} {4} "'"?               { yybegin(MAYBE_SEMICOLON); return CHAR; }
-	"'\\U" {HEX_DIGIT} {8} "'"?               { yybegin(MAYBE_SEMICOLON); return CHAR; }
+	"."                                       { return BtlTypes.DOT; }
+	"{"                                       { return BtlTypes.LBRACE; }
+	"}"                                       { yybegin(MAYBE_SEMICOLON); return BtlTypes.RBRACE; }
 
-	"`" [^`]* "`"?                            { yybegin(MAYBE_SEMICOLON); return RAW_STRING; }
-	"..."                                     { return TRIPLE_DOT; }
-	"."                                       { return DOT; }
-	"|"                                       { return BIT_OR; }
-	"{"                                       { return LBRACE; }
-	"}"                                       { yybegin(MAYBE_SEMICOLON); return RBRACE; }
+	"["                                       { return BtlTypes.LBRACK; }
+	"]"                                       { yybegin(MAYBE_SEMICOLON); return BtlTypes.RBRACK; }
 
-	"["                                       { return LBRACK; }
-	"]"                                       { yybegin(MAYBE_SEMICOLON); return RBRACK; }
+	"("                                       { return BtlTypes.LPAREN; }
+	")"                                       { yybegin(MAYBE_SEMICOLON); return BtlTypes.RPAREN; }
+	/*定界符*/
+	"<!--#"                                   { return BtlTypes.LDELIMITER; }
+	"-->"                                     { yybegin(MAYBE_SEMICOLON); return BtlTypes.RDELIMITER; }
+	"layui:"                                  { return BtlTypes.HTMLTAG; }
 
-	"("                                       { return LPAREN; }
-	")"                                       { yybegin(MAYBE_SEMICOLON); return RPAREN; }
+	":"                                       { return BtlTypes.COLON; }
+	";"                                       { return BtlTypes.SEMICOLON; }
+	","                                       { return BtlTypes.COMMA; }
 
-	":"                                       { return COLON; }
-	";"                                       { return SEMICOLON; }
-	","                                       { return COMMA; }
+	"=="                                      { return BtlTypes.EQ; }
+	"="                                       { return BtlTypes.ASSIGN; }
 
-	"=="                                      { return EQ; }
-	"="                                       { return ASSIGN; }
+	"!="                                      { return BtlTypes.NOT_EQ; }
+	"!"                                       { return BtlTypes.NOT; }
+	"|"                                       { return BtlTypes.BIT_OR; }
 
-	"!="                                      { return NOT_EQ; }
-	"!"                                       { return NOT; }
+	"++"                                      { return BtlTypes.INCREASE; }
+	"+="                                      { return BtlTypes.PLUS_ASSIGN; }
+	"+"                                       { return BtlTypes.PLUS; }
 
-	"++"                                      { yybegin(MAYBE_SEMICOLON); return PLUS_PLUS; }
-	"+="                                      { return PLUS_ASSIGN; }
-	"+"                                       { return PLUS; }
+	"--"                                      { return BtlTypes.DECREASE; }
+	"-="                                      { return BtlTypes.MINUS_ASSIGN; }
+	"-"                                       { return BtlTypes.MINUS; }
 
-	"--"                                      { yybegin(MAYBE_SEMICOLON); return MINUS_MINUS; }
-	"-="                                      { return MINUS_ASSIGN; }
-	"-"                                       { return MINUS; }
+	"||"                                      { return BtlTypes.COND_OR; }
+	"|="                                      { return BtlTypes.BIT_OR_ASSIGN; }
 
-	"||"                                      { return COND_OR; }
-	"|="                                      { return BIT_OR_ASSIGN; }
+	"&&"                                      { return BtlTypes.COND_AND; }
+	"&="                                      { return BtlTypes.BIT_AND_ASSIGN; }
+	"&"                                       { return BtlTypes.BIT_AND; }
 
-	"&^="                                     { return BIT_CLEAR_ASSIGN; }
-	"&^"                                      { return BIT_CLEAR; }
-	"&&"                                      { return COND_AND; }
+	"<<"                                      { return BtlTypes.SHIFT_LEFT; }
+	"<="                                      { return BtlTypes.LESS_OR_EQUAL; }
+	"<"                                       { return BtlTypes.LESS; }
 
-	"&="                                      { return BIT_AND_ASSIGN; }
-	"&"                                       { return BIT_AND; }
+	"^="                                      { return BtlTypes.BIT_XOR_ASSIGN; }
+	"^"                                       { return BtlTypes.BIT_XOR; }
 
-	"<<="                                     { return SHIFT_LEFT_ASSIGN; }
-	"<<"                                      { return SHIFT_LEFT; }
-	"<-"                                      { return SEND_CHANNEL; }
-	"<="                                      { return LESS_OR_EQUAL; }
-	"<"                                       { return LESS; }
+	"*="                                      { return BtlTypes.MUL_ASSIGN; }
+	"*"                                       { return BtlTypes.MUL; }
 
-	"^="                                      { return BIT_XOR_ASSIGN; }
-	"^"                                       { return BIT_XOR; }
+	"/="                                      { return BtlTypes.QUOTIENT_ASSIGN; }
+	"/"                                       { return BtlTypes.QUOTIENT; }
 
-	"*="                                      { return MUL_ASSIGN; }
-	"*"                                       { return MUL; }
+	"%="                                      { return BtlTypes.REMAINDER_ASSIGN; }
+	"%"                                       { return BtlTypes.REMAINDER; }
 
-	"/="                                      { return QUOTIENT_ASSIGN; }
-	"/"                                       { return QUOTIENT; }
+	">>"                                      { return BtlTypes.SHIFT_RIGHT; }
+	">="                                      { return BtlTypes.GREATER_OR_EQUAL; }
+	">"                                       { return BtlTypes.GREATER; }
 
-	"%="                                      { return REMAINDER_ASSIGN; }
-	"%"                                       { return REMAINDER; }
+	"break"                                   { yybegin(MAYBE_SEMICOLON); return BtlTypes.BREAK; }
+	"return"                                  { yybegin(MAYBE_SEMICOLON); return BtlTypes.RETURN ; }
+	"continue"                                { yybegin(MAYBE_SEMICOLON); return BtlTypes.CONTINUE ; }
 
-	">>="                                     { return SHIFT_RIGHT_ASSIGN; }
-	">>"                                      { return SHIFT_RIGHT; }
-	">="                                      { return GREATER_OR_EQUAL; }
-	">"                                       { return GREATER; }
+	"default"                                 { return BtlTypes.DEFAULT; }
+	"interface"                               { return BtlTypes.INTERFACE; }
 
-	":="                                      { return VAR_ASSIGN; }
+	"switch"                                  { return BtlTypes.SWITCH; }
+	"select"                                  { return BtlTypes.SELECT; }
+	"case"                                    { return BtlTypes.CASE; }
+	"const"                                   { return BtlTypes.CONST; }
 
-	"break"                                   { yybegin(MAYBE_SEMICOLON); return BREAK; }
-	"return"                                  { yybegin(MAYBE_SEMICOLON); return RETURN ; }
-	"continue"                                { yybegin(MAYBE_SEMICOLON); return CONTINUE ; }
+	"if"                                      { return BtlTypes.IF; }
+	"for"                                     { return BtlTypes.FOR; }
+	"elsefor"                                 { return BtlTypes.ELSE_FOR; }
+	"else"                                    { return BtlTypes.ELSE; }
+	"while"                                   { return BtlTypes.WHILE; }
 
-	"default"                                 { return DEFAULT; }
-	"interface"                               { return INTERFACE; }
+	"DIRECTIVE" | "directive"                 { return BtlTypes.DIRECTIVE; }
+	"type"                                    { return BtlTypes.TYPE_; }
+	"var"                                     { return BtlTypes.VAR; }
 
-	"case"                                    { return CASE; }
+	"try"                                     { return BtlTypes.TRY; }
+	"catch"                                   { return BtlTypes.CATCH; }
+	"#ajax"                                   { return BtlTypes.AJAX; }
+	"#fragment"                               { return BtlTypes.FRAGMENT; }
 
-	"else"                                    { return ELSE; }
-	"switch"                                  { return SWITCH; }
-	"select"                                  { return SELECT; }
-	"const"                                   { return CONST; }
+	".~"                                      { return BtlTypes.VIRTUAL; }
+	"?"                                       { return BtlTypes.QUESTOIN; }
+	"@"                                       { return BtlTypes.AT; }
+	"null"                                    { return BtlTypes.NULL; }
+	"true"                                    { return BtlTypes.TRUE; }
+	"false"                                   { return BtlTypes.FALSE; }
+	"in"                                      { return BtlTypes.FOR_IN; }
 
-	"if"                                      { return IF ; }
-	"for"                                     { return FOR ; }
-	"elsefor"                                 { return ELSE_FOR ; }
-	"while"                                   { return WHILE ; }
+	{IDENTIFIER}                              { yybegin(MAYBE_SEMICOLON); return BtlTypes.IDENTIFIER; }
 
-	"DIRECTIVE"                               { return DIRECTIVE; }
-	"directive"                               { return DIRECTIVE; }
-	"type"                                    { return TYPE_; }
-	"var"                                     { return VAR; }
+	{NUM_FLOAT}                               { yybegin(MAYBE_SEMICOLON); return BtlTypes.FLOAT; }
+	{NUM_OCT}                                 { yybegin(MAYBE_SEMICOLON); return BtlTypes.OCT; }
+	{NUM_HEX}                                 { yybegin(MAYBE_SEMICOLON); return BtlTypes.HEX; }
+	{NUM_INT}                                 { yybegin(MAYBE_SEMICOLON); return BtlTypes.INT; }
 
-	"try"                                     { return TRY; }
-	"catch"                                   { return CATCH; }
-	"#ajax"                                   { return AJAX; }
-	"#fragment"                               { return FRAGMENT; }
-
-	".~"                                      { return VIRTUAL; }
-	"?"                                       { return QUESTOIN; }
-	"@"                                       { return AT; }
-	"null"                                    { return NULL; }
-	"true"                                    { return TRUE; }
-	"false"                                   { return FALSE; }
-	"in"                                      { return FOR_IN; }
-
-	{IDENTIFIER}                              { yybegin(MAYBE_SEMICOLON); return IDENTIFIER; }
-
-	{NUM_FLOAT}                               { yybegin(MAYBE_SEMICOLON); return FLOAT; }
-	{NUM_OCT}                                 { yybegin(MAYBE_SEMICOLON); return OCT; }
-	{NUM_HEX}                                 { yybegin(MAYBE_SEMICOLON); return HEX; }
-	{NUM_INT}                                 { yybegin(MAYBE_SEMICOLON); return INT; }
-
-	.                                         { return BAD_CHARACTER; }
+	.                                         { return TokenType.BAD_CHARACTER; }
 }
 
 <MAYBE_SEMICOLON> {
-	{WS}                                      { return WS; }
+	{WS}                                      { return BtlParserDefinition.WS; }
 	{NL}                                      { yybegin(YYINITIAL); yypushback(yytext().length()); return SEMICOLON_SYNTHETIC; }
-	{LINE_COMMENT}                            { return LINE_COMMENT; }
-	{MULTILINE_COMMENT}                       { return MULTILINE_COMMENT; }
+
+	{LINE_COMMENT}                            { return BtlParserDefinition.LINE_COMMENT; }
+	{MULTILINE_COMMENT}                       { return BtlParserDefinition.MULTILINE_COMMENT; }
 	.                                         { yybegin(YYINITIAL); yypushback(yytext().length()); }
 }
