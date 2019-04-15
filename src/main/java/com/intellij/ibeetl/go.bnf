@@ -1,22 +1,23 @@
 {
 	/*定义parser类全限定名*/
-  parserClass='com.intellij.ibeetl.parser.BeetlParser'
+  parserClass='com.goide.parser.GoParser'
   /*每个Java类头部的版权申明*/
   classHeader='copyrightHeader.java'
 
-  extends='com.intellij.extapi.psi.ASTWrapperPsiElement'
+  implements='com.goide.psi.GoCompositeElement'
+  extends='com.goide.psi.impl.GoCompositeElementImpl'
 
-  elementTypeHolderClass='com.intellij.ibeetl.GoTypes'
-  elementTypeClass='com.intellij.ibeetl.psi.BeetlElementType'
-  tokenTypeClass='com.intellij.ibeetl.psi.BeetlTokenType'
-  psiTreeUtilClass='com.intellij.ibeetl.psi.BeetlPsiTreeUtil'
+  elementTypeHolderClass='com.goide.GoTypes'
+  elementTypeClass='com.goide.psi.GoCompositeElementType'
+  tokenTypeClass='com.goide.psi.GoTokenType'
+  psiTreeUtilClass='com.goide.psi.GoPsiTreeUtil'
 
-  psiClassPrefix='Beetl'
+  psiClassPrefix='Go'
   psiImplClassSuffix='Impl'
-  psiPackage='com.intellij.ibeetl.psi'
-  psiImplPackage='com.intellij.ibeetl.psi.impl'
-  psiImplUtilClass="com.intellij.ibeetl.psi.impl.GoPsiImplUtil"
-  parserUtilClass="com.intellij.ibeetl.parser.GoParserUtil"
+  psiPackage='com.goide.psi'
+  psiImplPackage='com.goide.psi.impl'
+  psiImplUtilClass="com.goide.psi.impl.GoPsiImplUtil"
+  parserUtilClass="com.goide.parser.GoParserUtil"
 
   tokens=[
     LBRACE               =  '{'

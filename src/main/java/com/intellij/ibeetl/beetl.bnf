@@ -3,7 +3,12 @@
   parserClass='com.intellij.ibeetl.parser.BeetlParser'
   /*每个Java类头部的版权申明*/
   classHeader='copyrightHeader.java'
-
+  /*所有的psi node接口的扩展*/
+//  implements='com.intellij.ibeetl.psi.BeetlElement'
+  /*所有的psi node接口或者实现类的扩展，后面的extends语法覆盖前面出现的，每一个语法自己的extends会覆盖全局的
+    简单来说，越是精确的，越是优先度高
+    例如：下面extends Expression节点，声明所有的Expr/Literal/Lit的接口和实现类分别扩展Expression节点的接口和实现类
+  */
   extends='com.intellij.extapi.psi.ASTWrapperPsiElement'
 
   elementTypeHolderClass='com.intellij.ibeetl.GoTypes'
@@ -65,22 +70,48 @@
     SEMICOLON_SYNTHETIC  = '<NL>'
     TYPE_                = 'type'
   ]
+  extends("(Or|And|Add|Minus|Mul|Quotient|Conditional)Expr")=BinaryExpr
+  extends(".*(Expr|Literal|Lit)")=Expression
 
   generateTokenAccessors=true
 }
 /*
-整个beetl的结构：
-	左定界符  语句  右定界符
-or
-	HTML 标签
+将整个beetl 语法分为三部分：
+1. 定界符包含的语法 { 关键字，表达式{} }
+2. html标签函数
+3. 引用属性
 */
-File ::= LDELIMITER Statement* RDELIMITER {pin(".*")=1}
+File ::= (ldelimiter Statement* rdelimiter) | HtmlFunc
 
-Statement ::= VarDeclaration
+Block ::= lbrace Statement* rbrace
+
+Statement ::=
+		Block
     | VarDeclaration
     | SimpleStatement
-    | Block
     | IfStatement
     | SwitchStatement
     | SelectStatement
     | ForStatement
+
+HtmlFunc ::=
+
+VarDeclaration ::= var identifier assign Expression (semicolon identifier assign Expression)* {pin(".*")=1}
+
+Expression ::= string | int | float | oct | hex
+
+Expression ::=
+    OrExpr
+  | AndExpr
+  | ConditionalExpr
+  | AddExpr
+  | MulExpr
+  | UnaryExpr
+  | ConversionExpr
+  | MaxGroup
+  | ParenthesesExpr {methods=[getGoType] implements="com.goide.psi.GoTypeOwner"}
+
+fake BinaryExpr ::= Expression+ {
+  methods=[left="Expression[0]" right="Expression[1]" getOperator]
+}
+Literal ::= string | int | float | oct | hex
