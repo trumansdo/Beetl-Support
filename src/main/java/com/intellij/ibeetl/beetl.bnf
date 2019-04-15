@@ -76,11 +76,12 @@ or
 */
 File ::= LDELIMITER Statement* RDELIMITER {pin(".*")=1}
 
-Statement ::= VarDeclaration
-    | VarDeclaration
+Statement ::=
+      VarDeclaration
     | SimpleStatement
-    | Block
     | IfStatement
     | SwitchStatement
     | SelectStatement
     | ForStatement
+
+VarDeclaration ::= var
