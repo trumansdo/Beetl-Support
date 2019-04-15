@@ -1,7 +1,8 @@
 package com.intellij.ibeetl.lexer;
 
 import com.intellij.lexer.FlexLexer;
-import com.intellij.psi.TokenType;import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.TokenType;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.ibeetl.BtlTypes;
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
 import static com.intellij.ibeetl.BtlParserDefinition.*;
@@ -78,7 +79,7 @@ NUM_FLOAT = (
 Java允许的非首字母的字符
 */
 IDENTIFIER = [:jletter:] [:jletterdigit:]*
-/*双引号和单引号*/
+/*双引号和单引号，暂时没用*/
 QUOTE_STR = [\u0022\u0027]
 /*Unicode 转义 序列*/
 UNICODE_ESCAPE = "\\" {HEX_DIGIT} {HEX_DIGIT} {HEX_DIGIT} {HEX_DIGIT}
@@ -86,7 +87,8 @@ UNICODE_ESCAPE = "\\" {HEX_DIGIT} {HEX_DIGIT} {HEX_DIGIT} {HEX_DIGIT}
 OCTAL_ESCAPE = "\\" [0-3]? [0-7]? [0-7]
 /*转义序列*/
 ESCAPE_SEQUENCE = "\\" [btnfr\"\'\\] | {UNICODE_ESCAPE} | {OCTAL_ESCAPE}
-STRING = {QUOTE_STR} ( {ESCAPE_SEQUENCE} | [^\"\'\\\n\r] )* {QUOTE_STR}?
+STRING = ("\"" ( {ESCAPE_SEQUENCE} | [^\"\'\\\n\r] )* "\"")
+		| ("'" ( {ESCAPE_SEQUENCE} | [^\"\'\\\n\r] )* "'")
 
 %state MAYBE_SEMICOLON
 
