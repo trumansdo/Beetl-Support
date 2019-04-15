@@ -83,22 +83,17 @@
 */
 File ::= (ldelimiter Statement* rdelimiter) | HtmlFunc
 
-Block ::= lbrace Statement* rbrace
-
 Statement ::=
-		Block
-    | VarDeclaration
+      VarDeclaration
     | SimpleStatement
     | IfStatement
     | SwitchStatement
     | SelectStatement
     | ForStatement
+/*满足 变量定义语法*/
+VarDeclaration ::= var identifier (assign (Expression | Literal))? (semicolon identifier (assign (Expression | Literal))?)* ';' {pin(".*")=1}
 
 HtmlFunc ::=
-
-VarDeclaration ::= var identifier assign Expression (semicolon identifier assign Expression)* {pin(".*")=1}
-
-Expression ::= string | int | float | oct | hex
 
 Expression ::=
     OrExpr
