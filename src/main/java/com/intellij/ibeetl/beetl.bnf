@@ -1,3 +1,4 @@
+//todo 尝试一下ILazyParseableElementType 混合语言开发 能否将定界符作为混合语言的包装符号
 {
 	/*定义parser类全限定名*/
   parserClass='com.intellij.ibeetl.parser.BeetlParser'
@@ -30,9 +31,9 @@
     RBRACK               =  ']'
     LPAREN               =  '('
     RPAREN               =  ')'
-    LDELIMITER           =  '<!--#'
-    RDELIMITER           =  '-->'
-    HTMLTAG              =  'layui:'
+    LDELIMITER           =  '<%'
+    RDELIMITER           =  '%>'
+    HTMLTAG              =  'btl:'
     COLON                =  ':'
     SEMICOLON            =  ';'
     COMMA                =  ','
@@ -71,8 +72,8 @@
     SEMICOLON_SYNTHETIC  = '<NL>'
     TYPE_                = '@type'
   ]
-  extends("(Or|And|Add|Minus|Mul|Quotient|Conditional)Expr")=BinaryExpr
-  extends(".*(Expr|Literal|Lit)")=Expression
+  extends("(Or|And|Add|Mul|Conditional)Expr")=BinaryExpr
+  extends(".*(Expr|Literal)")=Expression
 
   generateTokenAccessors=true
 }
@@ -88,12 +89,17 @@
 2. html标签函数
 3. 占位符
 */
-File ::= (LDELIMITER Statement* RDELIMITER) | HtmlFunc
+File ::= (LDELIMITER Statement* RDELIMITER) | HtmlTagStatement | PlaceHolder
+
+PlaceHolder ::= lplaceholder VarReferenceExpr TextFormat? rplaceholder
+
+HtmlTagStatement ::= '<' HTMLTAG identifier HtmlAttibutePair* ('/>'| '</' HTMLTAG identifier)
+
+HtmlAttibutePair ::= identifier '=' (string | PlaceHolder)
 
 Statement ::= Block
     | break ';'
     | continue ';'
-    | ';'
     | TYPE_ CommentTypeTag
     | VarStatement
     | IfStatement
@@ -106,9 +112,12 @@ Statement ::= Block
     | DirectiveStatement
     | AssignMent SEMICOLON
     | FunctionCallStatement
+    | NativieCallStatement
+    | TagFunctionCallStatement
     | AjaxStatement
+    | ';'
 
-Block ::= LBRACE Statement* RBRACE
+Block ::= LBRACE Statement* RBRACE?
 
 IfStatement ::= if ParenthesesExpr Statement (else Statement)?
 /*满足for*/
@@ -148,15 +157,27 @@ DirectiveStatement ::= directive DirectiveExpr
 private DirectiveExpr ::= identifier (string | DirectiveExpIDList)? SEMICOLON
 private DirectiveExpIDList ::= identifier (COMMA identifier)*
 /*满足function调用*/
-//todo 待完成  与beetl原本不一样
-FunctionCallStatement ::= FunctionNs  LPAREN ExpressionList? RPAREN  Block
+FunctionCallStatement ::= FunctionNs ArgumentList ValAttribute* SafeOutput?
+/*native 调用*/
+NativieCallStatement ::= AT FunctionNs (ArgumentList | ArrayValue)
+/*标签方法*/
+TagFunctionCallStatement ::= FunctionNs ArgumentList LBRACE Statement* RBRACE?
+/*格式化方法*/
+TextFormat ::= string | (FunctionNs (ASSIGN string)?)
+
+ArgumentList ::= LPAREN ExpressionList? RPAREN
 private FunctionNs ::= identifier (DOT identifier)*
+
 /*满足 ajax语法*/
 AjaxStatement ::= (ajax|fragment) identifier identifier? COLON Block
+
 ClassOrInterfaceType ::= identifier (DOT identifier )* TypeArguments?
 TypeArguments ::= LESS TypeArgument (COMMA TypeArgument)* GREATER
 TypeArgument ::= ClassOrInterfaceType
 
+/*变量的属性：正常引用属性，虚拟属性，数组索引属性和map取值属性*/
+ValAttribute ::= '.' identifier | virtual identifier | LBRACK (int | string) RBRACK
+/**/
 /*
 各种表达式：
 	加、减、乘、除
@@ -168,8 +189,7 @@ Expression ::=
   | FunctionCallStatement
   | VarReferenceExpr
   | Json
-  | identifier (INCREASE|DECREASE)
-  | (INCREASE|DECREASE) identifier
+  | IncOrDecExpr
   | AddExpr
   | MulExpr
   | UnaryExpr
@@ -179,6 +199,10 @@ Expression ::=
   | ParenthesesExpr
   | TernaryExpr
   | GeneralAssignExpr
+
+fake BinaryExpr ::= Expression+ {
+  methods=[left="Expression[0]" right="Expression[1]" getOperator]
+}
 
 ExpressionList ::= Expression (COMMA Expression)*
 
@@ -200,9 +224,11 @@ TernaryExpr ::= Expression QUESTOIN Expression? COLON? Expression? {pin=3}
 ParenthesesExpr  ::= LPAREN <<enterMode "PAR">> Expression <<exitModeSafe "PAR">> RPAREN {pin=1}
 /*通用赋值表达式*/
 GeneralAssignExpr ::= VarReferenceExpr ASSIGN Expression
-
-VarReferenceExpr ::= identifier varAttribute* SafeOutput?
-
+/*变量引用表达式*/
+VarReferenceExpr ::= identifier ValAttribute* SafeOutput?
+/*自增或者自减表达式*/
+IncOrDecExpr ::= (identifier (INCREASE|DECREASE)) | ((INCREASE|DECREASE) identifier)
+/*安全输出表达式: user.name!  !(user.notexists)*/
 SafeOutput ::= NOT SafeAllowExpr?
 
 SafeAllowExpr ::= Literal
@@ -211,11 +237,15 @@ SafeAllowExpr ::= Literal
               | VarReferenceExpr
               | (LPAREN Expression RPAREN)
 
+/*数组*/
+ArrayValue ::= LBRACK Expression RBRACK
+/*json*/
 Json ::= (LBRACK (Expression  (COMMA Expression)*)? RBRACK)
 	|  (LBRACE (JsonKeyValue (COMMA JsonKeyValue)*)? RBRACE)
 JsonKeyValue ::= (string COLON Expression)
 	|	(identifier COLON Expression)
 
+/*beetl中所有的值类型，包括上面的json*/
 Literal ::= string | int | float | BooleanLiteral | null
 
 BooleanLiteral ::= false | true
@@ -224,7 +254,7 @@ BooleanLiteral ::= false | true
 private RelOp ::= '==' | '!=' | '<' | '<=' | '>' | '>='
 /*为什么会是位或和异或是加法：加减本质都是加法
 因为等效于0 1 的加法后舍去最高位*/
-private AddOp ::= '+' | '-' | '|' | '^'
+private AddOp ::= '+' | '+=' | '-' | '|' | '^'
 /*同理：乘除本质都是乘法
 求余的反向是乘法、位移的本质是乘除、位与是乘法的本质舍去最高位*/
 private MulOp ::= '*' | '/' | '%' | '<<' | '>>' | '&'
