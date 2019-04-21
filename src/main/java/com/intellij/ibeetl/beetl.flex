@@ -1,5 +1,6 @@
 package com.intellij.ibeetl.lexer;
 
+import com.intellij.ibeetl.utils.BtlConstants;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
@@ -26,7 +27,7 @@ import static com.intellij.ibeetl.BtlParserDefinition.*;
 %type IElementType
 
 NL = \R
-WS = [\ \r\t\f]
+WS = [ \r\t\f]
 
 LINE_COMMENT = "//" [^\r\n]*
 MULTILINE_COMMENT = "/*" ( ([^"*"]|[\r\n])* ("*"+ [^"*""/"] )? )* ("*" | "*"+"/")?
@@ -105,7 +106,7 @@ MAYBE_SEMICOLON：表明当前匹配的字符之后可能具有的词法状态
 	{LINE_COMMENT}                            { return BtlParserDefinition.LINE_COMMENT; }
 	{MULTILINE_COMMENT}                       { return BtlParserDefinition.MULTILINE_COMMENT; }
 
-	{STRING}                                  { return BtlTypes.STRING; }
+	{STRING}                                  { yybegin(MAYBE_SEMICOLON); return BtlTypes.STRING; }
 
 	"."                                       { return BtlTypes.DOT; }
 	"{"                                       { return BtlTypes.LBRACE; }
@@ -117,9 +118,10 @@ MAYBE_SEMICOLON：表明当前匹配的字符之后可能具有的词法状态
 	"("                                       { return BtlTypes.LPAREN; }
 	")"                                       { yybegin(MAYBE_SEMICOLON); return BtlTypes.RPAREN; }
 	/*定界符*/
-	"<!--#"                                   { return BtlTypes.LDELIMITER; }
-	"-->"                                     { yybegin(MAYBE_SEMICOLON); return BtlTypes.RDELIMITER; }
-	"layui:"                                  { return BtlTypes.HTMLTAG; }
+	"<%"                                      { return BtlTypes.LDELIMITER; }
+	"%>"                                      { yybegin(MAYBE_SEMICOLON); return BtlTypes.RDELIMITER; }
+	"btl:"                                    { return BtlTypes.HTMLTAG; }
+	"${"                                      { return BtlTypes.LPLACEHOLDER; }
 
 	":"                                       { return BtlTypes.COLON; }
 	";"                                       { return BtlTypes.SEMICOLON; }
@@ -202,7 +204,7 @@ MAYBE_SEMICOLON：表明当前匹配的字符之后可能具有的词法状态
 	"false"                                   { return BtlTypes.FALSE; }
 	"in"                                      { return BtlTypes.FOR_IN; }
 
-	{IDENTIFIER}                              { yybegin(MAYBE_SEMICOLON); return BtlTypes.IDENTIFIER; }
+	{IDENTIFIER}                              { yybegin(MAYBE_PLACEHOLDER); return BtlTypes.IDENTIFIER; }
 
 	{NUM_FLOAT}                               { yybegin(MAYBE_SEMICOLON); return BtlTypes.FLOAT; }
 	{NUM_OCT}                                 { yybegin(MAYBE_SEMICOLON); return BtlTypes.OCT; }
@@ -218,5 +220,10 @@ MAYBE_SEMICOLON：表明当前匹配的字符之后可能具有的词法状态
 
 	{LINE_COMMENT}                            { return BtlParserDefinition.LINE_COMMENT; }
 	{MULTILINE_COMMENT}                       { return BtlParserDefinition.MULTILINE_COMMENT; }
+	"}"                                      { return BtlTypes.RPLACEHOLDER; }
 	.                                         { yybegin(YYINITIAL); yypushback(yytext().length()); }
+}
+<MAYBE_PLACEHOLDER> {
+	"}"                                      { return BtlTypes.RPLACEHOLDER; }
+    .                                        { yybegin(YYINITIAL); yypushback(yytext().length()); }
 }
