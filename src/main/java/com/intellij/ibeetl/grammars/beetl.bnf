@@ -67,8 +67,9 @@
     GREATER_OR_EQUAL     =  '>='
     GREATER              =  '>'
     DOT                  =  '.'
+    AT                   =  '@'
     SEMICOLON_SYNTHETIC  = '<NL>'
-    TYPE_                = 'type'
+    TYPE_                = '@type'
   ]
   extends("(Or|And|Add|Minus|Mul|Quotient|Conditional)Expr")=BinaryExpr
   extends(".*(Expr|Literal|Lit)")=Expression
@@ -76,42 +77,157 @@
   generateTokenAccessors=true
 }
 /*
+语法树：定界符 + 语句
+语句：变量定义、判断、循环、分支、调用....等
+语句包括：关键字+表达式?+语句?
+表达式：常量表达式、字面量、四则、位、三元、引用...等
+表达式包括：字面量+表达式?
+
 将整个beetl 语法分为三部分：
 1. 定界符包含的语法 { 关键字，表达式{} }
 2. html标签函数
-3. 引用属性
+3. 占位符
 */
-File ::= (ldelimiter Statement* rdelimiter) | HtmlFunc
+File ::= (LDELIMITER Statement* RDELIMITER) | HtmlFunc
 
-Block ::= lbrace Statement* rbrace
-
-Statement ::=
-		Block
-    | VarDeclaration
-    | SimpleStatement
+Statement ::= Block
+    | break ';'
+    | continue ';'
+    | ';'
+    | TYPE_ CommentTypeTag
+    | VarStatement
     | IfStatement
+    | ForStatement
+    | WhileStatement
     | SwitchStatement
     | SelectStatement
-    | ForStatement
+    | TryStatement
+    | ReturnStatement
+    | DirectiveStatement
+    | AssignMent SEMICOLON
+    | FunctionCallStatement
+    | AjaxStatement
 
-HtmlFunc ::=
+Block ::= LBRACE Statement* RBRACE
 
-VarDeclaration ::= var identifier assign Expression (semicolon identifier assign Expression)* {pin(".*")=1}
+IfStatement ::= if ParenthesesExpr Statement (else Statement)?
+/*满足for*/
+ForStatement ::= for LPAREN ForControl  RPAREN Statement (elsefor Statement)?
+ForControl ::= ForInControl | GeneralForControl
+ForInControl ::= var? identifier for_in Expression
+GeneralForControl ::= ForInit? ';' Expression? ';' ForUpdate?
+ForInit ::=   var VarDeclareList | ExpressionList
+ForUpdate ::=   ExpressionList
+/*满足while*/
+WhileStatement ::= while ParenthesesExpr Statement
 
-Expression ::= string | int | float | oct | hex
+/*满足switch*/
+SwitchStatement ::= ParenthesesExpr SwitchBlock
+private SwitchBlock ::= LBRACE SwitchBlockStatementGroup* RBRACE
+private SwitchBlockStatementGroup ::= SwitchLabel+ Statement*
+private SwitchLabel ::= case Expression COLON | default COLON
+/*满足select*/
+SelectStatement ::= select SelectSwitchStatment
+private SelectSwitchStatment ::= (LPAREN Expression RPAREN)? LBRACE SelectCaseStatment* SelectDefaultStatment? RBRACE
+private SelectCaseStatment ::= case Expression (COMMA Expression)* COLON Statement*
+private SelectDefaultStatment ::= default COLON Statement*
 
+/*满足var变量定义语法*/
+VarStatement ::= var identifier (ASSIGN (Expression | Literal))? (SEMICOLON identifier (ASSIGN (Expression | Literal))?)* SEMICOLON {pin(".*")=1}
+VarDeclareList ::=  AssignMent (COMMA AssignMent)*
+AssignMent ::= identifier | GeneralAssignExpr | (identifier ASSIGN  Block)
+/*满足@type*/
+CommentTypeTag ::= LPAREN CommentTypeItemTag (COMMA CommentTypeItemTag)* RPAREN
+CommentTypeItemTag ::=    ClassOrInterfaceType   identifier
+/*满足trycatch*/
+TryStatement ::= try Block (catch LPAREN identifier? RPAREN Block)?
+/*满足return语句*/
+ReturnStatement ::= return Expression? SEMICOLON
+/*满足directive 语句*/
+DirectiveStatement ::= directive DirectiveExpr
+private DirectiveExpr ::= identifier (string | DirectiveExpIDList)? SEMICOLON
+private DirectiveExpIDList ::= identifier (COMMA identifier)*
+/*满足function调用*/
+//todo 待完成  与beetl原本不一样
+FunctionCallStatement ::= FunctionNs  LPAREN ExpressionList? RPAREN  Block
+private FunctionNs ::= identifier (DOT identifier)*
+/*满足 ajax语法*/
+AjaxStatement ::= (ajax|fragment) identifier identifier? COLON Block
+ClassOrInterfaceType ::= identifier (DOT identifier )* TypeArguments?
+TypeArguments ::= LESS TypeArgument (COMMA TypeArgument)* GREATER
+TypeArgument ::= ClassOrInterfaceType
+
+/*
+各种表达式：
+	加、减、乘、除
+	++、--、+=、-=
+	==、!=、!、||、&&、^
+*/
 Expression ::=
-    OrExpr
-  | AndExpr
-  | ConditionalExpr
+    Literal
+  | FunctionCallStatement
+  | VarReferenceExpr
+  | Json
+  | identifier (INCREASE|DECREASE)
+  | (INCREASE|DECREASE) identifier
   | AddExpr
   | MulExpr
   | UnaryExpr
-  | ConversionExpr
-  | MaxGroup
-  | ParenthesesExpr {methods=[getGoType] implements="com.goide.psi.GoTypeOwner"}
+  | ConditionalExpr
+  | AndExpr
+  | OrExpr
+  | ParenthesesExpr
+  | TernaryExpr
+  | GeneralAssignExpr
 
-fake BinaryExpr ::= Expression+ {
-  methods=[left="Expression[0]" right="Expression[1]" getOperator]
-}
-Literal ::= string | int | float | oct | hex
+ExpressionList ::= Expression (COMMA Expression)*
+
+/*或*/
+OrExpr ::= Expression '||' Expression
+/*与*/
+AndExpr ::= Expression '&&' Expression
+/*一元表达式*/
+UnaryExpr ::=  UnaryOp Expression {methods=[getOperator]}
+/*条件*/
+ConditionalExpr ::= Expression RelOp Expression
+/*加减*/
+AddExpr ::= Expression AddOp Expression
+/*乘除*/
+MulExpr ::= Expression MulOp Expression
+/*三元运算符*/
+TernaryExpr ::= Expression QUESTOIN Expression? COLON? Expression? {pin=3}
+/* ( exp ) */
+ParenthesesExpr  ::= LPAREN <<enterMode "PAR">> Expression <<exitModeSafe "PAR">> RPAREN {pin=1}
+/*通用赋值表达式*/
+GeneralAssignExpr ::= VarReferenceExpr ASSIGN Expression
+
+VarReferenceExpr ::= identifier varAttribute* SafeOutput?
+
+SafeOutput ::= NOT SafeAllowExpr?
+
+SafeAllowExpr ::= Literal
+              | FunctionCallStatement
+              | Json
+              | VarReferenceExpr
+              | (LPAREN Expression RPAREN)
+
+Json ::= (LBRACK (Expression  (COMMA Expression)*)? RBRACK)
+	|  (LBRACE (JsonKeyValue (COMMA JsonKeyValue)*)? RBRACE)
+JsonKeyValue ::= (string COLON Expression)
+	|	(identifier COLON Expression)
+
+Literal ::= string | int | float | BooleanLiteral | null
+
+BooleanLiteral ::= false | true
+
+/*操作符*/
+private RelOp ::= '==' | '!=' | '<' | '<=' | '>' | '>='
+/*为什么会是位或和异或是加法：加减本质都是加法
+因为等效于0 1 的加法后舍去最高位*/
+private AddOp ::= '+' | '-' | '|' | '^'
+/*同理：乘除本质都是乘法
+求余的反向是乘法、位移的本质是乘除、位与是乘法的本质舍去最高位*/
+private MulOp ::= '*' | '/' | '%' | '<<' | '>>' | '&'
+/*一元操作符*/
+private UnaryOp ::= '+' | '-' | '!' | '^' | '*' | '&'
+
