@@ -1,0 +1,57 @@
+{
+  classHeader="copyrightHeader.java"
+  generate=[
+    java="8"
+    names="long"
+    elements="yes"
+    visitor="yes"
+    visitor-value="R"
+    psi-classes-map="yes"
+    psi-factory="yes"
+    token-sets="yes"
+    token-accessors="yes"
+    first-check="2"
+  ]
+
+  parserClass="com.intellij.ibeetl.generated.parser.BeetlParser"
+  parserUtilClass="com.intellij.ibeetl.lang.parser.BeetlParserUtil"
+/*所有的psielement类实现的*/
+  implements="com.intellij.ibeetl.lang.psi.BeetlCompositePsiElement"
+  /*所有的psielement接口继承的*/
+  extends="com.intellij.ibeetl.lang.psi.impl.BeetlCompositePsiElementImpl"
+
+  psiClassPrefix="Beetl"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.intellij.ibeetl.generated.psi"
+  psiImplPackage="com.intellij.ibeetl.generated.psi.impl"
+  psiImplUtilClass="com.intellij.ibeetl.lang.psi.BeetlPsiImplUtil"
+
+  elementTypeHolderClass="com.intellij.ibeetl.generated.psi.BeetlTypes"
+  elementTypePrefix="BTL_"
+  elementTypeClass="com.intellij.ibeetl.lang.psi.BeetlLazyIElementType"
+
+  tokenTypeClass="com.intellij.ibeetl.lang.psi.BeetlTokenType"
+
+  tokens = [
+    space='regexp:\s+'
+	EQ='='
+	PLUS='+'
+	LDT = '<%'
+	RDT = '%>'
+    number="regexp:\d+"
+    string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\\"|\\\'|\\)*\")"
+    id="regexp:\w+"
+    line_comment="regexp://.*"
+    block_comment="regexp:/\*(.|\n)*\*/"
+  ]
+/*同时会实现最顶层的implements指定的*/
+  /*implements("rule|attr")="org.intellij.grammar.psi.BnfNamedElement"
+  extends("rule|attr")="org.intellij.grammar.psi.impl.BnfNamedImpl"
+  mixin("reference_or_token")="org.intellij.grammar.psi.impl.BnfRefOrTokenImpl"
+  mixin("string_literal_expression")="org.intellij.grammar.psi.impl.BnfStringImpl"
+  extends("paren_.*expression")=parenthesized*/
+}
+
+file ::= binary_expression (';' binary_expression?)*
+binary_expression ::= literal '+' literal
+literal ::= string | number

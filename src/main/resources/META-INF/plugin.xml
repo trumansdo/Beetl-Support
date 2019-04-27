@@ -21,7 +21,10 @@
     -->
 
     <extensions defaultExtensionNs="com.intellij">
-        <fileTypeFactory implementation="com.intellij.ibeetl.psi.files.BtlFileTypeFactory"/>
+        <fileTypeFactory implementation="com.intellij.ibeetl.lang.BeetlFileTypeFactory"/>
+        <lang.parserDefinition language="beetl" implementationClass="com.intellij.ibeetl.lang.BeetlParserDefinition"/>
+	    <syntaxHighlighter key="beetl" implementationClass="com.intellij.ibeetl.lang.highlight.BeetlSyntaxHighlighter"/>
+        <lang.syntaxHighlighterFactory language="beetl" implementationClass="com.intellij.ibeetl.lang.highlight.BeetlSyntaxHighlighterFactory"/>
     </extensions>
     <actions>
     </actions>

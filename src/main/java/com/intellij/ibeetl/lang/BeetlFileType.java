@@ -1,8 +1,6 @@
-package com.intellij.ibeetl.psi.files;
+package com.intellij.ibeetl.lang;
 
-import com.intellij.ibeetl.psi.BtlLanguage;
-import com.intellij.ibeetl.utils.BtlConstants;
-import com.intellij.lang.html.HTMLLanguage;
+import com.intellij.ibeetl.utils.BeetlConstants;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.fileTypes.TemplateLanguageFileType;
 import com.intellij.openapi.project.Project;
@@ -18,17 +16,17 @@ import java.nio.charset.Charset;
 /**
  * Beetl 的文件类型
  */
-public class BtlFileType extends LanguageFileType implements TemplateLanguageFileType {
-	public static final LanguageFileType INSTANCE = new BtlFileType();
+public class BeetlFileType extends LanguageFileType implements TemplateLanguageFileType {
+	public static final LanguageFileType INSTANCE = new BeetlFileType();
 
-	private BtlFileType() {
-		super(BtlLanguage.INSTANCE);
+	private BeetlFileType() {
+		super(BeetlLanguage.INSTANCE);
 	}
 
 	@NotNull
 	@Override
 	public String getName() {
-		return BtlConstants.BTL;
+		return BeetlConstants.BTL;
 	}
 
 	@NotNull

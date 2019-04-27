@@ -1,7 +1,7 @@
 //todo 尝试一下ILazyParseableElementType 混合语言开发 能否将定界符作为混合语言的包装符号
 {
 	/*定义parser类全限定名*/
-  parserClass='com.intellij.ibeetl.parser.BeetlParser'
+  parserClass='com.intellij.ibeetl.lang.parser.BeetlParser'
   /*每个Java类头部的版权申明*/
   classHeader='copyrightHeader.java'
   /*所有的psi node接口的扩展*/
@@ -13,16 +13,16 @@
   extends='com.intellij.extapi.psi.ASTWrapperPsiElement'
 
   elementTypeHolderClass='com.intellij.ibeetl.GoTypes'
-  elementTypeClass='com.intellij.ibeetl.psi.BeetlElementType'
-  tokenTypeClass='com.intellij.ibeetl.psi.BeetlTokenType'
-  psiTreeUtilClass='com.intellij.ibeetl.psi.BeetlPsiTreeUtil'
+  elementTypeClass='com.intellij.ibeetl.lang.psi.BeetlElementType'
+  tokenTypeClass='com.intellij.ibeetl.lang.psi.BeetlTokenType'
+  psiTreeUtilClass='com.intellij.ibeetl.lang.psi.BeetlPsiTreeUtil'
 
   psiClassPrefix='Beetl'
   psiImplClassSuffix='Impl'
-  psiPackage='com.intellij.ibeetl.psi'
-  psiImplPackage='com.intellij.ibeetl.psi.impl'
-  psiImplUtilClass="com.intellij.ibeetl.psi.impl.GoPsiImplUtil"
-  parserUtilClass="com.intellij.ibeetl.parser.GoParserUtil"
+  psiPackage='com.intellij.ibeetl.lang.psi'
+  psiImplPackage='com.intellij.ibeetl.lang.psi.impl'
+  psiImplUtilClass="com.intellij.ibeetl.lang.psi.impl.GoPsiImplUtil"
+  parserUtilClass="com.intellij.ibeetl.lang.parser.GoParserUtil"
 
   tokens=[
     LBRACE               =  '{'
