@@ -8,22 +8,19 @@ import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.fileTypes.SingleLazyInstanceSyntaxHighlighterFactory;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
+import com.intellij.psi.templateLanguages.TemplateLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Beetl语言，标识为BTL
+ * 查看 InjectableLanguage 或者  TemplateLanguage
  */
-public class BeetlLanguage extends Language implements InjectableLanguage {
+public class BeetlLanguage extends Language implements TemplateLanguage {
 	public static final BeetlLanguage INSTANCE = new BeetlLanguage();
-	public static final BeetlLanguage HTML_TAG_EXPRESSIONS = new BeetlLanguage(INSTANCE, "BeetlHtmlTagExpressions");
 
 	private BeetlLanguage() {
-		super(HTMLLanguage.INSTANCE, "beetl", new String[]{"text/html", "text/htmlh","text/btl", "text/x-btl", "application/x-btl"});
-	}
-	protected BeetlLanguage(BeetlLanguage baseLanguage, String ID) {
-		super(baseLanguage, ID, new String[0]);
-		this.addSyntaxHighlighting();
+		super(HTMLLanguage.INSTANCE, "btl");
 	}
 
 	@Nullable
@@ -35,11 +32,7 @@ public class BeetlLanguage extends Language implements InjectableLanguage {
 	@NotNull
 	@Override
 	public String getDisplayName() {
-		if (this == HTML_TAG_EXPRESSIONS) {
-			return "Beetl HTML tag Expression";
-		}  else {
-			return "Beetl Language";
-		}
+		return "Beetl Language";
 	}
 
 	@Override

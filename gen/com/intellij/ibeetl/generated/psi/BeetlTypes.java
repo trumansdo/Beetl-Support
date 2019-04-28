@@ -1,35 +1,19 @@
-/*
-
- * Copyright 2019 trumansdo
-
- *
-
- * Licensed under the Apache License, Version 2.0 (the "License");
-
- * you may not use this file except in compliance with the License.
-
- * You may obtain a copy of the License at
-
- *
-
- * http://www.apache.org/licenses/LICENSE-2.0
-
- *
-
- * Unless required by applicable law or agreed to in writing, software
-
- * distributed under the License is distributed on an "AS IS" BASIS,
-
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-
- * See the License for the specific language governing permissions and
-
- * limitations under the License.
-
- */
-
-
-
+/*
+ * Copyright 2019 trumansdo
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 // This is a generated file. Not intended for manual editing.
 package com.intellij.ibeetl.generated.psi;
 
@@ -42,7 +26,6 @@ import com.intellij.ibeetl.generated.psi.impl.*;
 import java.util.Collections;
 import java.util.Set;
 import java.util.LinkedHashMap;
-import com.intellij.psi.impl.source.tree.CompositePsiElement;
 
 public interface BeetlTypes {
 
@@ -78,15 +61,15 @@ public interface BeetlTypes {
   }
 
   class Factory {
-    public static CompositePsiElement createElement(ASTNode node) {
+    public static PsiElement createElement(ASTNode node) {
       IElementType type = node.getElementType();
       if (type == BTL_BINARY_EXPRESSION) {
-        return new BeetlBinaryExpressionImpl(type);
+        return new BeetlBinaryExpressionImpl(node);
       }
       else if (type == BTL_LITERAL) {
-        return new BeetlLiteralImpl(type);
+        return new BeetlLiteralImpl(node);
       }
-      throw new AssertionError("Unknown element node: " + node);
+      throw new AssertionError("Unknown element type: " + type);
     }
   }
 }

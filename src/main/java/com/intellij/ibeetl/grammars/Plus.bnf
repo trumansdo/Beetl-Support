@@ -13,18 +13,19 @@
     first-check="2"
   ]
 
-  parserClass="com.intellij.ibeetl.generated.parser.BeetlParser"
-  parserUtilClass="com.intellij.ibeetl.lang.parser.BeetlParserUtil"
-/*所有的psielement类实现的*/
-  implements="com.intellij.ibeetl.lang.psi.BeetlCompositePsiElement"
-  /*所有的psielement接口继承的*/
-  extends="com.intellij.ibeetl.lang.psi.impl.BeetlCompositePsiElementImpl"
-
   psiClassPrefix="Beetl"
   psiImplClassSuffix="Impl"
   psiPackage="com.intellij.ibeetl.generated.psi"
   psiImplPackage="com.intellij.ibeetl.generated.psi.impl"
   psiImplUtilClass="com.intellij.ibeetl.lang.psi.BeetlPsiImplUtil"
+
+  parserClass="com.intellij.ibeetl.generated.parser.BeetlParser"
+  parserUtilClass="com.intellij.ibeetl.lang.parser.BeetlParserUtil"
+
+/*所有的psielement类实现的*/
+  implements="com.intellij.ibeetl.lang.psi.BeetlPsiElement"
+  /*所有的psielement接口继承的*/
+  extends="com.intellij.ibeetl.lang.psi.impl.BeetlCompositeElement"
 
   elementTypeHolderClass="com.intellij.ibeetl.generated.psi.BeetlTypes"
   elementTypePrefix="BTL_"
@@ -52,6 +53,8 @@
   extends("paren_.*expression")=parenthesized*/
 }
 
-file ::= binary_expression (';' binary_expression?)*
+file ::= binary_expression (';' binary_expression?)* {pin=1;recoverWhile=binary_expression_recover}
 binary_expression ::= literal '+' literal
 literal ::= string | number
+
+private binary_expression_recover::= !(literal)

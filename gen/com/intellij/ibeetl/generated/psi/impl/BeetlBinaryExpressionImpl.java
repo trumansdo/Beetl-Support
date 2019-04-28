@@ -24,15 +24,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.intellij.ibeetl.generated.psi.BeetlTypes.*;
-import com.intellij.ibeetl.lang.psi.impl.BeetlCompositePsiElementImpl;
+import com.intellij.ibeetl.lang.psi.impl.BeetlCompositeElement;
 import com.intellij.ibeetl.generated.psi.*;
 import com.intellij.ibeetl.lang.psi.BeetlPsiImplUtil;
-import com.intellij.psi.tree.IElementType;
 
-public class BeetlBinaryExpressionImpl extends BeetlCompositePsiElementImpl implements BeetlBinaryExpression {
+public class BeetlBinaryExpressionImpl extends BeetlCompositeElement implements BeetlBinaryExpression {
 
-  public BeetlBinaryExpressionImpl(IElementType type) {
-    super(type);
+  public BeetlBinaryExpressionImpl(@NotNull ASTNode node) {
+    super(node);
   }
 
   public <R> R accept(@NotNull BeetlVisitor<R> visitor) {
@@ -53,7 +52,7 @@ public class BeetlBinaryExpressionImpl extends BeetlCompositePsiElementImpl impl
   @Override
   @NotNull
   public PsiElement getPlus() {
-    return findPsiChildByType(BTL_PLUS);
+    return findNotNullChildByType(BTL_PLUS);
   }
 
 }
