@@ -20,9 +20,9 @@ package com.intellij.ibeetl.generated.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
-import com.intellij.ibeetl.lang.psi.BeetlCompositePsiElement;
+import com.intellij.ibeetl.lang.psi.BeetlPsiElement;
 
-public interface BeetlBinaryExpression extends BeetlCompositePsiElement {
+public interface BeetlBinaryExpression extends BeetlPsiElement {
 
   @NotNull
   List<BeetlLiteral> getLiteralList();

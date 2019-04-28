@@ -22,6 +22,7 @@ import com.intellij.lang.PsiBuilder.Marker;
 import static com.intellij.ibeetl.generated.psi.BeetlTypes.*;
 import static com.intellij.ibeetl.lang.parser.BeetlParserUtil.*;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.IFileElementType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.lang.PsiParser;
@@ -39,14 +40,11 @@ public class BeetlParser implements PsiParser, LightPsiParser {
     boolean result;
     builder = adapt_builder_(type, builder, this, null);
     Marker marker = enter_section_(builder, 0, _COLLAPSE_, null);
-    if (type == BTL_BINARY_EXPRESSION) {
-      result = binary_expression(builder, 0);
-    }
-    else if (type == BTL_LITERAL) {
-      result = literal(builder, 0);
+    if (type instanceof IFileElementType) {
+      result = parse_root_(type, builder, 0);
     }
     else {
-      result = parse_root_(type, builder, 0);
+      result = false;
     }
     exit_section_(builder, 0, marker, type, result, true, TRUE_CONDITION);
   }
@@ -70,16 +68,37 @@ public class BeetlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // !(literal)
+  static boolean binary_expression_recover(PsiBuilder builder, int level) {
+    if (!recursion_guard_(builder, level, "binary_expression_recover")) return false;
+    boolean result;
+    Marker marker = enter_section_(builder, level, _NOT_);
+    result = !binary_expression_recover_0(builder, level + 1);
+    exit_section_(builder, level, marker, result, false, null);
+    return result;
+  }
+
+  // (literal)
+  private static boolean binary_expression_recover_0(PsiBuilder builder, int level) {
+    if (!recursion_guard_(builder, level, "binary_expression_recover_0")) return false;
+    boolean result;
+    Marker marker = enter_section_(builder);
+    result = literal(builder, level + 1);
+    exit_section_(builder, marker, null, result);
+    return result;
+  }
+
+  /* ********************************************************** */
   // binary_expression (';' binary_expression?)*
   static boolean file(PsiBuilder builder, int level) {
     if (!recursion_guard_(builder, level, "file")) return false;
-    if (!nextTokenIs(builder, "", BTL_NUMBER, BTL_STRING)) return false;
-    boolean result;
-    Marker marker = enter_section_(builder);
+    boolean result, pinned;
+    Marker marker = enter_section_(builder, level, _NONE_);
     result = binary_expression(builder, level + 1);
+    pinned = result; // pin = 1
     result = result && file_1(builder, level + 1);
-    exit_section_(builder, marker, null, result);
-    return result;
+    exit_section_(builder, level, marker, result, pinned, BeetlParser::binary_expression_recover);
+    return result || pinned;
   }
 
   // (';' binary_expression?)*
