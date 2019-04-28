@@ -24,15 +24,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.intellij.ibeetl.generated.psi.BeetlTypes.*;
-import com.intellij.ibeetl.lang.psi.impl.BeetlCompositePsiElementImpl;
+import com.intellij.ibeetl.lang.psi.impl.BeetlCompositeElement;
 import com.intellij.ibeetl.generated.psi.*;
 import com.intellij.ibeetl.lang.psi.BeetlPsiImplUtil;
-import com.intellij.psi.tree.IElementType;
 
-public class BeetlLiteralImpl extends BeetlCompositePsiElementImpl implements BeetlLiteral {
+public class BeetlLiteralImpl extends BeetlCompositeElement implements BeetlLiteral {
 
-  public BeetlLiteralImpl(IElementType type) {
-    super(type);
+  public BeetlLiteralImpl(@NotNull ASTNode node) {
+    super(node);
   }
 
   public <R> R accept(@NotNull BeetlVisitor<R> visitor) {
@@ -47,13 +46,13 @@ public class BeetlLiteralImpl extends BeetlCompositePsiElementImpl implements Be
   @Override
   @Nullable
   public PsiElement getNumber() {
-    return findPsiChildByType(BTL_NUMBER);
+    return findChildByType(BTL_NUMBER);
   }
 
   @Override
   @Nullable
   public PsiElement getString() {
-    return findPsiChildByType(BTL_STRING);
+    return findChildByType(BTL_STRING);
   }
 
 }

@@ -19,19 +19,19 @@ package com.intellij.ibeetl.generated.psi;
 
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.ibeetl.lang.psi.BeetlCompositePsiElement;
+import com.intellij.ibeetl.lang.psi.BeetlPsiElement;
 
 public class BeetlVisitor<R> extends PsiElementVisitor {
 
   public R visitBinaryExpression(@NotNull BeetlBinaryExpression o) {
-    return visitCompositePsiElement(o);
+    return visitPsiElement(o);
   }
 
   public R visitLiteral(@NotNull BeetlLiteral o) {
-    return visitCompositePsiElement(o);
+    return visitPsiElement(o);
   }
 
-  public R visitCompositePsiElement(@NotNull BeetlCompositePsiElement o) {
+  public R visitPsiElement(@NotNull BeetlPsiElement o) {
     visitElement(o);
     return null;
   }

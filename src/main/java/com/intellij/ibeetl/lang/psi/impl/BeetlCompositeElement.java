@@ -1,27 +1,29 @@
 package com.intellij.ibeetl.lang.psi.impl;
 
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.ibeetl.generated.psi.BeetlVisitor;
-import com.intellij.ibeetl.lang.psi.BeetlCompositePsiElement;
+import com.intellij.ibeetl.lang.psi.BeetlPsiElement;
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.source.tree.CompositePsiElement;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * psi  语法树 的节点类型
- * 同时 也是AstNode
+ * 用来包装ASTNode转换成PsiElement类型
+ * 可以看一下CompositePsiElement，但是CompositePsiElement这个类应该是某个用途的时候才用
  */
-public class BeetlCompositePsiElementImpl extends CompositePsiElement implements BeetlCompositePsiElement {
+public class BeetlCompositeElement extends ASTWrapperPsiElement implements BeetlPsiElement {
 
-	public BeetlCompositePsiElementImpl(IElementType type) {
-		super(type);
+	public BeetlCompositeElement(@NotNull ASTNode node) {
+		super(node);
+
 	}
 
 	@Override
 	public <R> R accept(@NotNull BeetlVisitor<R> visitor) {
-		return visitor.visitCompositePsiElement(this);
+		return visitor.visitPsiElement(this);
 	}
 
 	@Override
