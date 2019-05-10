@@ -44,6 +44,7 @@
     id="regexp:\w+"
     line_comment="regexp://.*"
     block_comment="regexp:/\*(.|\n)*\*/"
+    template_html_text="regexp:."
   ]
 /*同时会实现最顶层的implements指定的*/
   /*implements("rule|attr")="org.intellij.grammar.psi.BnfNamedElement"
@@ -58,3 +59,9 @@ binary_expression ::= literal '+' literal
 literal ::= string | number
 
 private binary_expression_recover::= !(literal)
+<%
+1321+1321
+%>
+<%
+qyhjtrjrtj
+%>

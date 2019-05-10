@@ -23,8 +23,16 @@
     <extensions defaultExtensionNs="com.intellij">
         <fileTypeFactory implementation="com.intellij.ibeetl.lang.BeetlFileTypeFactory"/>
         <lang.parserDefinition language="btl" implementationClass="com.intellij.ibeetl.lang.BeetlParserDefinition"/>
-	    <!--<syntaxHighlighter key="btl" implementationClass="com.intellij.ibeetl.lang.highlight.BeetlSyntaxHighlighter"/>-->
-        <!--<lang.syntaxHighlighterFactory language="btl" implementationClass="com.intellij.ibeetl.lang.highlight.BeetlSyntaxHighlighterFactory"/>-->
+        <!--
+        两个fileview一样。根据模板语言的开发步骤：
+        1、自定义模板flex，并把模板语言之外的外部语言识别为一个template data  type
+        2、定义fileViewProvider，将外部语言的内容给正确的语言识别
+        3、注册扩展点
+        -->
+        <!--<fileType.fileViewProviderFactory filetype="btl" implementationClass="com.intellij.ibeetl.lang.psi.file.BeetlFileViewProviderFactory"/>-->
+        <lang.fileViewProviderFactory language="btl" implementationClass="com.intellij.ibeetl.lang.psi.file.BeetlFileViewProviderFactory"/>
+	    <syntaxHighlighter key="btl" implementationClass="com.intellij.ibeetl.lang.highlight.BeetlSyntaxHighlighter"/>
+        <lang.syntaxHighlighterFactory language="btl" implementationClass="com.intellij.ibeetl.lang.highlight.BeetlSyntaxHighlighterFactory"/>
     </extensions>
     <actions>
     </actions>
