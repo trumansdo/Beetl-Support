@@ -4,10 +4,11 @@ package com.intellij.ibeetl.generated.lexer;
 
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
+import org.apache.commons.lang3.StringUtils;
 
+import static com.intellij.ibeetl.generated.psi.BeetlTypes.*;
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
 import static com.intellij.psi.TokenType.WHITE_SPACE;
-import static com.intellij.ibeetl.generated.psi.BeetlTypes.*;
 
 
 /**
@@ -22,9 +23,12 @@ public class _BeetlLexer implements FlexLexer {
 
   /** initial size of the lookahead buffer */
   private static final int ZZ_BUFFERSIZE = 16384;
+  private static final String ZZ_NL = System.getProperty("line.separator");
 
   /** lexical states */
   public static final int YYINITIAL = 0;
+  public static final int BTL_LEX = 2;
+  public static final int BTL_HTML_LEX = 4;
 
   /**
    * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
@@ -33,31 +37,30 @@ public class _BeetlLexer implements FlexLexer {
    * l is of the form l = 2*k, k a non negative integer
    */
   private static final int ZZ_LEXSTATE[] = { 
-     0, 0
+     0,  0,  1,  1,  2, 2
   };
 
   /** 
    * Translates characters to character classes
-   * Chosen bits are [7, 7, 7]
-   * Total runtime size is 1928 bytes
+   * Chosen bits are [9, 6, 6]
+   * Total runtime size is 1568 bytes
    */
   public static int ZZ_CMAP(int ch) {
-    return ZZ_CMAP_A[(ZZ_CMAP_Y[ZZ_CMAP_Z[ch>>14]|((ch>>7)&0x7f)]<<7)|(ch&0x7f)];
+    return ZZ_CMAP_A[(ZZ_CMAP_Y[ZZ_CMAP_Z[ch>>12]|((ch>>6)&0x3f)]<<6)|(ch&0x3f)];
   }
 
-  /* The ZZ_CMAP_Z table has 68 entries */
+  /* The ZZ_CMAP_Z table has 272 entries */
   static final char ZZ_CMAP_Z[] = zzUnpackCMap(
-    "\1\0\103\200");
+    "\1\0\1\100\1\200\u010d\100");
 
-  /* The ZZ_CMAP_Y table has 256 entries */
+  /* The ZZ_CMAP_Y table has 192 entries */
   static final char ZZ_CMAP_Y[] = zzUnpackCMap(
-    "\1\0\1\1\53\2\1\3\22\2\1\4\37\2\1\3\237\2");
+    "\1\0\1\1\1\2\175\3\1\4\77\3");
 
-  /* The ZZ_CMAP_A table has 640 entries */
+  /* The ZZ_CMAP_A table has 320 entries */
   static final char ZZ_CMAP_A[] = zzUnpackCMap(
-    "\11\0\1\3\1\2\3\1\22\0\1\3\1\0\1\7\2\0\1\16\1\0\1\5\2\0\1\12\1\14\3\0\1\11"+
-    "\12\4\2\0\1\15\1\13\1\17\2\0\32\10\1\0\1\6\2\0\1\10\1\0\32\10\12\0\1\1\32"+
-    "\0\1\3\337\0\1\3\177\0\13\3\35\0\2\1\5\0\1\3\57\0\1\3\40\0");
+    "\11\0\1\3\1\2\1\1\1\4\1\2\22\0\1\3\4\0\1\12\4\0\1\10\1\13\3\0\1\7\12\5\2\0"+
+    "\1\11\1\0\1\14\2\0\32\6\4\0\1\6\1\0\32\6\12\0\1\1\242\0\2\1\26\0");
 
   /** 
    * Translates DFA states to action switch labels.
@@ -65,12 +68,11 @@ public class _BeetlLexer implements FlexLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\1\0\1\1\1\2\1\3\2\1\1\4\1\1\1\5"+
-    "\1\6\2\1\1\0\1\7\3\0\1\10\1\0\1\11"+
-    "\1\12\1\7\1\0\1\13";
+    "\3\0\1\1\3\2\2\1\1\3\1\4\2\0\1\5"+
+    "\1\6\1\7\1\10\1\11\2\7\1\0";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[24];
+    int [] result = new int[21];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -95,12 +97,12 @@ public class _BeetlLexer implements FlexLexer {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\20\0\40\0\60\0\100\0\120\0\140\0\160"+
-    "\0\20\0\20\0\200\0\220\0\100\0\20\0\240\0\120"+
-    "\0\260\0\300\0\320\0\20\0\20\0\120\0\340\0\320";
+    "\0\0\0\15\0\32\0\32\0\47\0\64\0\101\0\116"+
+    "\0\133\0\150\0\165\0\116\0\202\0\32\0\217\0\234"+
+    "\0\32\0\32\0\251\0\32\0\251";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[24];
+    int [] result = new int[21];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -123,17 +125,16 @@ public class _BeetlLexer implements FlexLexer {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\2\3\3\1\4\1\5\1\2\1\6\1\7\1\10"+
-    "\1\2\1\11\1\12\1\13\1\14\1\2\21\0\3\3"+
-    "\20\0\1\4\3\0\1\7\7\0\5\15\1\16\1\17"+
-    "\11\15\6\20\1\21\1\16\10\20\4\0\1\7\3\0"+
-    "\1\7\20\0\1\22\1\23\23\0\1\24\20\0\1\25"+
-    "\1\15\2\0\15\15\6\20\1\21\1\26\10\20\1\22"+
-    "\2\0\15\22\1\23\1\0\10\23\1\27\6\23\1\0"+
-    "\7\23\1\30\1\27\5\23";
+    "\1\4\2\5\1\6\1\7\2\4\1\10\1\4\1\11"+
+    "\3\4\1\0\2\5\1\6\1\7\1\12\1\13\1\14"+
+    "\2\0\1\15\1\16\17\0\2\5\1\0\1\5\13\0"+
+    "\2\6\11\0\2\5\1\6\1\7\17\0\1\17\1\20"+
+    "\16\0\1\21\7\0\1\12\1\13\13\0\2\13\22\0"+
+    "\1\22\2\17\1\0\12\17\10\20\1\23\13\20\1\24"+
+    "\1\25\4\20";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[240];
+    int [] result = new int[182];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -171,11 +172,11 @@ public class _BeetlLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\1\0\1\11\6\1\2\11\2\1\1\0\1\11\3\0"+
-    "\1\1\1\0\2\11\1\1\1\0\1\1";
+    "\2\0\1\10\1\11\7\1\2\0\1\11\2\1\2\11"+
+    "\1\1\1\11\1\0";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[24];
+    int [] result = new int[21];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -231,9 +232,33 @@ public class _BeetlLexer implements FlexLexer {
   private boolean zzEOFDone;
 
   /* user code: */
-  public _BeetlLexer() {
-    this((java.io.Reader)null);
-  }
+	public _BeetlLexer() {
+		this((java.io.Reader)null);
+	}
+	private IElementType test(){
+		int indexOf = StringUtils.indexOf(zzBuffer, "<%", zzCurrentPos);
+		System.out.println(yycharat(indexOf));
+		zzMarkedPos=indexOf;
+		System.out.println("----------------test start");
+		System.out.println("zzBuffer : "+this.zzBuffer);
+		System.out.println("content:"+yytext());
+		System.out.println("content length:"+yylength());
+
+		System.out.println("zzState : "+this.zzState);
+		System.out.println("lexer state: "+yystate());
+		System.out.println("zzLexicalState : "+this.zzLexicalState);
+
+		System.out.println("zzCurrentPos : "+this.zzCurrentPos);
+		System.out.println("zzMarkedPos : "+this.zzMarkedPos);
+
+		System.out.println("zzStartRead : "+this.zzStartRead);
+		System.out.println("zzEndRead : "+this.zzEndRead);
+		//  	System.out.println(yyline);
+		//  	System.out.println(yychar);
+		//  	System.out.println(yycolumn);
+		System.out.println("----------------test end");
+		return TEMPLATE_HTML_TEXT;
+	}
 
 
   /**
@@ -266,6 +291,23 @@ public class _BeetlLexer implements FlexLexer {
       do map[j++] = value; while (--count > 0);
     }
     return map;
+  }
+
+  private static String zzToPrintable(CharSequence str) {
+    StringBuilder builder = new StringBuilder();
+    for (int n = 0 ; n < str.length() ; ) {
+      int ch = Character.codePointAt(str, n);
+      int charCount = Character.charCount(ch);
+      n += charCount;
+      if (ch > 31 && ch < 127) {
+        builder.append((char)ch);
+      } else if (charCount == 1) {
+        builder.append(String.format("\\u%04X", ch));
+      } else {
+        builder.append(String.format("\\U%06X", ch));
+      }
+    }
+    return builder.toString();
   }
 
   public final int getTokenStart() {
@@ -391,6 +433,18 @@ public class _BeetlLexer implements FlexLexer {
 
 
   /**
+   * Contains user EOF-code, which will be executed exactly once,
+   * when the end of file is reached
+   */
+  private void zzDoEOF() {
+    if (!zzEOFDone) {
+      zzEOFDone = true;
+    
+    }
+  }
+
+
+  /**
    * Resumes scanning until the next regular expression is matched,
    * the end of input is encountered or an I/O-Error occurs.
    *
@@ -476,68 +530,130 @@ public class _BeetlLexer implements FlexLexer {
 
       if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
         zzAtEOF = true;
+        zzDoEOF();
         return null;
       }
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
-            { return BAD_CHARACTER;
+            System.out.println("match: --"+zzToPrintable(yytext())+"--");
+            System.out.println("action [73] { test(); }");
+            { test();
             } 
             // fall through
-          case 12: break;
+          case 10: break;
           case 2: 
+            System.out.println("match: --"+zzToPrintable(yytext())+"--");
+            System.out.println("action [69] { return WHITE_SPACE; }");
             { return WHITE_SPACE;
             } 
             // fall through
-          case 13: break;
+          case 11: break;
           case 3: 
+            System.out.println("match: --"+zzToPrintable(yytext())+"--");
+            System.out.println("action [81] { return BTL_NUMBER; }");
             { return BTL_NUMBER;
             } 
             // fall through
-          case 14: break;
+          case 12: break;
           case 4: 
+            System.out.println("match: --"+zzToPrintable(yytext())+"--");
+            System.out.println("action [82] { return BTL_ID; }");
             { return BTL_ID;
             } 
             // fall through
-          case 15: break;
+          case 13: break;
           case 5: 
-            { return BTL_EQ;
-            } 
-            // fall through
-          case 16: break;
-          case 6: 
+            System.out.println("match: --"+zzToPrintable(yytext())+"--");
+            System.out.println("action [80] { return BTL_PLUS; }");
             { return BTL_PLUS;
             } 
             // fall through
-          case 17: break;
-          case 7: 
-            { return BTL_STRING;
-            } 
-            // fall through
-          case 18: break;
-          case 8: 
+          case 14: break;
+          case 6: 
+            System.out.println("match: --"+zzToPrintable(yytext())+"--");
+            System.out.println("action [70] { return BTL_LINE_COMMENT; }");
             { return BTL_LINE_COMMENT;
             } 
             // fall through
-          case 19: break;
-          case 9: 
-            { return BTL_LDT;
-            } 
-            // fall through
-          case 20: break;
-          case 10: 
-            { return BTL_RDT;
-            } 
-            // fall through
-          case 21: break;
-          case 11: 
+          case 15: break;
+          case 7: 
+            System.out.println("match: --"+zzToPrintable(yytext())+"--");
+            System.out.println("action [71] { return BTL_BLOCK_COMMENT; }");
             { return BTL_BLOCK_COMMENT;
             } 
             // fall through
-          case 22: break;
+          case 16: break;
+          case 8: 
+            System.out.println("match: --"+zzToPrintable(yytext())+"--");
+            System.out.println("action [72] { yybegin(BTL_LEX); return BTL_LDT; }");
+            { yybegin(BTL_LEX); return BTL_LDT;
+            } 
+            // fall through
+          case 17: break;
+          case 9: 
+            System.out.println("match: --"+zzToPrintable(yytext())+"--");
+            System.out.println("action [83] { yybegin(YYINITIAL); return BTL_RDT; }");
+            { yybegin(YYINITIAL); return BTL_RDT;
+            } 
+            // fall through
+          case 18: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }
+      }
+    }
+  }
+
+  /**
+   * Runs the scanner on input files.
+   *
+   * This main method is the debugging routine for the scanner.
+   * It prints debugging information about each returned token to
+   * System.out until the end of file is reached, or an error occured.
+   *
+   * @param argv   the command line, contains the filenames to run
+   *               the scanner on.
+   */
+  public static void main(String argv[]) {
+    if (argv.length == 0) {
+      System.out.println("Usage : java _BeetlLexer [ --encoding <name> ] <inputfile(s)>");
+    }
+    else {
+      int firstFilePos = 0;
+      String encodingName = "UTF-8";
+      if (argv[0].equals("--encoding")) {
+        firstFilePos = 2;
+        encodingName = argv[1];
+        try {
+          java.nio.charset.Charset.forName(encodingName); // Side-effect: is encodingName valid? 
+        } catch (Exception e) {
+          System.out.println("Invalid encoding '" + encodingName + "'");
+          return;
+        }
+      }
+      for (int i = firstFilePos; i < argv.length; i++) {
+        _BeetlLexer scanner = null;
+        try {
+          java.io.FileInputStream stream = new java.io.FileInputStream(argv[i]);
+          java.io.Reader reader = new java.io.InputStreamReader(stream, encodingName);
+          scanner = new _BeetlLexer(reader);
+          do {
+            System.out.println(scanner.advance());
+          } while (!scanner.zzAtEOF);
+
+        }
+        catch (java.io.FileNotFoundException e) {
+          System.out.println("File not found : \""+argv[i]+"\"");
+        }
+        catch (java.io.IOException e) {
+          System.out.println("IO error scanning file \""+argv[i]+"\"");
+          System.out.println(e);
+        }
+        catch (Exception e) {
+          System.out.println("Unexpected exception:");
+          e.printStackTrace();
+        }
       }
     }
   }
