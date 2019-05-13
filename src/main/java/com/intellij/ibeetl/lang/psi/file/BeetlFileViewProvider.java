@@ -1,24 +1,25 @@
 package com.intellij.ibeetl.lang.psi.file;
 
-import com.intellij.ibeetl.generated.psi.BeetlTypes;
 import com.intellij.ibeetl.lang.BeetlLanguage;
+import com.intellij.ibeetl.lang.lexer.BeetlFileElementType;
+import com.intellij.ibeetl.lang.psi.BeetlTokenType;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
-import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.fileTypes.PlainTextLanguage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.LanguageSubstitutors;
+import com.intellij.psi.MultiplePsiFilesPerDocumentFileViewProvider;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.templateLanguages.ConfigurableTemplateLanguageFileViewProvider;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
 import com.intellij.psi.templateLanguages.TemplateLanguage;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.ui.Html;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,6 +48,7 @@ public class BeetlFileViewProvider extends MultiplePsiFilesPerDocumentFileViewPr
 		this.myTemplateDataLanguage = templateDataLanguage;
 		this.setBaseLanguage(baseLanguage);
 	}
+
 	private static Language getSubstitutedLanguage(PsiManager manager, VirtualFile virtualFile) {
 		Language language = getTemplateDataLanguage(virtualFile, manager.getProject());
 		Language substituteLanguage = LanguageSubstitutors.INSTANCE.substituteLanguage(language, virtualFile, manager.getProject());
@@ -61,6 +63,7 @@ public class BeetlFileViewProvider extends MultiplePsiFilesPerDocumentFileViewPr
 			return language;
 		}
 	}
+
 	@NotNull
 	@Override
 	public Language getBaseLanguage() {
@@ -113,7 +116,7 @@ public class BeetlFileViewProvider extends MultiplePsiFilesPerDocumentFileViewPr
 			return LanguageParserDefinitions.INSTANCE.forLanguage(lang).createFile(this);
 		} else if (lang == this.getTemplateDataLanguage()) {
 			PsiFileImpl file = (PsiFileImpl) LanguageParserDefinitions.INSTANCE.forLanguage(lang).createFile(this);
-			file.setContentElementType(BeetlTypes.TEMPLATE_DATA);
+			file.setContentElementType(BeetlFileElementType.TEMPLATE_DATA);
 			return file;
 		} else {
 			return null;

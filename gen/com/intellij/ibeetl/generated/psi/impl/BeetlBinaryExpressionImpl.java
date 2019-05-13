@@ -50,9 +50,9 @@ public class BeetlBinaryExpressionImpl extends BeetlCompositeElement implements 
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getPlus() {
-    return findNotNullChildByType(BTL_PLUS);
+    return findChildByType(BTL_PLUS);
   }
 
 }

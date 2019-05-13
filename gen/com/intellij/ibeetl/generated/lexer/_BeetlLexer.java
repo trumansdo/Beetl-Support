@@ -237,27 +237,30 @@ public class _BeetlLexer implements FlexLexer {
 	}
 	private IElementType test(){
 		int indexOf = StringUtils.indexOf(zzBuffer, "<%", zzCurrentPos);
-		System.out.println(yycharat(indexOf));
-		zzMarkedPos=indexOf;
-		System.out.println("----------------test start");
-		System.out.println("zzBuffer : "+this.zzBuffer);
-		System.out.println("content:"+yytext());
-		System.out.println("content length:"+yylength());
+		if(-1!=indexOf){
+          zzMarkedPos=indexOf;
+        }else {
+		  zzMarkedPos=zzEndRead;
+        }
+      System.out.println("----------------test start");
+      System.out.println("zzBuffer : "+this.zzBuffer);
+      System.out.println("content:"+yytext());
+      System.out.println("content length:"+yylength());
 
-		System.out.println("zzState : "+this.zzState);
-		System.out.println("lexer state: "+yystate());
-		System.out.println("zzLexicalState : "+this.zzLexicalState);
+      System.out.println("zzState : "+this.zzState);
+      System.out.println("lexer state: "+yystate());
+      System.out.println("zzLexicalState : "+this.zzLexicalState);
 
-		System.out.println("zzCurrentPos : "+this.zzCurrentPos);
-		System.out.println("zzMarkedPos : "+this.zzMarkedPos);
+      System.out.println("zzCurrentPos : "+this.zzCurrentPos);
+      System.out.println("zzMarkedPos : "+this.zzMarkedPos);
 
-		System.out.println("zzStartRead : "+this.zzStartRead);
-		System.out.println("zzEndRead : "+this.zzEndRead);
-		//  	System.out.println(yyline);
-		//  	System.out.println(yychar);
-		//  	System.out.println(yycolumn);
-		System.out.println("----------------test end");
-		return TEMPLATE_HTML_TEXT;
+      System.out.println("zzStartRead : "+this.zzStartRead);
+      System.out.println("zzEndRead : "+this.zzEndRead);
+      //  	System.out.println(yyline);
+      //  	System.out.println(yychar);
+      //  	System.out.println(yycolumn);
+      System.out.println("----------------test end");
+      return BTL_TEMPLATE_HTML_TEXT;
 	}
 
 
@@ -538,7 +541,7 @@ public class _BeetlLexer implements FlexLexer {
           case 1: 
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
             System.out.println("action [73] { test(); }");
-            { test();
+            { return test();
             } 
             // fall through
           case 10: break;
