@@ -33,6 +33,8 @@
         <lang.fileViewProviderFactory language="btl" implementationClass="com.intellij.ibeetl.lang.psi.file.BeetlFileViewProviderFactory"/>
 	    <syntaxHighlighter key="btl" implementationClass="com.intellij.ibeetl.lang.highlight.BeetlSyntaxHighlighter"/>
         <lang.syntaxHighlighterFactory language="btl" implementationClass="com.intellij.ibeetl.lang.highlight.BeetlSyntaxHighlighterFactory"/>
+	    <lang.formatter language="btl"
+	                    implementationClass="com.intellij.ibeetl.lang.psi.formatter.BeetlFormattingModelBuilder"/>
     </extensions>
     <actions>
     </actions>

@@ -54,14 +54,8 @@
   extends("paren_.*expression")=parenthesized*/
 }
 
-file ::= binary_expression (';' binary_expression?)* {pin=1;recoverWhile=binary_expression_recover}
-binary_expression ::= literal '+' literal
+file ::= binary_expression (';' binary_expression?)*
+binary_expression ::= literal '+' literal  {pin=1;recoverWhile=binary_expression_recover}
 literal ::= string | number
 
 private binary_expression_recover::= !(literal)
-<%
-1321+1321
-%>
-<%
-qyhjtrjrtj
-%>

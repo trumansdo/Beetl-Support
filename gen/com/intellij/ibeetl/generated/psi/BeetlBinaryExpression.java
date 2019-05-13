@@ -27,7 +27,7 @@ public interface BeetlBinaryExpression extends BeetlPsiElement {
   @NotNull
   List<BeetlLiteral> getLiteralList();
 
-  @NotNull
+  @Nullable
   PsiElement getPlus();
 
 }
