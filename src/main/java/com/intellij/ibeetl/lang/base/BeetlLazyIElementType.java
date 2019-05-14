@@ -1,4 +1,4 @@
-package com.intellij.ibeetl.lang.psi.base;
+package com.intellij.ibeetl.lang.base;
 
 import com.intellij.ibeetl.lang.BeetlLanguage;
 import com.intellij.psi.tree.ILazyParseableElementType;

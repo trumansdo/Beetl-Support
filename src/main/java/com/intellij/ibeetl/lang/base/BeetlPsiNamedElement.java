@@ -1,4 +1,4 @@
-package com.intellij.ibeetl.lang.psi.base;
+package com.intellij.ibeetl.lang.base;
 
 import com.intellij.ibeetl.generated.psi.BeetlVisitor;
 import com.intellij.psi.PsiNameIdentifierOwner;
