@@ -1,9 +1,13 @@
 package com.intellij.ibeetl.generated.lexer;
 
+import com.intellij.ibeetl.lang.BeetlParserDefinition;
+import com.intellij.ibeetl.lang.lexer.BeetlTokenTypes;
+import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.ibeetl.generated.lexer.BtlTokenTypes;
-import static com.intellij.psi.TokenType.BAD_CHARACTER;
-import static com.intellij.ibeetl.BtlParserDefinition.*;
+import org.apache.commons.lang3.StringUtils;
+
+import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.*;
+import static com.intellij.psi.TokenType.*;
 
 %%
 
@@ -54,8 +58,6 @@ import static com.intellij.ibeetl.BtlParserDefinition.*;
 	}
 %}
 
-%line
-%column
 %debug
 
 %public
@@ -68,7 +70,7 @@ import static com.intellij.ibeetl.BtlParserDefinition.*;
 %eof}
 
 NEW_LINE = (\r\n | \R | \r})+
-WHITE_SPACE = ( \s| \S | \t | \f )+
+WHITE_SPACE = \s+
 
 LINE_COMMENT = "//" [^\r\n]*
 MULTILINE_COMMENT = "/*" ( ([^"*"]|[\r\n])* ("*"+ [^"*""/"] )? )* ("*" | "*"+"/")?
@@ -121,7 +123,7 @@ NUM_FLOAT = (
 Java允许的首字母非数字标识符
 */
 IDENTIFIER = [:jletter:] [:jletterdigit:]*
-ATTRIBUTE_NAME = [\w-\:]+
+ATTRIBUTE_NAME = [\w\-\:]+
 ATTRIBUTE_VALUE = ("\"" ([^\\\n\r] )* "\"") | ("'" ([^\\\n\r] )* "'")
 
 /*双引号和单引号，暂时没用*/
@@ -147,154 +149,154 @@ yybegin()方法是切换分析器词法状态
 MAYBE_SEMICOLON：表明当前匹配的字符之后可能具有的词法状态
 */
 <YYINITIAL> {
-	{WHITE_SPACE}                             { return BtlParserDefinition.WHITE_SPACES; }
-	{NEW_LINE}                                { return BtlParserDefinition.NEW_LINES; }
+	{WHITE_SPACE}                             { return BeetlParserDefinition.WHITE_SPACES; }
+	{NEW_LINE}                                { return BeetlParserDefinition.NEW_LINES; }
 
-	{LINE_COMMENT}                            { return BtlParserDefinition.LINE_COMMENT; }
-	{MULTILINE_COMMENT}                       { return BtlParserDefinition.MULTILINE_COMMENT; }
+	{LINE_COMMENT}                            { return BeetlParserDefinition.LINE_COMMENT; }
+	{MULTILINE_COMMENT}                       { return BeetlParserDefinition.MULTILINE_COMMENT; }
 	/*定界符*/
-    "${"                                      { yybegin(BTL_PLACEHOLDER); return BtlTypes.LPLACEHOLDER; }
-	"<%"                                      { yybegin(BTL_LEX); return BtlTypes.LDELIMITER; }
-	"<#" | "</#"                              { yybegin(BTL_HTML_LEX); return BtlTypes.HTML_TAG_START; }
+    "${"                                      { yybegin(BTL_PLACEHOLDER); return BeetlTokenTypes.BT_LPLACEHOLDER; }
+	"<%"                                      { yybegin(BTL_LEX); return BeetlTokenTypes.BT_LDELIMITER; }
+	"<#" | "</#"                              { yybegin(BTL_HTML_LEX); return BeetlTokenTypes.BT_HTML_TAG_START; }
     .                                         { return lexerTemplateData(); }
 }
 
 <BTL_LEX>{
-	{WHITE_SPACE}                             { return BtlParserDefinition.WHITE_SPACES; }
-	{NEW_LINE}                                { return BtlParserDefinition.NEW_LINES; }
+	{WHITE_SPACE}                             { return BeetlParserDefinition.WHITE_SPACES; }
+	{NEW_LINE}                                { return BeetlParserDefinition.NEW_LINES; }
 
-	{LINE_COMMENT}                            { return BtlParserDefinition.LINE_COMMENT; }
-	{MULTILINE_COMMENT}                       { return BtlParserDefinition.MULTILINE_COMMENT; }
+	{LINE_COMMENT}                            { return BeetlParserDefinition.LINE_COMMENT; }
+	{MULTILINE_COMMENT}                       { return BeetlParserDefinition.MULTILINE_COMMENT; }
 
-	"."                                       { return BtlTypes.DOT; }
+	"."                                       { return BeetlTokenTypes.BT_DOT; }
 
-    "${"                                      { yybegin(BTL_PLACEHOLDER); return BtlTypes.LPLACEHOLDER; }
+    "${"                                      { yybegin(BTL_PLACEHOLDER); return BeetlTokenTypes.BT_LPLACEHOLDER; }
 
-	"{"                                       { return BtlTypes.LBRACE; }
-	"}"                                       { return BtlTypes.RBRACE; }
+	"{"                                       { return BeetlTokenTypes.BT_LBRACE; }
+	"}"                                       { return BeetlTokenTypes.BT_RBRACE; }
 
-	"["                                       { return BtlTypes.LBRACK; }
-	"]"                                       { return BtlTypes.RBRACK; }
+	"["                                       { return BeetlTokenTypes.BT_LBRACK; }
+	"]"                                       { return BeetlTokenTypes.BT_RBRACK; }
 
-	"("                                       { return BtlTypes.LPAREN; }
-	")"                                       { return BtlTypes.RPAREN; }
+	"("                                       { return BeetlTokenTypes.BT_LPAREN; }
+	")"                                       { return BeetlTokenTypes.BT_RPAREN; }
 
-	":"                                       { return BtlTypes.COLON; }
-	";"                                       { return BtlTypes.SEMICOLON; }
-	","                                       { return BtlTypes.COMMA; }
+	":"                                       { return BeetlTokenTypes.BT_COLON; }
+	";"                                       { return BeetlTokenTypes.BT_SEMICOLON; }
+	","                                       { return BeetlTokenTypes.BT_COMMA; }
 
-	"=="                                      { return BtlTypes.EQ; }
-	"="                                       { return BtlTypes.ASSIGN; }
+	"=="                                      { return BeetlTokenTypes.BT_EQ; }
+	"="                                       { return BeetlTokenTypes.BT_ASSIGN; }
 
-	"!="                                      { return BtlTypes.NOT_EQ; }
-	"!"                                       { return BtlTypes.NOT; }
-	"|"                                       { return BtlTypes.BIT_OR; }
+	"!="                                      { return BeetlTokenTypes.BT_NOT_EQ; }
+	"!"                                       { return BeetlTokenTypes.BT_NOT; }
+	"|"                                       { return BeetlTokenTypes.BT_BIT_OR; }
 
-	"++"                                      { return BtlTypes.INCREASE; }
-	"+="                                      { return BtlTypes.PLUS_ASSIGN; }
-	"+"                                       { return BtlTypes.PLUS; }
+	"++"                                      { return BeetlTokenTypes.BT_INCREASE; }
+	"+="                                      { return BeetlTokenTypes.BT_PLUS_ASSIGN; }
+	"+"                                       { return BeetlTokenTypes.BT_PLUS; }
 
-	"--"                                      { return BtlTypes.DECREASE; }
-	"-="                                      { return BtlTypes.MINUS_ASSIGN; }
-	"-"                                       { return BtlTypes.MINUS; }
+	"--"                                      { return BeetlTokenTypes.BT_DECREASE; }
+	"-="                                      { return BeetlTokenTypes.BT_MINUS_ASSIGN; }
+	"-"                                       { return BeetlTokenTypes.BT_MINUS; }
 
-	"||"                                      { return BtlTypes.COND_OR; }
-	"|="                                      { return BtlTypes.BIT_OR_ASSIGN; }
+	"||"                                      { return BeetlTokenTypes.BT_COND_OR; }
+	"|="                                      { return BeetlTokenTypes.BT_BIT_OR_ASSIGN; }
 
-	"&&"                                      { return BtlTypes.COND_AND; }
-	"&="                                      { return BtlTypes.BIT_AND_ASSIGN; }
-	"&"                                       { return BtlTypes.BIT_AND; }
+	"&&"                                      { return BeetlTokenTypes.BT_COND_AND; }
+	"&="                                      { return BeetlTokenTypes.BT_BIT_AND_ASSIGN; }
+	"&"                                       { return BeetlTokenTypes.BT_BIT_AND; }
 
-	"<<"                                      { return BtlTypes.SHIFT_LEFT; }
-	"<="                                      { return BtlTypes.LESS_OR_EQUAL; }
-	"<"                                       { return BtlTypes.LESS; }
+	"<<"                                      { return BeetlTokenTypes.BT_SHIFT_LEFT; }
+	"<="                                      { return BeetlTokenTypes.BT_LESS_OR_EQUAL; }
+	"<"                                       { return BeetlTokenTypes.BT_LESS; }
 
-	"^="                                      { return BtlTypes.BIT_XOR_ASSIGN; }
-	"^"                                       { return BtlTypes.BIT_XOR; }
+	"^="                                      { return BeetlTokenTypes.BT_BIT_XOR_ASSIGN; }
+	"^"                                       { return BeetlTokenTypes.BT_BIT_XOR; }
 
-	"*="                                      { return BtlTypes.MUL_ASSIGN; }
-	"*"                                       { return BtlTypes.MUL; }
+	"*="                                      { return BeetlTokenTypes.BT_MUL_ASSIGN; }
+	"*"                                       { return BeetlTokenTypes.BT_MUL; }
 
-	"/="                                      { return BtlTypes.QUOTIENT_ASSIGN; }
-	"/"                                       { return BtlTypes.QUOTIENT; }
+	"/="                                      { return BeetlTokenTypes.BT_QUOTIENT_ASSIGN; }
+	"/"                                       { return BeetlTokenTypes.BT_QUOTIENT; }
 	/*因为是%开头，所以放在下面的求余符号前*/
-	"%>"                                      { yybegin(YYINITIAL); return BtlTypes.RDELIMITER; }
+	"%>"                                      { yybegin(YYINITIAL); return BeetlTokenTypes.BT_RDELIMITER; }
 
-	"%="                                      { return BtlTypes.REMAINDER_ASSIGN; }
-	"%"                                       { return BtlTypes.REMAINDER; }
+	"%="                                      { return BeetlTokenTypes.BT_REMAINDER_ASSIGN; }
+	"%"                                       { return BeetlTokenTypes.BT_REMAINDER; }
 
-	">>"                                      { return BtlTypes.SHIFT_RIGHT; }
-	">="                                      { return BtlTypes.GREATER_OR_EQUAL; }
-	">"                                       { return BtlTypes.GREATER; }
+	">>"                                      { return BeetlTokenTypes.BT_SHIFT_RIGHT; }
+	">="                                      { return BeetlTokenTypes.BT_GREATER_OR_EQUAL; }
+	">"                                       { return BeetlTokenTypes.BT_GREATER; }
 
-	"break"                                   { return BtlTypes.BREAK; }
-	"return"                                  { return BtlTypes.RETURN ; }
-	"continue"                                { return BtlTypes.CONTINUE ; }
+	"break"                                   { return BeetlTokenTypes.BT_BREAK; }
+	"return"                                  { return BeetlTokenTypes.BT_RETURN ; }
+	"continue"                                { return BeetlTokenTypes.BT_CONTINUE ; }
 
-	"default"                                 { return BtlTypes.DEFAULT; }
-	"interface"                               { return BtlTypes.INTERFACE; }
+	"default"                                 { return BeetlTokenTypes.BT_DEFAULT; }
+	"interface"                               { return BeetlTokenTypes.BT_INTERFACE; }
 
-	"switch"                                  { return BtlTypes.SWITCH; }
-	"select"                                  { return BtlTypes.SELECT; }
-	"case"                                    { return BtlTypes.CASE; }
-	"const"                                   { return BtlTypes.CONST; }
+	"switch"                                  { return BeetlTokenTypes.BT_SWITCH; }
+	"select"                                  { return BeetlTokenTypes.BT_SELECT; }
+	"case"                                    { return BeetlTokenTypes.BT_CASE; }
+	"const"                                   { return BeetlTokenTypes.BT_CONST; }
 
-	"if"                                      { return BtlTypes.IF; }
-	"for"                                     { return BtlTypes.FOR; }
-	"elsefor"                                 { return BtlTypes.ELSE_FOR; }
-	"else"                                    { return BtlTypes.ELSE; }
-	"while"                                   { return BtlTypes.WHILE; }
+	"if"                                      { return BeetlTokenTypes.BT_IF; }
+	"for"                                     { return BeetlTokenTypes.BT_FOR; }
+	"elsefor"                                 { return BeetlTokenTypes.BT_ELSE_FOR; }
+	"else"                                    { return BeetlTokenTypes.BT_ELSE; }
+	"while"                                   { return BeetlTokenTypes.BT_WHILE; }
 
-	"DIRECTIVE" | "directive"                 { return BtlTypes.DIRECTIVE; }
-	"type"                                    { return BtlTypes.TYPE_; }
-	"var"                                     { return BtlTypes.VAR; }
+	"DIRECTIVE" | "directive"                 { return BeetlTokenTypes.BT_DIRECTIVE; }
+	"@type"                                   { return BeetlTokenTypes.BT_TYPE_; }
+	"var"                                     { return BeetlTokenTypes.BT_VAR; }
 
-	"try"                                     { return BtlTypes.TRY; }
-	"catch"                                   { return BtlTypes.CATCH; }
-	"#ajax"                                   { return BtlTypes.AJAX; }
-	"#fragment"                               { return BtlTypes.FRAGMENT; }
+	"try"                                     { return BeetlTokenTypes.BT_TRY; }
+	"catch"                                   { return BeetlTokenTypes.BT_CATCH; }
+	"#ajax"                                   { return BeetlTokenTypes.BT_AJAX; }
+	"#fragment"                               { return BeetlTokenTypes.BT_FRAGMENT; }
 
-	".~"                                      { return BtlTypes.VIRTUAL; }
-	"?"                                       { return BtlTypes.QUESTOIN; }
-	"@"                                       { return BtlTypes.AT; }
-	"null"                                    { return BtlTypes.NULL; }
-	"true"                                    { return BtlTypes.TRUE; }
-	"false"                                   { return BtlTypes.FALSE; }
-	"in"                                      { return BtlTypes.FOR_IN; }
+	".~"                                      { return BeetlTokenTypes.BT_VIRTUAL; }
+	"?"                                       { return BeetlTokenTypes.BT_QUESTOIN; }
+	"@"                                       { return BeetlTokenTypes.BT_AT; }
+	"null"                                    { return BeetlTokenTypes.BT_NULL; }
+	"true"                                    { return BeetlTokenTypes.BT_TRUE; }
+	"false"                                   { return BeetlTokenTypes.BT_FALSE; }
+	"in"                                      { return BeetlTokenTypes.BT_FOR_IN; }
 
-	{IDENTIFIER}                              { return BtlTypes.IDENTIFIER; }
+	{IDENTIFIER}                              { return BeetlTokenTypes.BT_IDENTIFIER; }
 
-	{STRING}                                  { return BtlTypes.STRING; }
+	{STRING}                                  { return BeetlTokenTypes.BT_STRING; }
 
-	{NUM_FLOAT}                               { return BtlTypes.FLOAT; }
-	{NUM_OCT}                                 { return BtlTypes.OCT; }
-	{NUM_HEX}                                 { return BtlTypes.HEX; }
-	{NUM_INT}                                 { return BtlTypes.INT; }
+	{NUM_FLOAT}                               { return BeetlTokenTypes.BT_FLOAT; }
+	{NUM_OCT}                                 { return BeetlTokenTypes.BT_OCT; }
+	{NUM_HEX}                                 { return BeetlTokenTypes.BT_HEX; }
+	{NUM_INT}                                 { return BeetlTokenTypes.BT_INT; }
 
     .                                         { return BAD_CHARACTER; }
 }
 <BTL_HTML_LEX>{
-	{WHITE_SPACE}                             { return BtlParserDefinition.WHITE_SPACES; }
-	{NEW_LINE}                                { return BtlParserDefinition.NEW_LINES; }
+	{WHITE_SPACE}                             { return BeetlParserDefinition.WHITE_SPACES; }
+	{NEW_LINE}                                { return BeetlParserDefinition.NEW_LINES; }
 
-	{LINE_COMMENT}                            { return BtlParserDefinition.LINE_COMMENT; }
-	{MULTILINE_COMMENT}                       { return BtlParserDefinition.MULTILINE_COMMENT; }
+	{LINE_COMMENT}                            { return BeetlParserDefinition.LINE_COMMENT; }
+	{MULTILINE_COMMENT}                       { return BeetlParserDefinition.MULTILINE_COMMENT; }
 
-	{IDENTIFIER}                              { return BtlTypes.IDENTIFIER; }
+	{IDENTIFIER}                              { return BeetlTokenTypes.BT_IDENTIFIER; }
 
-	"${"                                      { yybegin(BTL_PLACEHOLDER); return BtlTypes.LPLACEHOLDER; }
+	"${"                                      { yybegin(BTL_PLACEHOLDER); return BeetlTokenTypes.BT_LPLACEHOLDER; }
 
-	"="                                       { return BtlTypes.ASSIGN; }
+	"="                                       { return BeetlTokenTypes.BT_ASSIGN; }
 
-	{ATTRIBUTE_NAME}                          { return BtlTypes.ATTRIBUTE_NAME; }
-	{ATTRIBUTE_VALUE}                         { return BtlTypes.ATTRIBUTE_VALUE; }
+	{ATTRIBUTE_NAME}                          { return BeetlTokenTypes.BT_ATTRIBUTE_NAME; }
+	{ATTRIBUTE_VALUE}                         { return BeetlTokenTypes.BT_ATTRIBUTE_VALUE; }
 
-    ">" | "/>"                                { yybegin(YYINITIAL); return BtlTypes.HTML_TAG_END; }
+    ">" | "/>"                                { yybegin(YYINITIAL); return BeetlTokenTypes.BT_HTML_TAG_END; }
     .                                         { return BAD_CHARACTER; }
 }
 
 <BTL_PLACEHOLDER> {
-	[^\n\r\}]+                                { return BtlTypes.PLACEHOLDER_VALUE; }
-	"}"                                       { yybegin(YYINITIAL); return BtlTypes.RPLACEHOLDER; }
+	[^\n\r\}]+                                { return BeetlTokenTypes.BT_PLACEHOLDER_VALUE; }
+	"}"                                       { yybegin(YYINITIAL); return BeetlTokenTypes.BT_RPLACEHOLDER; }
     .                                         { return BAD_CHARACTER; }
 }

@@ -1,80 +1,160 @@
 {
 	/*定义parser类全限定名*/
-  parserClass='com.intellij.ibeetl.lang.parser.BeetlParser'
-  /*每个Java类头部的版权申明*/
-  classHeader='copyrightHeader.java'
-  /*所有的psi node接口的扩展*/
-//  implements='com.intellij.ibeetl.psi.BeetlElement'
-  /*所有的psi node接口或者实现类的扩展，后面的extends语法覆盖前面出现的，每一个语法自己的extends会覆盖全局的
-    简单来说，越是精确的，越是优先度高
-    例如：下面extends Expression节点，声明所有的Expr/Literal/Lit的接口和实现类分别扩展Expression节点的接口和实现类
-  */
-  extends='com.intellij.extapi.psi.ASTWrapperPsiElement'
+	parserClass='com.intellij.ibeetl.generated.parser._BeetlParser'
+	/*每个Java类头部的版权申明*/
+	classHeader='copyrightHeader.java'
+	generate=[
+		java="8"
+		names="long"
+		elements="yes"
+		visitor="yes"
+		visitor-value="R"
+		psi-classes-map="yes"
+		psi-factory="yes"
+		token-sets="yes"
+		token-accessors="yes"
+		first-check="2"
+	]
 
-  elementTypeHolderClass='com.intellij.ibeetl.GoTypes'
-  elementTypeClass='com.intellij.ibeetl.lang.psi.BeetlElementType'
-  tokenTypeClass='com.intellij.ibeetl.lang.psi.base.BeetlTokenType'
-  psiTreeUtilClass='com.intellij.ibeetl.lang.psi.BeetlPsiTreeUtil'
+	/*所有的psi node接口的扩展*/
+	//  implements='com.intellij.ibeetl.psi.BeetlElement'
+	/*所有的psi node接口或者实现类的扩展，后面的extends语法覆盖前面出现的，每一个语法自己的extends会覆盖全局的
+	简单来说，越是精确的，越是优先度高。一般来说选择两个类：ASTWrapperPsiElement和CompositePsiElement ，两者都实现了PsiElement接口
+	例如：下面extends Expression节点，声明所有的Expr/Literal/Lit的接口和实现类分别扩展Expression节点的接口和实现类
+	*/
+	extends='com.intellij.ibeetl.lang.base.BeetlCompositeElement'
 
-  psiClassPrefix='Beetl'
-  psiImplClassSuffix='Impl'
-  psiPackage='com.intellij.ibeetl.lang.psi'
-  psiImplPackage='com.intellij.ibeetl.lang.psi.impl'
-  psiImplUtilClass="com.intellij.ibeetl.lang.psi.impl.GoPsiImplUtil"
-  parserUtilClass="com.intellij.ibeetl.lang.parser.GoParserUtil"
+	elementTypePrefix="BT_"
+	elementTypeHolderClass='com.intellij.ibeetl.generated.lexer._BeetlTokenTypes'
+	/*两个都是IElementType的实现*/
+	elementTypeClass='com.intellij.ibeetl.lang.base.BeetlIElementType'
+	tokenTypeClass='com.intellij.ibeetl.lang.base.BeetlTokenType'
 
-  tokens=[
-    LBRACE               =  '{'
-    RBRACE               =  '}'
-    LBRACK               =  '['
-    RBRACK               =  ']'
-    LPAREN               =  '('
-    RPAREN               =  ')'
-    LDELIMITER           =  '<!--#'
-    RDELIMITER           =  '-->'
-    HTMLTAG              =  'layui:'
-    COLON                =  ':'
-    SEMICOLON            =  ';'
-    COMMA                =  ','
-    EQ                   =  '=='
-    ASSIGN               =  '='
-    NOT_EQ               =  '!='
-    NOT                  =  '!'
-    INCREASE             =  '++'
-    PLUS_ASSIGN          =  '+='
-    PLUS                 =  '+'
-    DECREASE             =  '--'
-    MINUS_ASSIGN         =  '-='
-    MINUS                =  '-'
-    COND_OR              =  '||'
-    BIT_OR_ASSIGN        =  '|='
-    COND_AND             =  '&&'
-    BIT_AND_ASSIGN       =  '&='
-    BIT_AND              =  '&'
-    BIT_OR               =  '|'
-    SHIFT_LEFT           =  '<<'
-    LESS_OR_EQUAL        =  '<='
-    LESS                 =  '<'
-    BIT_XOR_ASSIGN       =  '^='
-    BIT_XOR              =  '^'
-    MUL_ASSIGN           =  '*='
-    MUL                  =  '*'
-    QUOTIENT_ASSIGN      =  '/='
-    QUOTIENT             =  '/'
-    REMAINDER_ASSIGN     =  '%='
-    REMAINDER            =  '%'
-    SHIFT_RIGHT          =  '>>'
-    GREATER_OR_EQUAL     =  '>='
-    GREATER              =  '>'
-    DOT                  =  '.'
-    AT                   =  '@'
-    SEMICOLON_SYNTHETIC  = '<NL>'
-    TYPE_                = '@type'
-  ]
-  extends("(Or|And|Add|Minus|Mul|Quotient|Conditional)Expr")=BinaryExpr
-  extends(".*(Expr|Literal|Lit)")=Expression
+	psiClassPrefix='BP_'
+	psiImplClassSuffix='Impl'
+	psiPackage='com.intellij.ibeetl.generated.psi'
+	psiImplPackage='com.intellij.ibeetl.generated.psi.impl'
 
-  generateTokenAccessors=true
+	psiImplUtilClass="com.intellij.ibeetl.generated.psi.impl.BeetlPsiImplUtil"
+	psiTreeUtilClass='com.intellij.ibeetl.generated.psi.BeetlPsiTreeUtil'
+	parserUtilClass="com.intellij.ibeetl.generated.parser.BeetlParserUtil"
+	/*
+	implements="org.intellij.grammar.psi.BnfComposite"
+	extends="org.intellij.grammar.psi.impl.BnfCompositeImpl"
+
+	elementTypeClass="org.intellij.grammar.psi.BnfCompositeElementType"
+	tokenTypeClass="org.intellij.grammar.psi.BnfTokenType"
+	*/
+	tokens=[
+		LDELIMITER           = '<%'
+        /*因为是%开头，所以放在下面的求余符号前*/
+        RDELIMITER           = '%>'
+		HTML_TAG_START       = 'regexp:<#|</#'
+		HTML_TAG_END         = 'regexp:>|/>'
+
+		DOT                  = '.'
+        LPLACEHOLDER         = '${'
+        RPLACEHOLDER         = '}'
+
+        LBRACE               = '{'
+        RBRACE               = '}'
+
+        LBRACK               = '['
+        RBRACK               = ']'
+
+        LPAREN               = '('
+        RPAREN               = ')'
+
+        COLON                = ':'
+        SEMICOLON            = ';'
+        COMMA                = ','
+
+        EQ                   = '=='
+        ASSIGN               = '='
+
+        NOT_EQ               = '!='
+        NOT                  = '!'
+        BIT_OR               = '|'
+
+        INCREASE             = '++'
+        PLUS_ASSIGN          = '+='
+        PLUS                 = '+'
+
+        DECREASE             = '--'
+        MINUS_ASSIGN         = '-='
+        MINUS                = '-'
+
+        COND_OR              = '||'
+        BIT_OR_ASSIGN        = '|='
+
+        COND_AND             = '&&'
+        BIT_AND_ASSIGN       = '&='
+        BIT_AND              = '&'
+
+        SHIFT_LEFT           = '<<'
+        LESS_OR_EQUAL        = '<='
+        LESS                 = '<'
+
+        BIT_XOR_ASSIGN       = '^='
+        BIT_XOR              = '^'
+
+        MUL_ASSIGN           = '*='
+        MUL                  = '*'
+
+        QUOTIENT_ASSIGN      = '/='
+        QUOTIENT             = '/'
+
+        REMAINDER_ASSIGN     = '%='
+        REMAINDER            = '%'
+
+        SHIFT_RIGHT          = '>>'
+        GREATER_OR_EQUAL     = '>='
+        GREATER              = '>'
+
+        BREAK                = 'break'
+        RETURN               = 'return'
+        CONTINUE             = 'continue'
+
+        DEFAULT              = 'default'
+        INTERFACE            = 'interface'
+
+        SWITCH               = 'switch'
+        SELECT               = 'select'
+        CASE                 = 'case'
+        CONST                = 'const'
+
+        IF                   = 'if'
+        FOR                  = 'for'
+        ELSE_FOR             = 'elsefor'
+        ELSE                 = 'else'
+        WHILE                = 'while'
+        DIRECTIVE            = 'DIRECTIVE'
+        TYPE_                = '@type'
+        VAR                  = 'var'
+        TRY                  = 'try'
+        CATCH                = 'catch'
+        AJAX                 = '#ajax'
+        FRAGMENT             = '#fragment'
+        VIRTUAL              = '.~'
+        QUESTOIN             = '?'
+        AT                   = '@'
+        NULL                 = 'null'
+        TRUE                 = 'true'
+        FALSE                = 'false'
+        FOR_IN               = 'in'
+
+        SPACE                ='regexp:\s+'
+        ID                   ="regexp:[\w\_][\w\d\_]+"
+        ATTR_NAME            ="regexp:[\w\_][\w\-\d]*"
+        STRING               ="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\\"|\\\'|\\)*\")"
+        NUMBER               ="regexp:\d+"
+        LINE_COMMENT         ="regexp://.*"
+        BLOCK_COMMENT        ="regexp:/\*(.|\n)*\*/"
+	]
+	//  extends("(Or|And|Add|Minus|Mul|Quotient|Conditional)Expr")=BinaryExpr
+	//  extends(".*(Expr|Literal|Lit)")=Expression
+
+	generateTokenAccessors=true
 }
 /*
 语法树：定界符 + 语句
@@ -88,146 +168,244 @@
 2. html标签函数
 3. 占位符
 */
-File ::= (LDELIMITER Statement* RDELIMITER) | HtmlFunc
 
-Statement ::= Block
-    | break ';'
-    | continue ';'
-    | ';'
-    | TYPE_ CommentTypeTag
-    | VarStatement
-    | IfStatement
-    | ForStatement
-    | WhileStatement
-    | SwitchStatement
-    | SelectStatement
-    | TryStatement
-    | ReturnStatement
-    | DirectiveStatement
-    | AssignMent SEMICOLON
-    | FunctionCallStatement
-    | AjaxStatement
+LDELIMITER           ::=LDELIMITER
 
-Block ::= LBRACE Statement* RBRACE
+        RDELIMITER           ::=RDELIMITER
+		HTML_TAG_START       ::=HTML_TAG_START
+		HTML_TAG_END         ::=HTML_TAG_END
 
-IfStatement ::= if ParenthesesExpr Statement (else Statement)?
-/*满足for*/
-ForStatement ::= for LPAREN ForControl  RPAREN Statement (elsefor Statement)?
-ForControl ::= ForInControl | GeneralForControl
-ForInControl ::= var? identifier for_in Expression
-GeneralForControl ::= ForInit? ';' Expression? ';' ForUpdate?
-ForInit ::=   var VarDeclareList | ExpressionList
-ForUpdate ::=   ExpressionList
-/*满足while*/
-WhileStatement ::= while ParenthesesExpr Statement
+		DOT                  ::=DOT
+        LPLACEHOLDER         ::=LPLACEHOLDER
+        RPLACEHOLDER         ::=RPLACEHOLDER
 
-/*满足switch*/
-SwitchStatement ::= ParenthesesExpr SwitchBlock
-private SwitchBlock ::= LBRACE SwitchBlockStatementGroup* RBRACE
-private SwitchBlockStatementGroup ::= SwitchLabel+ Statement*
-private SwitchLabel ::= case Expression COLON | default COLON
-/*满足select*/
-SelectStatement ::= select SelectSwitchStatment
-private SelectSwitchStatment ::= (LPAREN Expression RPAREN)? LBRACE SelectCaseStatment* SelectDefaultStatment? RBRACE
-private SelectCaseStatment ::= case Expression (COMMA Expression)* COLON Statement*
-private SelectDefaultStatment ::= default COLON Statement*
+        LBRACE               ::=LBRACE
+        RBRACE               ::=RBRACE
 
-/*满足var变量定义语法*/
-VarStatement ::= var identifier (ASSIGN (Expression | Literal))? (SEMICOLON identifier (ASSIGN (Expression | Literal))?)* SEMICOLON {pin(".*")=1}
-VarDeclareList ::=  AssignMent (COMMA AssignMent)*
-AssignMent ::= identifier | GeneralAssignExpr | (identifier ASSIGN  Block)
-/*满足@type*/
-CommentTypeTag ::= LPAREN CommentTypeItemTag (COMMA CommentTypeItemTag)* RPAREN
-CommentTypeItemTag ::=    ClassOrInterfaceType   identifier
-/*满足trycatch*/
-TryStatement ::= try Block (catch LPAREN identifier? RPAREN Block)?
-/*满足return语句*/
-ReturnStatement ::= return Expression? SEMICOLON
-/*满足directive 语句*/
-DirectiveStatement ::= directive DirectiveExpr
-private DirectiveExpr ::= identifier (string | DirectiveExpIDList)? SEMICOLON
-private DirectiveExpIDList ::= identifier (COMMA identifier)*
-/*满足function调用*/
-//todo 待完成  与beetl原本不一样
-FunctionCallStatement ::= FunctionNs  LPAREN ExpressionList? RPAREN  Block
-private FunctionNs ::= identifier (DOT identifier)*
-/*满足 ajax语法*/
-AjaxStatement ::= (ajax|fragment) identifier identifier? COLON Block
-ClassOrInterfaceType ::= identifier (DOT identifier )* TypeArguments?
-TypeArguments ::= LESS TypeArgument (COMMA TypeArgument)* GREATER
-TypeArgument ::= ClassOrInterfaceType
+        LBRACK               ::=LBRACK
+        RBRACK               ::=RBRACK
 
-/*
-各种表达式：
-	加、减、乘、除
-	++、--、+=、-=
-	==、!=、!、||、&&、^
-*/
-Expression ::=
-    Literal
-  | FunctionCallStatement
-  | VarReferenceExpr
-  | Json
-  | identifier (INCREASE|DECREASE)
-  | (INCREASE|DECREASE) identifier
-  | AddExpr
-  | MulExpr
-  | UnaryExpr
-  | ConditionalExpr
-  | AndExpr
-  | OrExpr
-  | ParenthesesExpr
-  | TernaryExpr
-  | GeneralAssignExpr
+        LPAREN               ::=LPAREN
+        RPAREN               ::=RPAREN
 
-ExpressionList ::= Expression (COMMA Expression)*
+        COLON                ::=COLON
+        SEMICOLON            ::=SEMICOLON
+        COMMA                ::=COMMA
 
-/*或*/
-OrExpr ::= Expression '||' Expression
-/*与*/
-AndExpr ::= Expression '&&' Expression
-/*一元表达式*/
-UnaryExpr ::=  UnaryOp Expression {methods=[getOperator]}
-/*条件*/
-ConditionalExpr ::= Expression RelOp Expression
-/*加减*/
-AddExpr ::= Expression AddOp Expression
-/*乘除*/
-MulExpr ::= Expression MulOp Expression
-/*三元运算符*/
-TernaryExpr ::= Expression QUESTOIN Expression? COLON? Expression? {pin=3}
-/* ( exp ) */
-ParenthesesExpr  ::= LPAREN <<enterMode "PAR">> Expression <<exitModeSafe "PAR">> RPAREN {pin=1}
-/*通用赋值表达式*/
-GeneralAssignExpr ::= VarReferenceExpr ASSIGN Expression
+        EQ                   ::=EQ
+        ASSIGN               ::=ASSIGN
 
-VarReferenceExpr ::= identifier varAttribute* SafeOutput?
+        NOT_EQ               ::=NOT_EQ
+        NOT                  ::=NOT
+        BIT_OR               ::=BIT_OR
 
-SafeOutput ::= NOT SafeAllowExpr?
+        INCREASE             ::=INCREASE
+        PLUS_ASSIGN          ::=PLUS_ASSIGN
+        PLUS                 ::=PLUS
 
-SafeAllowExpr ::= Literal
-              | FunctionCallStatement
-              | Json
-              | VarReferenceExpr
-              | (LPAREN Expression RPAREN)
+        DECREASE             ::=DECREASE
+        MINUS_ASSIGN         ::=MINUS_ASSIGN
+        MINUS                ::=MINUS
 
-Json ::= (LBRACK (Expression  (COMMA Expression)*)? RBRACK)
-	|  (LBRACE (JsonKeyValue (COMMA JsonKeyValue)*)? RBRACE)
-JsonKeyValue ::= (string COLON Expression)
-	|	(identifier COLON Expression)
+        COND_OR              ::=COND_OR
+        BIT_OR_ASSIGN        ::=BIT_OR_ASSIGN
 
-Literal ::= string | int | float | BooleanLiteral | null
+        COND_AND             ::=COND_AND
+        BIT_AND_ASSIGN       ::=BIT_AND_ASSIGN
+        BIT_AND              ::=BIT_AND
 
-BooleanLiteral ::= false | true
+        SHIFT_LEFT           ::=SHIFT_LEFT
+        LESS_OR_EQUAL        ::=LESS_OR_EQUAL
+        LESS                 ::=LESS
 
-/*操作符*/
-private RelOp ::= '==' | '!=' | '<' | '<=' | '>' | '>='
-/*为什么会是位或和异或是加法：加减本质都是加法
-因为等效于0 1 的加法后舍去最高位*/
-private AddOp ::= '+' | '-' | '|' | '^'
-/*同理：乘除本质都是乘法
-求余的反向是乘法、位移的本质是乘除、位与是乘法的本质舍去最高位*/
-private MulOp ::= '*' | '/' | '%' | '<<' | '>>' | '&'
-/*一元操作符*/
-private UnaryOp ::= '+' | '-' | '!' | '^' | '*' | '&'
+        BIT_XOR_ASSIGN       ::=BIT_XOR_ASSIGN
+        BIT_XOR              ::=BIT_XOR
 
+        MUL_ASSIGN           ::=MUL_ASSIGN
+        MUL                  ::=MUL
+
+        QUOTIENT_ASSIGN      ::=QUOTIENT_ASSIGN
+        QUOTIENT             ::=QUOTIENT
+
+        REMAINDER_ASSIGN     ::=REMAINDER_ASSIGN
+        REMAINDER            ::=REMAINDER
+
+        SHIFT_RIGHT          ::=SHIFT_RIGHT
+        GREATER_OR_EQUAL     ::=GREATER_OR_EQUAL
+        GREATER              ::=GREATER
+
+        BREAK                ::=BREAK
+        RETURN               ::=RETURN
+        CONTINUE             ::=CONTINUE
+
+        DEFAULT              ::=DEFAULT
+        INTERFACE            ::=INTERFACE
+
+        SWITCH               ::=SWITCH
+        SELECT               ::=SELECT
+        CASE                 ::=CASE
+        CONST                ::=CONST
+
+        IF                   ::=IF
+        FOR                  ::=FOR
+        ELSE_FOR             ::=ELSE_FOR
+        ELSE                 ::=ELSE
+        WHILE                ::=WHILE
+        DIRECTIVE            ::=DIRECTIVE
+        TYPE_                ::=TYPE_
+        VAR                  ::=VAR
+        TRY                  ::=TRY
+        CATCH                ::=CATCH
+        AJAX                 ::=AJAX
+        FRAGMENT             ::=FRAGMENT
+        VIRTUAL              ::=VIRTUAL
+        QUESTOIN             ::=QUESTOIN
+        AT                   ::=AT
+        NULL                 ::=NULL
+        TRUE                 ::=TRUE
+        FALSE                ::=FALSE
+        FOR_IN               ::=FOR_IN
+
+//File ::= Statement* | HtmlFunc
+//
+//Statement ::= Block
+//    | break ';'
+//    | continue ';'
+//    | ';'
+//    | TYPE_ CommentTypeTag
+//    | VarStatement
+//    | IfStatement
+//    | ForStatement
+//    | WhileStatement
+//    | SwitchStatement
+//    | SelectStatement
+//    | TryStatement
+//    | ReturnStatement
+//    | DirectiveStatement
+//    | AssignMent SEMICOLON
+//    | FunctionCallStatement
+//    | AjaxStatement
+//
+//Block ::= LBRACE Statement* RBRACE
+//
+//IfStatement ::= if ParenthesesExpr Statement (else Statement)?
+///*满足for*/
+//ForStatement ::= for LPAREN ForControl  RPAREN Statement (elsefor Statement)?
+//ForControl ::= ForInControl | GeneralForControl
+//ForInControl ::= var? identifier for_in Expression
+//GeneralForControl ::= ForInit? ';' Expression? ';' ForUpdate?
+//ForInit ::=   var VarDeclareList | ExpressionList
+//ForUpdate ::=   ExpressionList
+///*满足while*/
+//WhileStatement ::= while ParenthesesExpr Statement
+//
+///*满足switch*/
+//SwitchStatement ::= ParenthesesExpr SwitchBlock
+//private SwitchBlock ::= LBRACE SwitchBlockStatementGroup* RBRACE
+//private SwitchBlockStatementGroup ::= SwitchLabel+ Statement*
+//private SwitchLabel ::= case Expression COLON | default COLON
+///*满足select*/
+//SelectStatement ::= select SelectSwitchStatment
+//private SelectSwitchStatment ::= (LPAREN Expression RPAREN)? LBRACE SelectCaseStatment* SelectDefaultStatment? RBRACE
+//private SelectCaseStatment ::= case Expression (COMMA Expression)* COLON Statement*
+//private SelectDefaultStatment ::= default COLON Statement*
+//
+///*满足var变量定义语法*/
+//VarStatement ::= var identifier (ASSIGN (Expression | Literal))? (SEMICOLON identifier (ASSIGN (Expression | Literal))?)* SEMICOLON {pin(".*")=1}
+//VarDeclareList ::=  AssignMent (COMMA AssignMent)*
+//AssignMent ::= identifier | GeneralAssignExpr | (identifier ASSIGN  Block)
+///*满足@type*/
+//CommentTypeTag ::= LPAREN CommentTypeItemTag (COMMA CommentTypeItemTag)* RPAREN
+//CommentTypeItemTag ::=    ClassOrInterfaceType   identifier
+///*满足trycatch*/
+//TryStatement ::= try Block (catch LPAREN identifier? RPAREN Block)?
+///*满足return语句*/
+//ReturnStatement ::= return Expression? SEMICOLON
+///*满足directive 语句*/
+//DirectiveStatement ::= directive DirectiveExpr
+//private DirectiveExpr ::= identifier (string | DirectiveExpIDList)? SEMICOLON
+//private DirectiveExpIDList ::= identifier (COMMA identifier)*
+///*满足function调用*/
+////todo 待完成  与beetl原本不一样
+//FunctionCallStatement ::= FunctionNs  LPAREN ExpressionList? RPAREN  Block
+//private FunctionNs ::= identifier (DOT identifier)*
+///*满足 ajax语法*/
+//AjaxStatement ::= (ajax|fragment) identifier identifier? COLON Block
+//ClassOrInterfaceType ::= identifier (DOT identifier )* TypeArguments?
+//TypeArguments ::= LESS TypeArgument (COMMA TypeArgument)* GREATER
+//TypeArgument ::= ClassOrInterfaceType
+//
+///*
+//各种表达式：
+//	加、减、乘、除
+//	++、--、+=、-=
+//	==、!=、!、||、&&、^
+//*/
+//Expression ::=
+//    Literal
+//  | FunctionCallStatement
+//  | VarReferenceExpr
+//  | Json
+//  | identifier (INCREASE|DECREASE)
+//  | (INCREASE|DECREASE) identifier
+//  | AddExpr
+//  | MulExpr
+//  | UnaryExpr
+//  | ConditionalExpr
+//  | AndExpr
+//  | OrExpr
+//  | ParenthesesExpr
+//  | TernaryExpr
+//  | GeneralAssignExpr
+//
+//ExpressionList ::= Expression (COMMA Expression)*
+//
+///*或*/
+//OrExpr ::= Expression '||' Expression
+///*与*/
+//AndExpr ::= Expression '&&' Expression
+///*一元表达式*/
+//UnaryExpr ::=  UnaryOp Expression {methods=[getOperator]}
+///*条件*/
+//ConditionalExpr ::= Expression RelOp Expression
+///*加减*/
+//AddExpr ::= Expression AddOp Expression
+///*乘除*/
+//MulExpr ::= Expression MulOp Expression
+///*三元运算符*/
+//TernaryExpr ::= Expression QUESTOIN Expression? COLON? Expression? {pin=3}
+///* ( exp ) */
+//ParenthesesExpr  ::= LPAREN <<enterMode "PAR">> Expression <<exitModeSafe "PAR">> RPAREN {pin=1}
+///*通用赋值表达式*/
+//GeneralAssignExpr ::= VarReferenceExpr ASSIGN Expression
+//
+//VarReferenceExpr ::= identifier varAttribute* SafeOutput?
+//
+//SafeOutput ::= NOT SafeAllowExpr?
+//
+//SafeAllowExpr ::= Literal
+//              | FunctionCallStatement
+//              | Json
+//              | VarReferenceExpr
+//              | (LPAREN Expression RPAREN)
+//
+//Json ::= (LBRACK (Expression  (COMMA Expression)*)? RBRACK)
+//	|  (LBRACE (JsonKeyValue (COMMA JsonKeyValue)*)? RBRACE)
+//JsonKeyValue ::= (string COLON Expression)
+//	|	(identifier COLON Expression)
+//
+//Literal ::= string | int | float | BooleanLiteral | null
+//
+//BooleanLiteral ::= false | true
+//
+///*操作符*/
+//private RelOp ::= '==' | '!=' | '<' | '<=' | '>' | '>='
+///*为什么会是位或和异或是加法：加减本质都是加法
+//因为等效于0 1 的加法后舍去最高位*/
+//private AddOp ::= '+' | '-' | '|' | '^'
+///*同理：乘除本质都是乘法
+//求余的反向是乘法、位移的本质是乘除、位与是乘法的本质舍去最高位*/
+//private MulOp ::= '*' | '/' | '%' | '<<' | '>>' | '&'
+///*一元操作符*/
+//private UnaryOp ::= '+' | '-' | '!' | '^' | '*' | '&'
+//
