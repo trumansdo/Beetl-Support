@@ -1,8 +1,7 @@
-package com.intellij.ibeetl.lang.psi.file;
+package com.intellij.ibeetl.lang.psi.fileview;
 
 import com.intellij.ibeetl.lang.BeetlLanguage;
-import com.intellij.ibeetl.lang.lexer.BeetlFileElementType;
-import com.intellij.ibeetl.lang.psi.BeetlTokenType;
+import com.intellij.ibeetl.lang.lexer.BeetlIElementTypes;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.html.HTMLLanguage;
@@ -116,7 +115,7 @@ public class BeetlFileViewProvider extends MultiplePsiFilesPerDocumentFileViewPr
 			return LanguageParserDefinitions.INSTANCE.forLanguage(lang).createFile(this);
 		} else if (lang == this.getTemplateDataLanguage()) {
 			PsiFileImpl file = (PsiFileImpl) LanguageParserDefinitions.INSTANCE.forLanguage(lang).createFile(this);
-			file.setContentElementType(BeetlFileElementType.TEMPLATE_DATA);
+			file.setContentElementType(BeetlIElementTypes.TEMPLATE_DATA);
 			return file;
 		} else {
 			return null;

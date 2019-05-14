@@ -1,4 +1,4 @@
-package com.intellij.ibeetl.lang.psi;
+package com.intellij.ibeetl.lang.psi.base;
 
 import com.intellij.ibeetl.generated.psi.BeetlTypes;
 import com.intellij.ibeetl.lang.BeetlLanguage;

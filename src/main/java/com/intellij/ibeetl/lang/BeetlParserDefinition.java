@@ -1,9 +1,8 @@
 package com.intellij.ibeetl.lang;
 
-import com.intellij.ibeetl.generated.parser.BeetlParser;
+import com.intellij.ibeetl.lang.parser.BeetlParser;
 import com.intellij.ibeetl.generated.psi.BeetlTypes;
 import com.intellij.ibeetl.lang.lexer.BeetlLexer;
-import com.intellij.ibeetl.lang.psi.BeetlFile;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;

@@ -1,4 +1,4 @@
-package com.intellij.ibeetl.lang.psi.file;
+package com.intellij.ibeetl.lang.psi.fileview;
 
 import com.intellij.lang.Language;
 import com.intellij.openapi.vfs.VirtualFile;

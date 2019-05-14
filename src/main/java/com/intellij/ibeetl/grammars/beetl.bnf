@@ -14,7 +14,7 @@
 
   elementTypeHolderClass='com.intellij.ibeetl.GoTypes'
   elementTypeClass='com.intellij.ibeetl.lang.psi.BeetlElementType'
-  tokenTypeClass='com.intellij.ibeetl.lang.psi.BeetlTokenType'
+  tokenTypeClass='com.intellij.ibeetl.lang.psi.base.BeetlTokenType'
   psiTreeUtilClass='com.intellij.ibeetl.lang.psi.BeetlPsiTreeUtil'
 
   psiClassPrefix='Beetl'
