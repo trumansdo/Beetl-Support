@@ -8,8 +8,8 @@ import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
 import org.apache.commons.lang3.StringUtils;
 
-import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.*;
-import static com.intellij.psi.TokenType.*;
+import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.BTL_TEMPLATE_HTML_TEXT;
+import static com.intellij.psi.TokenType.BAD_CHARACTER;
 
 
 /**
@@ -715,7 +715,7 @@ public class _BeetlLexer implements FlexLexer {
 			}
 		}
 		System.out.println("----------------lexerTemplateData start");
-		System.out.println("zzBuffer : " + this.zzBuffer);
+//		System.out.println("zzBuffer : " + this.zzBuffer);
 		System.out.println("content:" + yytext());
 		System.out.println("content length:" + yylength());
 

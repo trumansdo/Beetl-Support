@@ -1,8 +1,6 @@
 package com.intellij.ibeetl.lang;
 
 import com.intellij.extapi.psi.PsiFileBase;
-import com.intellij.ibeetl.lang.BeetlLanguage;
-import com.intellij.ibeetl.lang.BeetlFileType;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiFile;

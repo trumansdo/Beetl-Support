@@ -34,15 +34,14 @@
 package com.intellij.ibeetl.lang.lexer;
 
 import com.intellij.ibeetl.lang.base.BeetlCompositeElement;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.PsiElement;
-import com.intellij.lang.ASTNode;
 import com.intellij.ibeetl.lang.base.BeetlIElementType;
 import com.intellij.ibeetl.lang.base.BeetlTokenType;
-import com.intellij.ibeetl.generated.psi.impl.*;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.IElementType;
+
 import java.util.Collections;
-import java.util.Set;
 import java.util.LinkedHashMap;
+import java.util.Set;
 
 public interface BeetlTokenTypes {
 
@@ -52,20 +51,18 @@ public interface BeetlTokenTypes {
 	IElementType BT_LDELIMITER = new BeetlTokenType("beetl[<%]");
 	IElementType BT_RDELIMITER = new BeetlTokenType("beetl[%>]");
 
-	IElementType BT_HTML_TAG_END = new BeetlTokenType("beetl[HTML_TAG_END]");
-	IElementType BT_HTML_TAG_START = new BeetlTokenType("beetl[HTML_TAG_START]");
+	IElementType BT_HTML_TAG_END = new BeetlTokenType("beetl[html_tag_end]");
+	IElementType BT_HTML_TAG_START = new BeetlTokenType("beetl[html_tag_start]");
 
 	IElementType BT_AJAX = new BeetlTokenType("beetl[#ajax]");
 	IElementType BT_ASSIGN = new BeetlTokenType("beetl[=]");
 	IElementType BT_AT = new BeetlTokenType("beetl[@]");
-	IElementType BT_ATTR_NAME = new BeetlTokenType("beetl[ATTR_NAME]");
 	IElementType BT_BIT_AND = new BeetlTokenType("beetl[&]");
 	IElementType BT_BIT_AND_ASSIGN = new BeetlTokenType("beetl[&=]");
 	IElementType BT_BIT_OR = new BeetlTokenType("beetl[|]");
 	IElementType BT_BIT_OR_ASSIGN = new BeetlTokenType("beetl[|=]");
 	IElementType BT_BIT_XOR = new BeetlTokenType("beetl[^]");
 	IElementType BT_BIT_XOR_ASSIGN = new BeetlTokenType("beetl[^=]");
-	IElementType BT_BLOCK_COMMENT = new BeetlTokenType("beetl[BLOCK_COMMENT]");
 	IElementType BT_BREAK = new BeetlTokenType("beetl[break]");
 	IElementType BT_CASE = new BeetlTokenType("beetl[case]");
 	IElementType BT_CATCH = new BeetlTokenType("beetl[catch]");
@@ -77,7 +74,7 @@ public interface BeetlTokenTypes {
 	IElementType BT_CONTINUE = new BeetlTokenType("beetl[continue]");
 	IElementType BT_DECREASE = new BeetlTokenType("beetl[--]");
 	IElementType BT_DEFAULT = new BeetlTokenType("beetl[default]");
-	IElementType BT_DIRECTIVE = new BeetlTokenType("beetl[DIRECTIVE]");
+	IElementType BT_DIRECTIVE = new BeetlTokenType("beetl[directive]");
 	IElementType BT_DOT = new BeetlTokenType("beetl[.]");
 	IElementType BT_ELSE = new BeetlTokenType("beetl[else]");
 	IElementType BT_ELSE_FOR = new BeetlTokenType("beetl[elsefor]");
@@ -109,7 +106,7 @@ public interface BeetlTokenTypes {
 	IElementType BT_NOT = new BeetlTokenType("beetl[!]");
 	IElementType BT_NOT_EQ = new BeetlTokenType("beetl[!=]");
 	IElementType BT_NULL = new BeetlTokenType("beetl[null]");
-	IElementType BT_NUMBER = new BeetlTokenType("beetl[NUMBER]");
+	IElementType BT_NUMBER = new BeetlTokenType("beetl[number]");
 	IElementType BT_PLUS = new BeetlTokenType("beetl[+]");
 	IElementType BT_PLUS_ASSIGN = new BeetlTokenType("beetl[+=]");
 	IElementType BT_QUESTOIN = new BeetlTokenType("beetl[?]");
