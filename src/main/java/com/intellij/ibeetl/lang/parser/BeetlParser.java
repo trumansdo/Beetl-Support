@@ -29,35 +29,34 @@
  */
 
 
-package com.intellij.ibeetl.generated.parser;
+package com.intellij.ibeetl.lang.parser;
 
 import com.intellij.ibeetl.generated.psi.BeetlTypes;
-import com.intellij.ibeetl.lang.lexer.BeetlFileElementType;
 import com.intellij.ibeetl.lang.psi.BeetlPrattRegistry;
-import com.intellij.ibeetl.lang.psi.BeetlTokenType;
 import com.intellij.lang.pratt.*;
-
-import static com.intellij.ibeetl.generated.psi.BeetlTypes.BTL_RDT;
 
 public class BeetlParser extends PrattParser {
 
-  static {
-    BeetlPrattRegistry.REGISTRY.registerParser(BeetlTypes.BTL_TEMPLATE_HTML_TEXT, 1, AppendTokenParser.JUST_APPEND);
-  }
 
-  @Override
-  protected void parse(PrattBuilder builder) {
-    MutableMarker rootTag = builder.mark();
-    if (!builder.isEof()) {
-      super.parse(builder);
-    }
-    rootTag.finish(BTL_RDT);
-  }
+	@Override
+	protected void parse(PrattBuilder builder) {
+		MutableMarker rootTag = builder.mark();
+		if (!builder.isEof()) {
+			super.parse(builder);
+		}
+		rootTag.drop();
+	}
 
-  @Override
-  protected PrattRegistry getRegistry() {
-    return BeetlPrattRegistry.REGISTRY;
-  }
+	@Override
+	protected PrattRegistry getRegistry() {
+		return BeetlPrattRegistry.REGISTRY;
+	}
 
+	static {
+		BeetlPrattRegistry.REGISTRY.registerParser(BeetlTypes.BTL_TEMPLATE_HTML_TEXT, 1, AppendTokenParser.JUST_APPEND);
+		BeetlPrattRegistry.REGISTRY.registerParser(BeetlTypes.BTL_LDT, 1, AppendTokenParser.JUST_APPEND);
+		BeetlPrattRegistry.REGISTRY.registerParser(BeetlTypes.BTL_NUMBER, 1, AppendTokenParser.JUST_APPEND);
+		BeetlPrattRegistry.REGISTRY.registerParser(BeetlTypes.BTL_PLUS, 1, AppendTokenParser.JUST_APPEND);
+	}
 
 }

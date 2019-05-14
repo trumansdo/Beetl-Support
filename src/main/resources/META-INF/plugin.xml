@@ -30,7 +30,7 @@
         3、注册扩展点
         -->
         <!--<fileType.fileViewProviderFactory filetype="btl" implementationClass="com.intellij.ibeetl.lang.psi.file.BeetlFileViewProviderFactory"/>-->
-        <lang.fileViewProviderFactory language="btl" implementationClass="com.intellij.ibeetl.lang.psi.file.BeetlFileViewProviderFactory"/>
+        <lang.fileViewProviderFactory language="btl" implementationClass="com.intellij.ibeetl.lang.psi.fileview.BeetlFileViewProviderFactory"/>
 	    <syntaxHighlighter key="btl" implementationClass="com.intellij.ibeetl.lang.highlight.BeetlSyntaxHighlighter"/>
         <lang.syntaxHighlighterFactory language="btl" implementationClass="com.intellij.ibeetl.lang.highlight.BeetlSyntaxHighlighterFactory"/>
 	    <lang.formatter language="btl"
