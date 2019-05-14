@@ -2,12 +2,9 @@ package com.intellij.ibeetl.lang.highlight;
 
 import com.intellij.ibeetl.lang.lexer.BeetlLexer;
 import com.intellij.ibeetl.lang.lexer.BeetlTokenSets;
-import com.intellij.lang.html.HtmlSyntaxHighlighterFactory;
-import com.intellij.lexer.HtmlHighlightingLexer;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -16,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BeetlSyntaxHighlighter implements SyntaxHighlighter {
+public class BeetlSyntaxHighlighter extends SyntaxHighlighterBase {
 	protected final Map<IElementType, TextAttributesKey> keys1 = new HashMap();
 	protected final Map<IElementType, TextAttributesKey> keys2 = new HashMap();
 
@@ -53,13 +50,13 @@ public class BeetlSyntaxHighlighter implements SyntaxHighlighter {
 	}
 
 	protected void fillMap(TokenSet tokenSet, TextAttributesKey key) {
-		this.fillMap(this.keys1, tokenSet, key);
-//		this.fillMap(this.keys2, tokenSet, BTL_BACKGROUND);
+		SyntaxHighlighterBase.fillMap(this.keys1, tokenSet, key);
+		SyntaxHighlighterBase.fillMap(this.keys2, tokenSet, BTL_BACKGROUND);
 	}
 
 	protected void putTokenType(IElementType elementType, TextAttributesKey key) {
 		this.keys1.put(elementType, key);
-//		this.keys2.put(elementType, BTL_BACKGROUND);
+		this.keys2.put(elementType, BTL_BACKGROUND);
 	}
 
 	@NotNull
@@ -75,13 +72,4 @@ public class BeetlSyntaxHighlighter implements SyntaxHighlighter {
 		return textAttributesKeys;
 	}
 
-	protected static void fillMap(@NotNull Map<IElementType, TextAttributesKey> map, @NotNull TokenSet keys, TextAttributesKey value) {
-		fillMap(map, value, keys.getTypes());
-	}
-
-	protected static void fillMap(@NotNull Map<IElementType, TextAttributesKey> map, TextAttributesKey value, @NotNull IElementType... types) {
-		for (IElementType type : types) {
-			map.put(type, value);
-		}
-	}
 }
