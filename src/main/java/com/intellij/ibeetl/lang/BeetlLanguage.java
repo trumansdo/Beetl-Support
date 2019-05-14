@@ -1,6 +1,7 @@
 package com.intellij.ibeetl.lang;
 
 import com.intellij.ibeetl.lang.highlight.BeetlSyntaxHighlighter;
+import com.intellij.lang.DependentLanguage;
 import com.intellij.lang.InjectableLanguage;
 import com.intellij.lang.Language;
 import com.intellij.lang.html.HTMLLanguage;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
  * Beetl语言，标识为BTL
  * 查看 InjectableLanguage 或者  TemplateLanguage
  */
-public class BeetlLanguage extends Language implements TemplateLanguage {
+public class BeetlLanguage extends Language implements TemplateLanguage, DependentLanguage, InjectableLanguage {
 	public static final BeetlLanguage INSTANCE = new BeetlLanguage();
 
 	private BeetlLanguage() {
