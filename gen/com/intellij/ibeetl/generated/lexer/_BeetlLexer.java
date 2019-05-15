@@ -724,14 +724,10 @@ public class _BeetlLexer implements FlexLexer {
 		System.out.println("zzLexicalState : " + this.zzLexicalState);
 
 		System.out.println("zzCurrentPos : " + this.zzCurrentPos);
-		System.out.println("zzCurrentPos char : " + this.yycharat(this.zzCurrentPos));
 		System.out.println("zzMarkedPos : " + this.zzMarkedPos);
-		System.out.println("zzMarkedPos char: " + this.yycharat(this.zzMarkedPos));
 
 		System.out.println("zzStartRead : " + this.zzStartRead);
-		System.out.println("zzStartRead char: " + this.yycharat(this.zzStartRead));
 		System.out.println("zzEndRead : " + this.zzEndRead);
-		System.out.println("zzEndRead char: " + this.yycharat(this.zzEndRead));
 		//  	System.out.println(yyline);
 		//  	System.out.println(yychar);
 		//  	System.out.println(yycolumn);
