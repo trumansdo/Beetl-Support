@@ -22,7 +22,7 @@
 	简单来说，越是精确的，越是优先度高。一般来说选择两个类：ASTWrapperPsiElement和CompositePsiElement ，两者都实现了PsiElement接口
 	例如：下面extends Expression节点，声明所有的Expr/Literal/Lit的接口和实现类分别扩展Expression节点的接口和实现类
 	*/
-	extends='com.intellij.ibeetl.lang.base.BeetlCompositeElement'
+	extends='com.intellij.ibeetl.lang.base.BeetlCompositePsiElement'
 
 	elementTypePrefix="BT_"
 	elementTypeHolderClass='com.intellij.ibeetl.generated.lexer._BeetlTokenTypes'

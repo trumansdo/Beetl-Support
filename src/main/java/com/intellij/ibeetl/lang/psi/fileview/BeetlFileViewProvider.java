@@ -57,7 +57,15 @@ public class BeetlFileViewProvider extends MultiplePsiFilesPerDocumentFileViewPr
 	public static Language getTemplateDataLanguage(VirtualFile virtualFile, Project project) {
 		Language language = TemplateDataLanguageMappings.getInstance(project).getMapping(virtualFile);
 		if (language == null) {
-			return ("btlx".equals(virtualFile.getExtension()) ? XMLLanguage.INSTANCE : HTMLLanguage.INSTANCE);
+			String extension = virtualFile.getExtension();
+			if ("btlx".equals(extension))
+				return XMLLanguage.INSTANCE;
+			else if ("btl".equals(extension))
+				return HTMLLanguage.INSTANCE;
+			else if ("html".equals(extension))
+				return HTMLLanguage.INSTANCE;
+			else
+				return PlainTextLanguage.INSTANCE;
 		} else {
 			return language;
 		}

@@ -35,12 +35,12 @@ package com.intellij.ibeetl.generated.psi.impl;
 
 import com.intellij.ibeetl.generated.psi.BPSemicolon;
 import com.intellij.ibeetl.generated.psi.BPVisitor;
-import com.intellij.ibeetl.lang.base.BeetlCompositeElement;
+import com.intellij.ibeetl.lang.base.BeetlCompositePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BPSemicolonImpl extends BeetlCompositeElement implements BPSemicolon {
+public abstract class BPSemicolonImpl extends BeetlCompositePsiElement implements BPSemicolon {
 
   public BPSemicolonImpl(@NotNull ASTNode node) {
     super(node);

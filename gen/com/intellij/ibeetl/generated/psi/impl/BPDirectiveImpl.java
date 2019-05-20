@@ -35,12 +35,12 @@ package com.intellij.ibeetl.generated.psi.impl;
 
 import com.intellij.ibeetl.generated.psi.BPDirective;
 import com.intellij.ibeetl.generated.psi.BPVisitor;
-import com.intellij.ibeetl.lang.base.BeetlCompositeElement;
+import com.intellij.ibeetl.lang.base.BeetlCompositePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BPDirectiveImpl extends BeetlCompositeElement implements BPDirective {
+public abstract class BPDirectiveImpl extends BeetlCompositePsiElement implements BPDirective {
 
   public BPDirectiveImpl(@NotNull ASTNode node) {
     super(node);

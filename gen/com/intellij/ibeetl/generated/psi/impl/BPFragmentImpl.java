@@ -35,12 +35,12 @@ package com.intellij.ibeetl.generated.psi.impl;
 
 import com.intellij.ibeetl.generated.psi.BPFragment;
 import com.intellij.ibeetl.generated.psi.BPVisitor;
-import com.intellij.ibeetl.lang.base.BeetlCompositeElement;
+import com.intellij.ibeetl.lang.base.BeetlCompositePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BPFragmentImpl extends BeetlCompositeElement implements BPFragment {
+public abstract class BPFragmentImpl extends BeetlCompositePsiElement implements BPFragment {
 
   public BPFragmentImpl(@NotNull ASTNode node) {
     super(node);

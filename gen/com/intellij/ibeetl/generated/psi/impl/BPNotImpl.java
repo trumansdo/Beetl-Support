@@ -35,12 +35,12 @@ package com.intellij.ibeetl.generated.psi.impl;
 
 import com.intellij.ibeetl.generated.psi.BPNot;
 import com.intellij.ibeetl.generated.psi.BPVisitor;
-import com.intellij.ibeetl.lang.base.BeetlCompositeElement;
+import com.intellij.ibeetl.lang.base.BeetlCompositePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BPNotImpl extends BeetlCompositeElement implements BPNot {
+public abstract class BPNotImpl extends BeetlCompositePsiElement implements BPNot {
 
   public BPNotImpl(@NotNull ASTNode node) {
     super(node);

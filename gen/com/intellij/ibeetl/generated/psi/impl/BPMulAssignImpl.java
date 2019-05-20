@@ -35,12 +35,12 @@ package com.intellij.ibeetl.generated.psi.impl;
 
 import com.intellij.ibeetl.generated.psi.BPMulAssign;
 import com.intellij.ibeetl.generated.psi.BPVisitor;
-import com.intellij.ibeetl.lang.base.BeetlCompositeElement;
+import com.intellij.ibeetl.lang.base.BeetlCompositePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BPMulAssignImpl extends BeetlCompositeElement implements BPMulAssign {
+public abstract class BPMulAssignImpl extends BeetlCompositePsiElement implements BPMulAssign {
 
   public BPMulAssignImpl(@NotNull ASTNode node) {
     super(node);

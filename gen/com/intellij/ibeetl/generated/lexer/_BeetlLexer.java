@@ -716,18 +716,18 @@ public class _BeetlLexer implements FlexLexer {
 		}
 		System.out.println("----------------lexerTemplateData start");
 //		System.out.println("zzBuffer : " + this.zzBuffer);
-		System.out.println("content:" + yytext());
-		System.out.println("content length:" + yylength());
+		System.out.println("匹配文本:" + yytext());
+		System.out.println("匹配文本长度" + yylength());
 
 		System.out.println("zzState : " + this.zzState);
 		System.out.println("lexer state: " + yystate());
 		System.out.println("zzLexicalState : " + this.zzLexicalState);
 
-		System.out.println("zzCurrentPos : " + this.zzCurrentPos);
-		System.out.println("zzMarkedPos : " + this.zzMarkedPos);
+		System.out.println("本次匹配开始位置 : " + this.zzCurrentPos);
+		System.out.println("本次匹配结束位置 : " + this.zzMarkedPos);
 
-		System.out.println("zzStartRead : " + this.zzStartRead);
-		System.out.println("zzEndRead : " + this.zzEndRead);
+		System.out.println("本次开始读取位置 : " + this.zzStartRead);
+		System.out.println("词法结束读取位置 : " + this.zzEndRead);
 		//  	System.out.println(yyline);
 		//  	System.out.println(yychar);
 		//  	System.out.println(yycolumn);

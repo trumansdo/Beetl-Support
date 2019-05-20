@@ -33,7 +33,7 @@
 // This is a generated file. Not intended for manual editing.
 package com.intellij.ibeetl.lang.lexer;
 
-import com.intellij.ibeetl.lang.base.BeetlCompositeElement;
+import com.intellij.ibeetl.lang.base.BeetlCompositePsiElement;
 import com.intellij.ibeetl.lang.base.BeetlIElementType;
 import com.intellij.ibeetl.lang.base.BeetlTokenType;
 import com.intellij.lang.ASTNode;
@@ -158,7 +158,9 @@ public interface BeetlTokenTypes {
 	}
 
 	class Factory {
-		public static BeetlCompositeElement createElement(ASTNode astNode) {
+		public static BeetlCompositePsiElement createElement(ASTNode astNode) {
+			IElementType elementType = astNode.getElementType();
+
 			return null;
 		}
 	}

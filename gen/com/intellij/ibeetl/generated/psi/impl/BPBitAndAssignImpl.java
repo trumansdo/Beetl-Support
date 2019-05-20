@@ -35,12 +35,12 @@ package com.intellij.ibeetl.generated.psi.impl;
 
 import com.intellij.ibeetl.generated.psi.BPBitAndAssign;
 import com.intellij.ibeetl.generated.psi.BPVisitor;
-import com.intellij.ibeetl.lang.base.BeetlCompositeElement;
+import com.intellij.ibeetl.lang.base.BeetlCompositePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BPBitAndAssignImpl extends BeetlCompositeElement implements BPBitAndAssign {
+public abstract class BPBitAndAssignImpl extends BeetlCompositePsiElement implements BPBitAndAssign {
 
   public BPBitAndAssignImpl(@NotNull ASTNode node) {
     super(node);

@@ -8,7 +8,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 /**
- * Beetl相关的图标
+ * Beetl相关的预定义图标。也许其中有些没用到
+ * 例如：文件图标
+ * 配置文件在左侧行号的图标
  */
 public interface BeetlIcons {
 	Icon ICON = IconLoader.findIcon("/icons/beetl.png");

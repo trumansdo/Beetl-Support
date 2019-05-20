@@ -11,9 +11,9 @@ import org.jetbrains.annotations.NotNull;
  * 同时实现命名引用
  * 可以看一下CompositePsiElement，但是CompositePsiElement这个类应该是某个用途的时候才用
  */
-public class BeetlCompositeElement extends ASTWrapperPsiElement {
+public class BeetlCompositePsiElement extends ASTWrapperPsiElement {
 
-	public BeetlCompositeElement(@NotNull ASTNode node) {
+	public BeetlCompositePsiElement(@NotNull ASTNode node) {
 		super(node);
 	}
 
