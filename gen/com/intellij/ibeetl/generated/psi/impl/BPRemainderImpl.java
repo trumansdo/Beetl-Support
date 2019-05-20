@@ -35,12 +35,12 @@ package com.intellij.ibeetl.generated.psi.impl;
 
 import com.intellij.ibeetl.generated.psi.BPRemainder;
 import com.intellij.ibeetl.generated.psi.BPVisitor;
-import com.intellij.ibeetl.lang.base.BeetlCompositeElement;
+import com.intellij.ibeetl.lang.base.BeetlCompositePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BPRemainderImpl extends BeetlCompositeElement implements BPRemainder {
+public abstract class BPRemainderImpl extends BeetlCompositePsiElement implements BPRemainder {
 
   public BPRemainderImpl(@NotNull ASTNode node) {
     super(node);

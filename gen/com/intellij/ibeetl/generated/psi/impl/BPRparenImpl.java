@@ -35,12 +35,12 @@ package com.intellij.ibeetl.generated.psi.impl;
 
 import com.intellij.ibeetl.generated.psi.BPRparen;
 import com.intellij.ibeetl.generated.psi.BPVisitor;
-import com.intellij.ibeetl.lang.base.BeetlCompositeElement;
+import com.intellij.ibeetl.lang.base.BeetlCompositePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BPRparenImpl extends BeetlCompositeElement implements BPRparen {
+public abstract class BPRparenImpl extends BeetlCompositePsiElement implements BPRparen {
 
   public BPRparenImpl(@NotNull ASTNode node) {
     super(node);

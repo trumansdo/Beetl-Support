@@ -35,12 +35,12 @@ package com.intellij.ibeetl.generated.psi.impl;
 
 import com.intellij.ibeetl.generated.psi.BPContinue;
 import com.intellij.ibeetl.generated.psi.BPVisitor;
-import com.intellij.ibeetl.lang.base.BeetlCompositeElement;
+import com.intellij.ibeetl.lang.base.BeetlCompositePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BPContinueImpl extends BeetlCompositeElement implements BPContinue {
+public abstract class BPContinueImpl extends BeetlCompositePsiElement implements BPContinue {
 
   public BPContinueImpl(@NotNull ASTNode node) {
     super(node);

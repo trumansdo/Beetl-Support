@@ -35,12 +35,12 @@ package com.intellij.ibeetl.generated.psi.impl;
 
 import com.intellij.ibeetl.generated.psi.BPElseFor;
 import com.intellij.ibeetl.generated.psi.BPVisitor;
-import com.intellij.ibeetl.lang.base.BeetlCompositeElement;
+import com.intellij.ibeetl.lang.base.BeetlCompositePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BPElseForImpl extends BeetlCompositeElement implements BPElseFor {
+public abstract class BPElseForImpl extends BeetlCompositePsiElement implements BPElseFor {
 
   public BPElseForImpl(@NotNull ASTNode node) {
     super(node);

@@ -35,12 +35,12 @@ package com.intellij.ibeetl.generated.psi.impl;
 
 import com.intellij.ibeetl.generated.psi.BPIncrease;
 import com.intellij.ibeetl.generated.psi.BPVisitor;
-import com.intellij.ibeetl.lang.base.BeetlCompositeElement;
+import com.intellij.ibeetl.lang.base.BeetlCompositePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BPIncreaseImpl extends BeetlCompositeElement implements BPIncrease {
+public abstract class BPIncreaseImpl extends BeetlCompositePsiElement implements BPIncrease {
 
   public BPIncreaseImpl(@NotNull ASTNode node) {
     super(node);

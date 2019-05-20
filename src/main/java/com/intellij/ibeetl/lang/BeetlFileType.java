@@ -1,8 +1,10 @@
 package com.intellij.ibeetl.lang;
 
+import com.intellij.ibeetl.lang.highlight.BeetlEditorHighlighter;
 import com.intellij.ibeetl.utils.BeetlConstants;
-import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.fileTypes.TemplateLanguageFileType;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.editor.highlighter.EditorHighlighter;
+import com.intellij.openapi.fileTypes.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -21,6 +23,12 @@ public class BeetlFileType extends LanguageFileType implements TemplateLanguageF
 
 	private BeetlFileType() {
 		super(BeetlLanguage.INSTANCE);
+		FileTypeEditorHighlighterProviders.INSTANCE.addExplicitExtension(this, new EditorHighlighterProvider() {
+			@Override
+			public EditorHighlighter getEditorHighlighter(@Nullable Project project, @NotNull FileType fileType, @Nullable VirtualFile virtualFile, @NotNull EditorColorsScheme colors) {
+				return new BeetlEditorHighlighter(project, virtualFile, colors);
+			}
+		});
 	}
 
 	@NotNull

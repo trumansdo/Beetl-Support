@@ -35,12 +35,12 @@ package com.intellij.ibeetl.generated.psi.impl;
 
 import com.intellij.ibeetl.generated.psi.BPLbrack;
 import com.intellij.ibeetl.generated.psi.BPVisitor;
-import com.intellij.ibeetl.lang.base.BeetlCompositeElement;
+import com.intellij.ibeetl.lang.base.BeetlCompositePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BPLbrackImpl extends BeetlCompositeElement implements BPLbrack {
+public abstract class BPLbrackImpl extends BeetlCompositePsiElement implements BPLbrack {
 
   public BPLbrackImpl(@NotNull ASTNode node) {
     super(node);

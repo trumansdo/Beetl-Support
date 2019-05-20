@@ -35,12 +35,12 @@ package com.intellij.ibeetl.generated.psi.impl;
 
 import com.intellij.ibeetl.generated.psi.BPGreaterOrEqual;
 import com.intellij.ibeetl.generated.psi.BPVisitor;
-import com.intellij.ibeetl.lang.base.BeetlCompositeElement;
+import com.intellij.ibeetl.lang.base.BeetlCompositePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BPGreaterOrEqualImpl extends BeetlCompositeElement implements BPGreaterOrEqual {
+public abstract class BPGreaterOrEqualImpl extends BeetlCompositePsiElement implements BPGreaterOrEqual {
 
   public BPGreaterOrEqualImpl(@NotNull ASTNode node) {
     super(node);

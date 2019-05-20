@@ -62,7 +62,7 @@ public class BeetlParserDefinition implements ParserDefinition {
 	@NotNull
 	@Override
 	public TokenSet getStringLiteralElements() {
-		return STRING_LITERAL;
+		return TokenSet.EMPTY;
 	}
 
 	@NotNull
