@@ -32,7 +32,6 @@
 package com.intellij.ibeetl.lang.parser;
 
 import com.intellij.ibeetl.lang.lexer.BeetlIElementTypes;
-import com.intellij.ibeetl.lang.lexer.BeetlTokenTypes;
 import com.intellij.ibeetl.lang.psi.BeetlPrattRegistry;
 import com.intellij.lang.pratt.*;
 
@@ -41,11 +40,7 @@ public class BeetlParser extends PrattParser {
 
 	@Override
 	protected void parse(PrattBuilder builder) {
-		MutableMarker rootTag = builder.mark();
-		if (!builder.isEof()) {
-			super.parse(builder);
-		}
-		rootTag.drop();
+		builder.parse();
 	}
 
 	@Override
@@ -55,9 +50,6 @@ public class BeetlParser extends PrattParser {
 
 	static {
 		BeetlPrattRegistry.REGISTRY.registerParser(BeetlIElementTypes.BTL_TEMPLATE_HTML_TEXT, 1, AppendTokenParser.JUST_APPEND);
-		BeetlPrattRegistry.REGISTRY.registerParser(BeetlTokenTypes.BT_LDELIMITER, 1, AppendTokenParser.JUST_APPEND);
-		BeetlPrattRegistry.REGISTRY.registerParser(BeetlTokenTypes.BT_NUMBER, 1, AppendTokenParser.JUST_APPEND);
-		BeetlPrattRegistry.REGISTRY.registerParser(BeetlTokenTypes.BT_PLUS, 1, AppendTokenParser.JUST_APPEND);
 	}
 
 }
