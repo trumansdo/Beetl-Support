@@ -4,9 +4,9 @@ package com.intellij.ibeetl.generated.lexer;
 
 import com.intellij.ibeetl.lang.BeetlParserDefinition;
 import com.intellij.ibeetl.lang.lexer.BeetlTokenTypes;
+import com.intellij.ibeetl.utils.StrUtil;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
-import org.apache.commons.lang3.StringUtils;
 
 import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.BTL_TEMPLATE_HTML_TEXT;
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
@@ -698,21 +698,11 @@ public class _BeetlLexer implements FlexLexer {
 	}
 
 	private IElementType lexerTemplateData() {
-		int i = StringUtils.indexOf(zzBuffer, "<%", zzCurrentPos);
+		int i = StrUtil.indexOfAny(zzBuffer, zzCurrentPos, "<%", "${", "<#", "</#");
 		if (-1 != i) {
 			zzMarkedPos = i;
 		} else {
-			int j = StringUtils.indexOf(zzBuffer, "<#", zzCurrentPos);
-			if (-1 != j) {
-				zzMarkedPos = j;
-			} else {
-				int k = StringUtils.indexOf(zzBuffer, "</#", zzCurrentPos);
-				if (-1 != k) {
-					zzMarkedPos = k;
-				} else {
-					zzMarkedPos = zzEndRead;
-				}
-			}
+			zzMarkedPos = zzEndRead;
 		}
 		System.out.println("----------------lexerTemplateData start");
 //		System.out.println("zzBuffer : " + this.zzBuffer);

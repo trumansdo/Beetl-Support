@@ -2,7 +2,7 @@
     <id>com.ibeetl.Beetl-Support</id>
     <name>Beetl-Support</name>
     <vendor email="trumansdo@foxmail.com" url=""></vendor>
-
+	<resource-bundle>messages.BeetlBundle</resource-bundle>
     <description><![CDATA[
     辅助Beetl框架工作。<br>
     <em>主要功能如下：</em>

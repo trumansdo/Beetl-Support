@@ -1,7 +1,7 @@
 package com.intellij.ibeetl.lang;
 
+import com.intellij.ibeetl.BeetlBundle;
 import com.intellij.ibeetl.lang.highlight.BeetlEditorHighlighter;
-import com.intellij.ibeetl.utils.BeetlConstants;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.fileTypes.*;
@@ -34,19 +34,19 @@ public class BeetlFileType extends LanguageFileType implements TemplateLanguageF
 	@NotNull
 	@Override
 	public String getName() {
-		return BeetlConstants.BTL;
+		return BeetlBundle.message("file.type.description");
 	}
 
 	@NotNull
 	@Override
 	public String getDescription() {
-		return "Beetl files";
+		return BeetlBundle.message("file.type.description");
 	}
 
 	@NotNull
 	@Override
 	public String getDefaultExtension() {
-		return "btl";
+		return BeetlBundle.message("file.extension");
 	}
 
 	@Nullable

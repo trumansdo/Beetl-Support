@@ -13,50 +13,52 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BeetlSyntaxHighlighter extends SyntaxHighlighterBase {
-	protected final Map<IElementType, TextAttributesKey> keys1 = new HashMap();
-	protected final Map<IElementType, TextAttributesKey> keys2 = new HashMap();
+import static com.intellij.ibeetl.lang.BeetlParserDefinition.LINE_COMMENT;
+import static com.intellij.ibeetl.lang.BeetlParserDefinition.MULTILINE_COMMENT;
+import static com.intellij.ibeetl.lang.highlight.BeetlSyntaxHighlighterColors.*;
+import static com.intellij.ibeetl.lang.lexer.BeetlTokenTypes.*;
 
-	public static TextAttributesKey BTL_BACKGROUND;
-	public static TextAttributesKey BTL_IDENT;
-	public static TextAttributesKey BTL_KEYWORD;
-	public static TextAttributesKey BTL_STRING;
-	public static TextAttributesKey BTL_NUMBER;
-	public static TextAttributesKey BTL_PARENTHS;
-	public static TextAttributesKey BTL_DOT;
-	public static TextAttributesKey BTL_COMMA;
-	public static TextAttributesKey BTL_BRACKETS;
-	public static TextAttributesKey BTL_BOUNDS;
+public class BeetlSyntaxHighlighter extends SyntaxHighlighterBase {
+	protected static final Map<IElementType, TextAttributesKey> keys1 = new HashMap();
+	protected static final Map<IElementType, TextAttributesKey> keys2 = new HashMap();
 
 	static {
-		BTL_BACKGROUND = TextAttributesKey.createTextAttributesKey("BTL.BACKGROUND", DefaultLanguageHighlighterColors.TEMPLATE_LANGUAGE_COLOR);
-		BTL_IDENT = TextAttributesKey.createTextAttributesKey("BTL.IDENT", DefaultLanguageHighlighterColors.LOCAL_VARIABLE);
-		BTL_KEYWORD = TextAttributesKey.createTextAttributesKey("BTL.KEYWORD", DefaultLanguageHighlighterColors.KEYWORD);
-		BTL_STRING = TextAttributesKey.createTextAttributesKey("BTL.STRING", DefaultLanguageHighlighterColors.STRING);
-		BTL_NUMBER = TextAttributesKey.createTextAttributesKey("BTL.NUMBER", DefaultLanguageHighlighterColors.NUMBER);
-		BTL_PARENTHS = TextAttributesKey.createTextAttributesKey("BTL.PARENTHS", DefaultLanguageHighlighterColors.PARENTHESES);
-		BTL_DOT = TextAttributesKey.createTextAttributesKey("BTL.DOT", DefaultLanguageHighlighterColors.DOT);
-		BTL_COMMA = TextAttributesKey.createTextAttributesKey("BTL.COMMA", DefaultLanguageHighlighterColors.COMMA);
-		BTL_BRACKETS = TextAttributesKey.createTextAttributesKey("BTL.BRACKETS", DefaultLanguageHighlighterColors.BRACKETS);
-		BTL_BOUNDS = TextAttributesKey.createTextAttributesKey("BTL.BOUNDS", DefaultLanguageHighlighterColors.KEYWORD);
+		fillMap(BeetlTokenSets.KEYWORDS, BTL_KEYWORD);
+		fillMap(BeetlTokenSets.OPERATIONS, BTL_OPERATIONS);
+		fillMap(BeetlTokenSets.STRINGS, BTL_STRING);
+		fillMap(BeetlTokenSets.LITERAL, BTL_LITERALS);
+		fillMap(BeetlTokenSets.NUMBER, BTL_NUMBER);
+		fillMap(BeetlTokenSets.DELIMITERS, BTL_DELIMITERS);
+		fillMap(BeetlTokenSets.PLACEHOLDERS, BTL_PLACEHOLDERS);
+		fillMap(BeetlTokenSets.PARENTHS, BTL_PARENTHS);
+		fillMap(BeetlTokenSets.BRACKETS, BTL_BRACKETS);
+		fillMap(BeetlTokenSets.BRACES, BTL_BRACES);
+		fillMap(BeetlTokenSets.DELIMITERS, BTL_DELIMITERS);
+
+		putTokenType(BT_DOT, BTL_DOT);
+		putTokenType(BT_SEMICOLON, BTL_SEMICOLON);
+		putTokenType(BT_COMMA, BTL_COMMA);
+		putTokenType(BT_IDENTIFIER, BTL_IDENT);
+		putTokenType(BT_ATTRIBUTE_NAME, BTL_REFERENCE);
+		putTokenType(BT_PLACEHOLDER_VALUE, BTL_KEYWORD);
+		putTokenType(LINE_COMMENT, BTL_LINE_COMMENT);
+		putTokenType(MULTILINE_COMMENT, BTL_BLOCK_COMMENT);
 	}
 
 	public BeetlSyntaxHighlighter() {
-		this.fillMap(BeetlTokenSets.KEYWORDS, BTL_KEYWORD);
-		this.fillMap(BeetlTokenSets.UNARY_OPERATIONS, BTL_BOUNDS);
-		this.fillMap(BeetlTokenSets.STRING_LITERALS, BTL_STRING);
-		this.fillMap(BeetlTokenSets.NUMBER, BTL_NUMBER);
-		this.fillMap(BeetlTokenSets.BINARY_OPERATIONS, BTL_KEYWORD);
+
 	}
 
-	protected void fillMap(TokenSet tokenSet, TextAttributesKey key) {
-		SyntaxHighlighterBase.fillMap(this.keys1, tokenSet, key);
-		SyntaxHighlighterBase.fillMap(this.keys2, tokenSet, BTL_BACKGROUND);
+	/*多个tokenset集合*/
+	protected static void fillMap(TokenSet tokenSet, TextAttributesKey key) {
+		SyntaxHighlighterBase.fillMap(keys1, tokenSet, key);
+		SyntaxHighlighterBase.fillMap(keys2, tokenSet, BTL_BACKGROUND);
 	}
 
-	protected void putTokenType(IElementType elementType, TextAttributesKey key) {
-		this.keys1.put(elementType, key);
-		this.keys2.put(elementType, BTL_BACKGROUND);
+	/*单个的token*/
+	protected static void putTokenType(IElementType elementType, TextAttributesKey key) {
+		keys1.put(elementType, key);
+		keys2.put(elementType, BTL_BACKGROUND);
 	}
 
 	@NotNull
