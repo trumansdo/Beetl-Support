@@ -37,6 +37,9 @@ import com.intellij.ibeetl.lang.base.BeetlCompositePsiElement;
 import com.intellij.ibeetl.lang.base.BeetlIElementType;
 import com.intellij.ibeetl.lang.base.BeetlTokenType;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.impl.PsiElementBase;
 import com.intellij.psi.tree.IElementType;
 
 import java.util.Collections;
@@ -158,9 +161,11 @@ public interface BeetlTokenTypes {
 	}
 
 	class Factory {
-		public static BeetlCompositePsiElement createElement(ASTNode astNode) {
+		public static PsiElement createElement(ASTNode astNode) {
 			IElementType elementType = astNode.getElementType();
-
+			if(elementType instanceof BeetlTokenType){
+				return ((BeetlTokenType) elementType).createPsiElement(astNode);
+			}
 			return null;
 		}
 	}
