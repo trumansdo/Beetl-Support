@@ -6,9 +6,9 @@ import com.intellij.psi.tree.IElementType;
 /**
  * 词法token类型, 非混合语言
  */
-public class BeetlIElementType extends IElementType {
+public class BeetlIElementType extends BeetlTokenType {
 
 	public BeetlIElementType(String debugName) {
-		super(debugName, BeetlLanguage.INSTANCE);
+		super(debugName);
 	}
 }

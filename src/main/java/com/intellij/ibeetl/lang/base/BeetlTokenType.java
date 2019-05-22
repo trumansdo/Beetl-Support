@@ -1,6 +1,8 @@
 package com.intellij.ibeetl.lang.base;
 
 import com.intellij.ibeetl.lang.BeetlLanguage;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 
 /**
@@ -10,5 +12,9 @@ public class BeetlTokenType extends IElementType {
 
 	public BeetlTokenType(String debugName) {
 		super(debugName, BeetlLanguage.INSTANCE);
+	}
+
+	public PsiElement createPsiElement(ASTNode node) {
+		return new BeetlCompositePsiElement(node);
 	}
 }
