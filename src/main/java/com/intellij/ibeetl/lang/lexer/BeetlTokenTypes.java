@@ -39,8 +39,10 @@ import com.intellij.ibeetl.lang.base.BeetlTokenType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiType;
+import com.intellij.psi.TokenType;
 import com.intellij.psi.impl.PsiElementBase;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -48,8 +50,15 @@ import java.util.Set;
 
 public interface BeetlTokenTypes {
 
-	IElementType BT_LPLACEHOLDER = new BeetlIElementType("beetl[lplaceholder]");
-	IElementType BT_RPLACEHOLDER = new BeetlIElementType("beetl[rplaceholder]");
+	IElementType TEMPORARY = new BeetlTokenType("beetl[TEMPORARY]");
+	TokenSet TEMPORARY_SET = TokenSet.create(new IElementType[]{TEMPORARY});
+	IElementType NEW_LINE = new BeetlTokenType("beetl[new_line]");
+
+	IElementType LINE_COMMENT = new BeetlTokenType("beetl[line_comment]");
+	IElementType MULTILINE_COMMENT = new BeetlTokenType("beetl[multiline_comment]");
+
+	IElementType BT_LPLACEHOLDER = new BeetlTokenType("beetl[lplaceholder]");
+	IElementType BT_RPLACEHOLDER = new BeetlTokenType("beetl[rplaceholder]");
 
 	IElementType BT_LDELIMITER = new BeetlTokenType("beetl[<%]");
 	IElementType BT_RDELIMITER = new BeetlTokenType("beetl[%>]");

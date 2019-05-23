@@ -1,60 +1,44 @@
 package com.intellij.ibeetl.generated.lexer;
 
-import com.intellij.ibeetl.lang.BeetlParserDefinition;
 import com.intellij.ibeetl.lang.lexer.BeetlTokenTypes;
+import com.intellij.ibeetl.utils.StrUtil;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
-import org.apache.commons.lang3.StringUtils;
 
-import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.*;
-import static com.intellij.psi.TokenType.*;
+import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.BTL_TEMPLATE_HTML_TEXT;
+import static com.intellij.psi.TokenType.WHITE_SPACE;
 
 %%
 
 %{
 	public _BeetlLexer() {
-			this((java.io.Reader)null);
-		}
-	private IElementType lexerTemplateData(){
-		int i = StringUtils.indexOf(zzBuffer, "<%", zzCurrentPos);
-		if(-1!=i){
-			zzMarkedPos=i;
-		}else {
-			int j = StringUtils.indexOf(zzBuffer, "<#", zzCurrentPos);
-			if(-1!=j){
-				zzMarkedPos=j;
-			}else {
-				int k = StringUtils.indexOf(zzBuffer, "</#", zzCurrentPos);
-				if(-1!=k){
-					zzMarkedPos=k;
-				}else {
-					zzMarkedPos=zzEndRead;
-				}
-			}
+		this((java.io.Reader)null);
+	}
+	private IElementType lexerTemplateData() {
+		int i = StrUtil.indexOfAny(zzBuffer, zzCurrentPos, "<%", "${", "<#", "</#");
+		if (-1 != i) {
+			zzMarkedPos = i;
+		} else {
+			zzMarkedPos = zzEndRead;
 		}
 		System.out.println("----------------lexerTemplateData start");
-		System.out.println("zzBuffer : "+this.zzBuffer);
-		System.out.println("content:"+yytext());
-		System.out.println("content length:"+yylength());
+		System.out.println("匹配文本:" + yytext());
+		System.out.println("匹配文本长度" + yylength());
 
-		System.out.println("zzState : "+this.zzState);
-		System.out.println("lexer state: "+yystate());
-		System.out.println("zzLexicalState : "+this.zzLexicalState);
+		System.out.println("zzState : " + this.zzState);
+		System.out.println("lexer state: " + yystate());
+		System.out.println("zzLexicalState : " + this.zzLexicalState);
 
-		System.out.println("zzCurrentPos : "+this.zzCurrentPos);
-		System.out.println("zzCurrentPos char : "+this.yycharat(this.zzCurrentPos));
-		System.out.println("zzMarkedPos : "+this.zzMarkedPos);
-		System.out.println("zzMarkedPos char: "+this.yycharat(this.zzMarkedPos));
+		System.out.println("本次匹配开始位置 : " + this.zzCurrentPos);
+		System.out.println("本次匹配结束位置 : " + this.zzMarkedPos);
 
-		System.out.println("zzStartRead : "+this.zzStartRead);
-		System.out.println("zzStartRead char: "+this.yycharat(this.zzStartRead));
-		System.out.println("zzEndRead : "+this.zzEndRead);
-		System.out.println("zzEndRead char: "+this.yycharat(this.zzEndRead));
+		System.out.println("本次开始读取位置 : " + this.zzStartRead);
+		System.out.println("词法结束读取位置 : " + this.zzEndRead);
 		//  	System.out.println(yyline);
 		//  	System.out.println(yychar);
 		//  	System.out.println(yycolumn);
 		System.out.println("----------------lexerTemplateData end");
-		return TEMPLATE_HTML_TEXT;
+		return BTL_TEMPLATE_HTML_TEXT;
 	}
 %}
 
@@ -69,13 +53,12 @@ import static com.intellij.psi.TokenType.*;
 %eof{  return;
 %eof}
 
-NEW_LINE = (\r\n | \R | \r})+
-WHITE_SPACE = \s+
+NEW_LINE = \R
+WHITE_SPACE = [ \t\x0B\f]
 
 LINE_COMMENT = "//" [^\r\n]*
 MULTILINE_COMMENT = "/*" ( ([^"*"]|[\r\n])* ("*"+ [^"*""/"] )? )* ("*" | "*"+"/")?
-//Java首字母允许的符号
-LETTER = [:jletter:]
+
 DIGIT =  [0-9]
 
 HEX_DIGIT = [0-9A-Fa-f]
@@ -119,11 +102,10 @@ NUM_FLOAT = (
 				{BIGDECIMAL_SUFFIX}?
 			)
 /*
-[:jletterdigit:]
 Java允许的首字母非数字标识符
 */
 IDENTIFIER = [:jletter:] [:jletterdigit:]*
-ATTRIBUTE_NAME = [\w\-\:]+
+ATTRIBUTE_NAME = ([:jletterdigit:] | "-")+
 ATTRIBUTE_VALUE = ("\"" ([^\\\n\r] )* "\"") | ("'" ([^\\\n\r] )* "'")
 
 /*双引号和单引号，暂时没用*/
@@ -149,28 +131,22 @@ yybegin()方法是切换分析器词法状态
 MAYBE_SEMICOLON：表明当前匹配的字符之后可能具有的词法状态
 */
 <YYINITIAL> {
-	{WHITE_SPACE}                             { return BeetlParserDefinition.WHITE_SPACES; }
-	{NEW_LINE}                                { return BeetlParserDefinition.NEW_LINES; }
+	{WHITE_SPACE}+                            { return WHITE_SPACE; }
+	{NEW_LINE}+                               { return BeetlTokenTypes.NEW_LINE; }
 
-	{LINE_COMMENT}                            { return BeetlParserDefinition.LINE_COMMENT; }
-	{MULTILINE_COMMENT}                       { return BeetlParserDefinition.MULTILINE_COMMENT; }
-	/*定界符*/
-    "${"                                      { yybegin(BTL_PLACEHOLDER); return BeetlTokenTypes.BT_LPLACEHOLDER; }
-	"<%"                                      { yybegin(BTL_LEX); return BeetlTokenTypes.BT_LDELIMITER; }
-	"<#" | "</#"                              { yybegin(BTL_HTML_LEX); return BeetlTokenTypes.BT_HTML_TAG_START; }
-    .                                         { return lexerTemplateData(); }
+	{LINE_COMMENT}                            { return BeetlTokenTypes.LINE_COMMENT; }
+	{MULTILINE_COMMENT}                       { return BeetlTokenTypes.MULTILINE_COMMENT; }
+    .                                         { return BeetlTokenTypes.TEMPORARY; }
 }
 
 <BTL_LEX>{
-	{WHITE_SPACE}                             { return BeetlParserDefinition.WHITE_SPACES; }
-	{NEW_LINE}                                { return BeetlParserDefinition.NEW_LINES; }
+	{WHITE_SPACE}+                            { return WHITE_SPACE; }
+	{NEW_LINE}                                { return BeetlTokenTypes.NEW_LINE; }
 
-	{LINE_COMMENT}                            { return BeetlParserDefinition.LINE_COMMENT; }
-	{MULTILINE_COMMENT}                       { return BeetlParserDefinition.MULTILINE_COMMENT; }
+	{LINE_COMMENT}                            { return BeetlTokenTypes.LINE_COMMENT; }
+	{MULTILINE_COMMENT}                       { return BeetlTokenTypes.MULTILINE_COMMENT; }
 
 	"."                                       { return BeetlTokenTypes.BT_DOT; }
-
-    "${"                                      { yybegin(BTL_PLACEHOLDER); return BeetlTokenTypes.BT_LPLACEHOLDER; }
 
 	"{"                                       { return BeetlTokenTypes.BT_LBRACE; }
 	"}"                                       { return BeetlTokenTypes.BT_RBRACE; }
@@ -219,8 +195,6 @@ MAYBE_SEMICOLON：表明当前匹配的字符之后可能具有的词法状态
 
 	"/="                                      { return BeetlTokenTypes.BT_QUOTIENT_ASSIGN; }
 	"/"                                       { return BeetlTokenTypes.BT_QUOTIENT; }
-	/*因为是%开头，所以放在下面的求余符号前*/
-	"%>"                                      { yybegin(YYINITIAL); return BeetlTokenTypes.BT_RDELIMITER; }
 
 	"%="                                      { return BeetlTokenTypes.BT_REMAINDER_ASSIGN; }
 	"%"                                       { return BeetlTokenTypes.BT_REMAINDER; }
@@ -273,30 +247,77 @@ MAYBE_SEMICOLON：表明当前匹配的字符之后可能具有的词法状态
 	{NUM_HEX}                                 { return BeetlTokenTypes.BT_HEX; }
 	{NUM_INT}                                 { return BeetlTokenTypes.BT_INT; }
 
-    .                                         { return BAD_CHARACTER; }
+    .                                         { return BeetlTokenTypes.TEMPORARY; }
 }
 <BTL_HTML_LEX>{
-	{WHITE_SPACE}                             { return BeetlParserDefinition.WHITE_SPACES; }
-	{NEW_LINE}                                { return BeetlParserDefinition.NEW_LINES; }
+	{WHITE_SPACE}                             { return WHITE_SPACE; }
+	{NEW_LINE}                                { return BeetlTokenTypes.NEW_LINE; }
 
-	{LINE_COMMENT}                            { return BeetlParserDefinition.LINE_COMMENT; }
-	{MULTILINE_COMMENT}                       { return BeetlParserDefinition.MULTILINE_COMMENT; }
-
-	{IDENTIFIER}                              { return BeetlTokenTypes.BT_IDENTIFIER; }
-
-	"${"                                      { yybegin(BTL_PLACEHOLDER); return BeetlTokenTypes.BT_LPLACEHOLDER; }
+	{LINE_COMMENT}                            { return BeetlTokenTypes.LINE_COMMENT; }
+	{MULTILINE_COMMENT}                       { return BeetlTokenTypes.MULTILINE_COMMENT; }
 
 	"="                                       { return BeetlTokenTypes.BT_ASSIGN; }
+	":"                                       { return BeetlTokenTypes.BT_COLON; }
 
 	{ATTRIBUTE_NAME}                          { return BeetlTokenTypes.BT_ATTRIBUTE_NAME; }
 	{ATTRIBUTE_VALUE}                         { return BeetlTokenTypes.BT_ATTRIBUTE_VALUE; }
 
-    ">" | "/>"                                { yybegin(YYINITIAL); return BeetlTokenTypes.BT_HTML_TAG_END; }
-    .                                         { return BAD_CHARACTER; }
+    .                                         { return BeetlTokenTypes.TEMPORARY; }
 }
 
 <BTL_PLACEHOLDER> {
-	[^\n\r\}]+                                { return BeetlTokenTypes.BT_PLACEHOLDER_VALUE; }
-	"}"                                       { yybegin(YYINITIAL); return BeetlTokenTypes.BT_RPLACEHOLDER; }
-    .                                         { return BAD_CHARACTER; }
+	{WHITE_SPACE}                             { return WHITE_SPACE; }
+	"."                                       { return BeetlTokenTypes.BT_DOT; }
+
+	"["                                       { return BeetlTokenTypes.BT_LBRACK; }
+	"]"                                       { return BeetlTokenTypes.BT_RBRACK; }
+
+	"("                                       { return BeetlTokenTypes.BT_LPAREN; }
+	")"                                       { return BeetlTokenTypes.BT_RPAREN; }
+
+	":"                                       { return BeetlTokenTypes.BT_COLON; }
+	";"                                       { return BeetlTokenTypes.BT_SEMICOLON; }
+	","                                       { return BeetlTokenTypes.BT_COMMA; }
+
+	"=="                                      { return BeetlTokenTypes.BT_EQ; }
+	"="                                       { return BeetlTokenTypes.BT_ASSIGN; }
+
+	"!="                                      { return BeetlTokenTypes.BT_NOT_EQ; }
+	"!"                                       { return BeetlTokenTypes.BT_NOT; }
+	"|"                                       { return BeetlTokenTypes.BT_BIT_OR; }
+
+	"++"                                      { return BeetlTokenTypes.BT_INCREASE; }
+	"+"                                       { return BeetlTokenTypes.BT_PLUS; }
+
+	"--"                                      { return BeetlTokenTypes.BT_DECREASE; }
+	"-"                                       { return BeetlTokenTypes.BT_MINUS; }
+
+	"||"                                      { return BeetlTokenTypes.BT_COND_OR; }
+
+	"&&"                                      { return BeetlTokenTypes.BT_COND_AND; }
+	"&"                                       { return BeetlTokenTypes.BT_BIT_AND; }
+
+	"<<"                                      { return BeetlTokenTypes.BT_SHIFT_LEFT; }
+	"<"                                       { return BeetlTokenTypes.BT_LESS; }
+
+	"^"                                       { return BeetlTokenTypes.BT_BIT_XOR; }
+
+	"*"                                       { return BeetlTokenTypes.BT_MUL; }
+
+	"/"                                       { return BeetlTokenTypes.BT_QUOTIENT; }
+
+	"%"                                       { return BeetlTokenTypes.BT_REMAINDER; }
+
+	">>"                                      { return BeetlTokenTypes.BT_SHIFT_RIGHT; }
+	">"                                       { return BeetlTokenTypes.BT_GREATER; }
+
+	".~"                                      { return BeetlTokenTypes.BT_VIRTUAL; }
+    "?"                                       { return BeetlTokenTypes.BT_QUESTOIN; }
+    "@"                                       { return BeetlTokenTypes.BT_AT; }
+
+	{IDENTIFIER}                              { return BeetlTokenTypes.BT_IDENTIFIER; }
+    {ATTRIBUTE_VALUE}                         { return BeetlTokenTypes.BT_ATTRIBUTE_VALUE; }
+	{NUM_INT}                                 { return BeetlTokenTypes.BT_INT; }
+
+    .                                         { return BeetlTokenTypes.TEMPORARY; }
 }
