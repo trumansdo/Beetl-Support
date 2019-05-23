@@ -18,16 +18,17 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.ibeetl.lang.lexer.BeetlTokenTypes.LINE_COMMENT;
+import static com.intellij.ibeetl.lang.lexer.BeetlTokenTypes.MULTILINE_COMMENT;
+
 public class BeetlParserDefinition implements ParserDefinition {
 
 	public static final IFileElementType file = new IFileElementType("plus_file", BeetlLanguage.INSTANCE);
 
 	public static final TokenSet WS = TokenSet.create(TokenType.WHITE_SPACE);
-	public static final IElementType WHITE_SPACES = TokenType.WHITE_SPACE;
-	public static final IElementType LINE_COMMENT = new BeetlTokenType("beetl_line_comment");
-	public static final IElementType MULTILINE_COMMENT = new BeetlTokenType("beetl_multiline_comment");
-	public static final IElementType NEW_LINES = new BeetlTokenType("beetl_new_lines");
+
 	public static final TokenSet COMMENTS = TokenSet.create(LINE_COMMENT, MULTILINE_COMMENT);
+
 	public static final TokenSet STRING_LITERAL = TokenSet.create(BeetlTokenTypes.BT_STRING);
 
 

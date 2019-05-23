@@ -3,7 +3,6 @@ package com.intellij.ibeetl.lang.highlight;
 import com.intellij.ibeetl.lang.lexer.BeetlLexer;
 import com.intellij.ibeetl.lang.lexer.BeetlTokenSets;
 import com.intellij.lexer.Lexer;
-import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
@@ -13,8 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.intellij.ibeetl.lang.BeetlParserDefinition.LINE_COMMENT;
-import static com.intellij.ibeetl.lang.BeetlParserDefinition.MULTILINE_COMMENT;
 import static com.intellij.ibeetl.lang.highlight.BeetlSyntaxHighlighterColors.*;
 import static com.intellij.ibeetl.lang.lexer.BeetlTokenTypes.*;
 

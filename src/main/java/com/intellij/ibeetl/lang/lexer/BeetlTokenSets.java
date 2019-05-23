@@ -1,13 +1,13 @@
 package com.intellij.ibeetl.lang.lexer;
 
+import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 
-import static com.intellij.ibeetl.lang.BeetlParserDefinition.WHITE_SPACES;
 import static com.intellij.ibeetl.lang.lexer.BeetlTokenTypes.*;
 
 public interface BeetlTokenSets {
-	TokenSet WHITESPACES = TokenSet.create(new IElementType[]{WHITE_SPACES});
+	TokenSet WHITESPACES = TokenSet.create(new IElementType[]{TokenType.WHITE_SPACE});
 	TokenSet STRINGS = TokenSet.create(new IElementType[]{BT_STRING, BT_ATTRIBUTE_VALUE});
 	TokenSet LITERAL = TokenSet.create(new IElementType[]{BT_NULL, BT_TRUE, BT_FALSE});
 	TokenSet NUMBER = TokenSet.create(new IElementType[]{BT_FLOAT, BT_INT, BT_OCT, BT_HEX});
@@ -18,7 +18,7 @@ public interface BeetlTokenSets {
 	TokenSet KEYWORDS = TokenSet.create(new IElementType[]{BT_BREAK, BT_RETURN, BT_CONTINUE, BT_DEFAULT, BT_INTERFACE, BT_SWITCH, BT_SELECT, BT_CASE, BT_CONST, BT_IF,
 			BT_FOR, BT_ELSE_FOR, BT_ELSE, BT_WHILE, BT_DIRECTIVE, BT_TYPE_, BT_VAR, BT_TRY, BT_CATCH, BT_AJAX, BT_FRAGMENT, BT_FOR_IN});
 
-	TokenSet DELIMITERS = TokenSet.create(new IElementType[]{BT_LDELIMITER, BT_RDELIMITER,BT_HTML_TAG_START,BT_HTML_TAG_END});
+	TokenSet DELIMITERS = TokenSet.create(new IElementType[]{BT_LDELIMITER, BT_RDELIMITER, BT_HTML_TAG_START, BT_HTML_TAG_END});
 	TokenSet PLACEHOLDERS = TokenSet.create(new IElementType[]{BT_LPLACEHOLDER, BT_RPLACEHOLDER});
 
 	TokenSet PARENTHS = TokenSet.create(new IElementType[]{BT_LPAREN, BT_RPAREN});
