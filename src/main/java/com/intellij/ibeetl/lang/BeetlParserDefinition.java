@@ -25,7 +25,7 @@ public class BeetlParserDefinition implements ParserDefinition {
 
 	public static final IFileElementType file = new IFileElementType("plus_file", BeetlLanguage.INSTANCE);
 
-	public static final TokenSet WS = TokenSet.create(TokenType.WHITE_SPACE);
+	public static final TokenSet WS = TokenSet.create(TokenType.WHITE_SPACE,BeetlTokenTypes.WHITE_SPACE);
 
 	public static final TokenSet COMMENTS = TokenSet.create(LINE_COMMENT, MULTILINE_COMMENT);
 

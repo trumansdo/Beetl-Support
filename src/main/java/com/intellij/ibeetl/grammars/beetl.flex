@@ -1,11 +1,9 @@
 package com.intellij.ibeetl.generated.lexer;
 
 import com.intellij.ibeetl.lang.lexer.BeetlTokenTypes;
-import com.intellij.ibeetl.utils.StrUtil;
 import com.intellij.lexer.FlexLexer;
-import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.TokenType;import com.intellij.psi.tree.IElementType;
 
-import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.BTL_TEMPLATE_HTML_TEXT;
 import static com.intellij.psi.TokenType.WHITE_SPACE;
 
 %%
@@ -14,35 +12,9 @@ import static com.intellij.psi.TokenType.WHITE_SPACE;
 	public _BeetlLexer() {
 		this((java.io.Reader)null);
 	}
-	private IElementType lexerTemplateData() {
-		int i = StrUtil.indexOfAny(zzBuffer, zzCurrentPos, "<%", "${", "<#", "</#");
-		if (-1 != i) {
-			zzMarkedPos = i;
-		} else {
-			zzMarkedPos = zzEndRead;
-		}
-		System.out.println("----------------lexerTemplateData start");
-		System.out.println("匹配文本:" + yytext());
-		System.out.println("匹配文本长度" + yylength());
-
-		System.out.println("zzState : " + this.zzState);
-		System.out.println("lexer state: " + yystate());
-		System.out.println("zzLexicalState : " + this.zzLexicalState);
-
-		System.out.println("本次匹配开始位置 : " + this.zzCurrentPos);
-		System.out.println("本次匹配结束位置 : " + this.zzMarkedPos);
-
-		System.out.println("本次开始读取位置 : " + this.zzStartRead);
-		System.out.println("词法结束读取位置 : " + this.zzEndRead);
-		//  	System.out.println(yyline);
-		//  	System.out.println(yychar);
-		//  	System.out.println(yycolumn);
-		System.out.println("----------------lexerTemplateData end");
-		return BTL_TEMPLATE_HTML_TEXT;
-	}
 %}
 
-%debug
+//%debug
 
 %public
 %class _BeetlLexer
@@ -106,8 +78,9 @@ Java允许的首字母非数字标识符
 */
 IDENTIFIER = [:jletter:] [:jletterdigit:]*
 ATTRIBUTE_NAME = ([:jletterdigit:] | "-")+
-ATTRIBUTE_VALUE = ("\"" ([^\\\n\r] )* "\"") | ("'" ([^\\\n\r] )* "'")
+ATTRIBUTE_VALUE = ("\"" ([^\\\n\r])* "\"") | ("'" ([^\\\n\r])* "'")
 
+STRING_NO_WRAP = ("\"" ([^\\\n\r])* "\"") | ("'" ([^\\\n\r])* "'")
 /*双引号和单引号，暂时没用*/
 QUOTE_STR = [\u0022\u0027]
 
@@ -131,8 +104,8 @@ yybegin()方法是切换分析器词法状态
 MAYBE_SEMICOLON：表明当前匹配的字符之后可能具有的词法状态
 */
 <YYINITIAL> {
-	{WHITE_SPACE}+                            { return WHITE_SPACE; }
-	{NEW_LINE}+                               { return BeetlTokenTypes.NEW_LINE; }
+	{WHITE_SPACE}+                            { return TokenType.WHITE_SPACE; }
+	{NEW_LINE}+                               { return BeetlTokenTypes.HTML_NEW_LINE; }
 
 	{LINE_COMMENT}                            { return BeetlTokenTypes.LINE_COMMENT; }
 	{MULTILINE_COMMENT}                       { return BeetlTokenTypes.MULTILINE_COMMENT; }
@@ -140,7 +113,7 @@ MAYBE_SEMICOLON：表明当前匹配的字符之后可能具有的词法状态
 }
 
 <BTL_LEX>{
-	{WHITE_SPACE}+                            { return WHITE_SPACE; }
+	{WHITE_SPACE}+                            { return BeetlTokenTypes.WHITE_SPACE; }
 	{NEW_LINE}                                { return BeetlTokenTypes.NEW_LINE; }
 
 	{LINE_COMMENT}                            { return BeetlTokenTypes.LINE_COMMENT; }
@@ -250,7 +223,7 @@ MAYBE_SEMICOLON：表明当前匹配的字符之后可能具有的词法状态
     .                                         { return BeetlTokenTypes.TEMPORARY; }
 }
 <BTL_HTML_LEX>{
-	{WHITE_SPACE}                             { return WHITE_SPACE; }
+	{WHITE_SPACE}                             { return BeetlTokenTypes.WHITE_SPACE; }
 	{NEW_LINE}                                { return BeetlTokenTypes.NEW_LINE; }
 
 	{LINE_COMMENT}                            { return BeetlTokenTypes.LINE_COMMENT; }
@@ -266,7 +239,7 @@ MAYBE_SEMICOLON：表明当前匹配的字符之后可能具有的词法状态
 }
 
 <BTL_PLACEHOLDER> {
-	{WHITE_SPACE}                             { return WHITE_SPACE; }
+	{WHITE_SPACE}                             { return BeetlTokenTypes.WHITE_SPACE; }
 	"."                                       { return BeetlTokenTypes.BT_DOT; }
 
 	"["                                       { return BeetlTokenTypes.BT_LBRACK; }
@@ -316,7 +289,7 @@ MAYBE_SEMICOLON：表明当前匹配的字符之后可能具有的词法状态
     "@"                                       { return BeetlTokenTypes.BT_AT; }
 
 	{IDENTIFIER}                              { return BeetlTokenTypes.BT_IDENTIFIER; }
-    {ATTRIBUTE_VALUE}                         { return BeetlTokenTypes.BT_ATTRIBUTE_VALUE; }
+    {STRING_NO_WRAP}                          { return BeetlTokenTypes.BT_STRING; }
 	{NUM_INT}                                 { return BeetlTokenTypes.BT_INT; }
 
     .                                         { return BeetlTokenTypes.TEMPORARY; }

@@ -51,8 +51,10 @@ import java.util.Set;
 public interface BeetlTokenTypes {
 
 	IElementType TEMPORARY = new BeetlTokenType("beetl[TEMPORARY]");
-	TokenSet TEMPORARY_SET = TokenSet.create(new IElementType[]{TEMPORARY});
+
+	IElementType WHITE_SPACE = new BeetlTokenType("beetl[white_space]");
 	IElementType NEW_LINE = new BeetlTokenType("beetl[new_line]");
+	IElementType HTML_NEW_LINE = new BeetlTokenType("beetl[template_text_new_line]");
 
 	IElementType LINE_COMMENT = new BeetlTokenType("beetl[line_comment]");
 	IElementType MULTILINE_COMMENT = new BeetlTokenType("beetl[multiline_comment]");

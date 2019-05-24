@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static com.intellij.ibeetl.generated.lexer._BeetlLexer.*;
 import static com.intellij.ibeetl.lang.lexer.BeetlTokenTypes.*;
@@ -22,16 +23,17 @@ import static com.intellij.psi.TokenType.BAD_CHARACTER;
  * 具有前瞻性的词法解析器。
  */
 public class BeetlLexer extends LookAheadLexer {
-	public static final CharSequence[] SPECIAL_MARKS_UP_START = new CharSequence[]{"<%","<#","</#","${"};
-	public static final CharSequence[] SPECIAL_MARKS_UP_END = new CharSequence[]{"%>",">","}"};
 	public static final Map<String,Ternary> MARKS_MAP = new HashMap<>();
-	public static final Ternary BAD = new Ternary(BAD_CHARACTER, 0);
+	public final Ternary BAD = new Ternary(BAD_CHARACTER, 0);
+	public boolean isHtmlToPlace = false;
+	public int ATTR_VALUE_END = Integer.MIN_VALUE;
 	static {
 		MARKS_MAP.put("<%", new Ternary(BT_LDELIMITER, BTL_LEX));
 		MARKS_MAP.put("%>", new Ternary(BT_RDELIMITER, YYINITIAL));
 		MARKS_MAP.put("<#", new Ternary(BT_HTML_TAG_START, BTL_HTML_LEX));
 		MARKS_MAP.put("</#", new Ternary(BT_HTML_TAG_START, BTL_HTML_LEX) );
 		MARKS_MAP.put(">", new Ternary(BT_HTML_TAG_END, YYINITIAL));
+		MARKS_MAP.put("/>", new Ternary(BT_HTML_TAG_END, YYINITIAL));
 		MARKS_MAP.put("${", new Ternary(BT_LPLACEHOLDER, BTL_PLACEHOLDER));
 		MARKS_MAP.put("}", new Ternary(BT_RPLACEHOLDER, YYINITIAL));
 	}
@@ -52,41 +54,65 @@ public class BeetlLexer extends LookAheadLexer {
 		int curIndex = baseLexer.getTokenStart();
 		int end = this.getBufferEnd();
 		CharSequence bufferSequence = baseLexer.getBufferSequence();
+		int lexicalState = baseLexer.getState();
 		if(null==currentToken){
-			addToken(curIndex, BAD_CHARACTER);
 			super.lookAhead(baseLexer);
-		}else if(TEMPORARY_SET.contains(currentToken)){/*处理非beetl词法中的token，*/
-			Ternary ternary = calcuMark(bufferSequence, curIndex);
+		}else if(currentToken==TEMPORARY && lexicalState==YYINITIAL){/*当前token是非beetl词法状态并且是无法识别的token（既是TEMPORARY）*/
+			Ternary ternary = searchTernary(bufferSequence, curIndex,new CharSequence[]{"<%","<#","</#","${"});
 			if(curIndex==ternary.index){/*相等就说明当前位置正好是定界符、占位符，HTML标签*/
 				beetlFlex.start(bufferSequence, ternary.index+ternary.length, end, ternary.lexicalState);
-				addToken(ternary.index+ternary.length, ternary.token);
-				System.out.println(bufferSequence.subSequence(curIndex, ternary.index+ternary.length));
+				super.addToken(ternary.index+ternary.length, ternary.token);
 			}else {
 				beetlFlex.start(bufferSequence, ternary.index, end, ternary.lexicalState);
-				addToken(ternary.index, BeetlIElementTypes.BTL_TEMPLATE_HTML_TEXT);
-				System.out.println(bufferSequence.subSequence(curIndex, ternary.index));
+				super.addToken(ternary.index, BeetlIElementTypes.BTL_TEMPLATE_HTML_TEXT);
 			}
-		}else {
-			Ternary ternary = calcuMark(bufferSequence, curIndex);
+		}else if(lexicalState==BTL_LEX){/*定界符词法状态*/
+			Ternary ternary = searchTernary(bufferSequence, curIndex,new CharSequence[]{"<%","%>"});
 			if(curIndex==ternary.index){/*相等就说明当前位置正好是定界符、占位符，HTML标签*/
 				beetlFlex.start(bufferSequence, ternary.index+ternary.length, end, ternary.lexicalState);
-				addToken(ternary.index+ternary.length, ternary.token);
-				System.out.println(bufferSequence.subSequence(curIndex, ternary.index+ternary.length));
-			}else
-				advanceLexer(baseLexer);
+				super.addToken(ternary.index+ternary.length, ternary.token);
+			}else {
+				super.advanceLexer(baseLexer);
+			}
+		}else if(lexicalState==BTL_HTML_LEX){/*HTML标签词法状态*/
+			Ternary ternary = searchTernary(bufferSequence, curIndex,new CharSequence[]{"<#","</#","/>",">","${"});
+			if(curIndex==ternary.index) {/*相等就说明当前位置正好是定界符、占位符，HTML标签*/
+				beetlFlex.start(bufferSequence, ternary.index + ternary.length, end, ternary.lexicalState);
+				super.addToken(ternary.index + ternary.length, ternary.token);
+			}else if (currentToken==BT_ATTRIBUTE_VALUE && ternary.token==BT_LPLACEHOLDER && ternary.index < beetlFlex.getTokenEnd()){
+				isHtmlToPlace=true;
+				ATTR_VALUE_END=baseLexer.getTokenEnd();
+				beetlFlex.start(bufferSequence, ternary.index, end, ternary.lexicalState);
+				super.addToken(curIndex, BT_ATTRIBUTE_VALUE);
+			}else {
+				if(ATTR_VALUE_END!=Integer.MIN_VALUE){
+					beetlFlex.start(bufferSequence, ATTR_VALUE_END, end, BTL_HTML_LEX);
+					super.addToken(curIndex, BT_ATTRIBUTE_VALUE);
+					ATTR_VALUE_END=Integer.MIN_VALUE;
+				}else {
+					super.advanceLexer(baseLexer);
+				}
+			}
+		}else if(lexicalState==BTL_PLACEHOLDER){/*占位符词法状态*/
+			Ternary ternary = searchTernary(bufferSequence, curIndex,new CharSequence[]{"${","}"});
+			if(curIndex==ternary.index){/*相等就说明当前位置正好是定界符、占位符，HTML标签*/
+				if(isHtmlToPlace && ternary.token==BT_RPLACEHOLDER){
+					beetlFlex.start(bufferSequence, ternary.index+ternary.length, end, BTL_HTML_LEX);
+					super.addToken(ternary.index+ternary.length, ternary.token);
+					isHtmlToPlace=false;
+				}else {
+					beetlFlex.start(bufferSequence, ternary.index+ternary.length, end, ternary.lexicalState);
+					super.addToken(ternary.index+ternary.length, ternary.token);
+				}
+			}else {
+				super.advanceLexer(baseLexer);
+			}
+		}else {
+			super.advanceLexer(baseLexer);
 		}
 	}
 
-	private static Ternary calcuMark(final CharSequence str, final int startPos){
-		Ternary ternaryStart = searchTernary(str, startPos, SPECIAL_MARKS_UP_START);
-		Ternary ternaryEnd = searchTernary(str, startPos, SPECIAL_MARKS_UP_END);
-		if(ternaryStart.index <= ternaryEnd.index){
-			return ternaryStart;
-		}
-		return ternaryEnd;
-	}
-
-	private static Ternary searchTernary(final CharSequence str, final int startPos, final CharSequence... searchStrs) {
+	private Ternary searchTernary(final CharSequence str, final int startPos, final CharSequence... searchStrs) {
 		if (str == null || searchStrs == null) {
 			return BAD;
 		}

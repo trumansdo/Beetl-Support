@@ -40,6 +40,9 @@ public class BeetlSyntaxHighlighter extends SyntaxHighlighterBase {
 		putTokenType(BT_PLACEHOLDER_VALUE, BTL_KEYWORD);
 		putTokenType(LINE_COMMENT, BTL_LINE_COMMENT);
 		putTokenType(MULTILINE_COMMENT, BTL_BLOCK_COMMENT);
+
+		keys2.put(WHITE_SPACE, BTL_BACKGROUND);
+		keys2.put(NEW_LINE, BTL_BACKGROUND);
 	}
 
 	public BeetlSyntaxHighlighter() {
