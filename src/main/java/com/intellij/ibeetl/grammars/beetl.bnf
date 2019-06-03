@@ -33,9 +33,9 @@
 	psiClassPrefix='BP_'
 	psiImplClassSuffix='Impl'
 	psiPackage='com.intellij.ibeetl.generated.psi'
-	psiImplPackage='com.intellij.ibeetl.generated.psi.impl'
+	psiImplPackage='com.intellij.ibeetl.lang.psi.elements.impl'
 
-	psiImplUtilClass="com.intellij.ibeetl.generated.psi.impl.BeetlPsiImplUtil"
+	psiImplUtilClass="com.intellij.ibeetl.lang.psi.elements.impl.BeetlPsiImplUtil"
 	psiTreeUtilClass='com.intellij.ibeetl.generated.psi.BeetlPsiTreeUtil'
 	parserUtilClass="com.intellij.ibeetl.generated.parser.BeetlParserUtil"
 	/*

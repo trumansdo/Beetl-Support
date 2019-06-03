@@ -1,6 +1,6 @@
 package com.intellij.ibeetl.lang.base;
 
-import com.intellij.ibeetl.generated.psi.BPVisitor;
+import com.intellij.ibeetl.lang.psi.elements.BeetlPsiElementVisitor;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,5 +9,5 @@ import org.jetbrains.annotations.NotNull;
  * PsiNamedElement 支撑find 引用功能
  */
 public interface BeetlPsiNamedElement extends PsiNameIdentifierOwner {
-	<R> R accept(@NotNull BPVisitor<R> visitor);
+	<R> R accept(@NotNull BeetlPsiElementVisitor<R> visitor);
 }
