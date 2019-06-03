@@ -31,10 +31,21 @@
 
 
 // This is a generated file. Not intended for manual editing.
-package com.intellij.ibeetl.generated.psi;
+package com.intellij.ibeetl.lang.psi.elements;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
+import org.jetbrains.annotations.NotNull;
 
-public interface BPType_ extends PsiElement {
+public class BeetlPsiElementVisitor<R> extends PsiElementVisitor {
+
+  public R visitAjax(@NotNull BeetlAjax o) {
+    return visitPsiElement(o);
+  }
+
+  public R visitPsiElement(@NotNull PsiElement o) {
+    visitElement(o);
+    return null;
+  }
 
 }

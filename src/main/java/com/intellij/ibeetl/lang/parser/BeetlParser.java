@@ -34,6 +34,7 @@ package com.intellij.ibeetl.lang.parser;
 import com.intellij.lang.pratt.*;
 
 import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.BTL_TEMPLATE_HTML_TEXT;
+import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.VIRTUAL_ROOT;
 import static com.intellij.ibeetl.lang.lexer.BeetlTokenTypes.*;
 import static com.intellij.ibeetl.lang.psi.BeetlPrattRegistry.REGISTRY;
 import static com.intellij.ibeetl.lang.psi.BeetlPrattRegistry.registerParser;
@@ -47,7 +48,7 @@ public class BeetlParser extends PrattParser {
 		if (!builder.isEof()) {
 			super.parse(builder);
 		}
-		rootTag.drop();
+		rootTag.finish(VIRTUAL_ROOT);
 	}
 
 	@Override

@@ -29,30 +29,27 @@
  */
 
 
-
 // This is a generated file. Not intended for manual editing.
-package com.intellij.ibeetl.generated.psi.impl;
+package com.intellij.ibeetl.lang.psi.elements;
 
-import com.intellij.ibeetl.generated.psi.BPColon;
-import com.intellij.ibeetl.generated.psi.BPVisitor;
 import com.intellij.ibeetl.lang.base.BeetlCompositePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BPColonImpl extends BeetlCompositePsiElement implements BPColon {
+public class BeetlAjax extends BeetlCompositePsiElement {
 
-  public BPColonImpl(@NotNull ASTNode node) {
-    super(node);
-  }
+	public BeetlAjax(@NotNull ASTNode node) {
+		super(node);
+	}
 
-  public <R> R accept(@NotNull BPVisitor<R> visitor) {
-    return visitor.visitColon(this);
-  }
+	public <R> R accept(@NotNull BeetlPsiElementVisitor<R> visitor) {
+		return visitor.visitAjax(this);
+	}
 
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof BPVisitor) accept((BPVisitor)visitor);
-    else super.accept(visitor);
-  }
+	public void accept(@NotNull PsiElementVisitor visitor) {
+		if (visitor instanceof BeetlPsiElementVisitor) accept((BeetlPsiElementVisitor) visitor);
+		else super.accept(visitor);
+	}
 
 }
