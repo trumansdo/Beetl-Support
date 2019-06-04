@@ -1,4 +1,4 @@
-package com.intellij.ibeetl.lang.psi;
+package com.intellij.ibeetl.lang.parser;
 
 import com.intellij.lang.pratt.PathPattern;
 import com.intellij.lang.pratt.PrattRegistry;
