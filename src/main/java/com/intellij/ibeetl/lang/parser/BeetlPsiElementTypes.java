@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface BeetlPsiElementTypes {
 	BeetlIElementType NUMBER = new BeetlIElementType("Number");
-	BeetlIElementType LDELIMITER = new BeetlIElementType("LeftDelimiter");
+	BeetlIElementType BEETL_BLOCK = new BeetlIElementType("BeetlSyntaxBlock");
 	BeetlIElementType BINARY_EXPRESSION = new BeetlIElementType("BinaryExpression") {
 		public PsiElement createPsiElement(ASTNode node) {
 			return new BeetlBinaryExpression(node);
