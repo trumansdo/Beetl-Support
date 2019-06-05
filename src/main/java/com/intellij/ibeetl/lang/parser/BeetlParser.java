@@ -32,16 +32,13 @@
 package com.intellij.ibeetl.lang.parser;
 
 import com.intellij.lang.pratt.*;
-import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.BTL_TEMPLATE_HTML_TEXT;
 import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.VIRTUAL_ROOT;
 import static com.intellij.ibeetl.lang.lexer.BeetlTokenTypes.*;
 import static com.intellij.ibeetl.lang.parser.BeetlPrattRegistry.REGISTRY;
 import static com.intellij.ibeetl.lang.parser.BeetlPrattRegistry.registerParser;
-import static com.intellij.ibeetl.lang.parser.BeetlPsiElementTypes.LDELIMITER;
-import static com.intellij.ibeetl.lang.parser.BeetlPsiElementTypes.NUMBER;
+import static com.intellij.ibeetl.lang.parser.BeetlPsiElementTypes.BEETL_BLOCK;
 
 public class BeetlParser extends PrattParser {
 
@@ -62,14 +59,18 @@ public class BeetlParser extends PrattParser {
 
 	static {
 		registerParser(BTL_TEMPLATE_HTML_TEXT, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_LDELIMITER, 1, new AppendTokenParser() {
-			@Nullable
+		registerParser(BT_RDELIMITER, 1, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_LDELIMITER, 1, new TokenParser() {
 			@Override
-			protected IElementType parseAppend(PrattBuilder builder) {
-				return LDELIMITER;
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				MutableMarker mark = prattBuilder.mark();
+				prattBuilder.advance();
+				prattBuilder.createChildBuilder(0).parse();
+				prattBuilder.checkToken(BT_RDELIMITER);
+				mark.finish(BEETL_BLOCK);
+				return true;
 			}
 		});
-		registerParser(BT_RDELIMITER, 1, AppendTokenParser.JUST_APPEND);
 
 		registerParser(BT_IDENTIFIER, 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_STRING, 1, AppendTokenParser.JUST_APPEND);
@@ -87,12 +88,14 @@ public class BeetlParser extends PrattParser {
 		registerParser(BT_ASSIGN, 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_ATTRIBUTE_NAME, 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_ATTRIBUTE_VALUE, 1, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_SEMICOLON, 12, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_VAR, 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_FOR, 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_FOR_IN, 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_IF, 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_ELSE, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_INT, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_PLUS, 57,PathPattern.path().left(BT_INT), TokenParser.infix(57,BeetlPsiElementTypes.BINARY_EXPRESSION));
+		registerParser(BT_INT, 11, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_PLUS, 57, TokenParser.infix(10,BeetlPsiElementTypes.BINARY_EXPRESSION));
 		registerParser(BT_INCREASE, 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_DOT, 1, AppendTokenParser.JUST_APPEND);
 	}
