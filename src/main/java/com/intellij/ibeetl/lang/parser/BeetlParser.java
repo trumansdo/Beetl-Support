@@ -43,7 +43,12 @@ import static com.intellij.ibeetl.lang.parser.BeetlPrattRegistry.registerParser;
 import static com.intellij.ibeetl.lang.parser.BeetlPsiElementTypes.BEETL_BLOCK;
 
 public class BeetlParser extends PrattParser {
+	/*定义整个语法解析中的等级层次*/
+	/**
+	 * 初始化等级最低，表示接受所有的token
+	 */
 	public static final int INIT_LEVEL=0;
+
 
 	@Override
 	protected void parse(PrattBuilder builder) {
