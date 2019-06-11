@@ -50,110 +50,110 @@ import java.util.Set;
 
 public interface BeetlTokenTypes {
 
-	IElementType TEMPORARY = new BeetlTokenType("beetl[TEMPORARY]");
+	BeetlTokenType TEMPORARY = new BeetlTokenType("beetl[TEMPORARY]");
 
-	IElementType WHITE_SPACE = new BeetlTokenType("beetl[white_space]");
-	IElementType NEW_LINE = new BeetlTokenType("beetl[new_line]");
-	IElementType HTML_NEW_LINE = new BeetlTokenType("beetl[template_text_new_line]");
+	BeetlTokenType WHITE_SPACE = new BeetlTokenType("beetl[white_space]");
+	BeetlTokenType NEW_LINE = new BeetlTokenType("beetl[new_line]");
+	BeetlTokenType HTML_NEW_LINE = new BeetlTokenType("beetl[template_text_new_line]");
 
-	IElementType LINE_COMMENT = new BeetlTokenType("beetl[line_comment]");
-	IElementType MULTILINE_COMMENT = new BeetlTokenType("beetl[multiline_comment]");
+	BeetlTokenType LINE_COMMENT = new BeetlTokenType("beetl[line_comment]");
+	BeetlTokenType MULTILINE_COMMENT = new BeetlTokenType("beetl[multiline_comment]");
 
-	IElementType BT_LPLACEHOLDER = new BeetlTokenType("beetl[lplaceholder]");
-	IElementType BT_RPLACEHOLDER = new BeetlTokenType("beetl[rplaceholder]");
+	BeetlTokenType BT_LPLACEHOLDER = new BeetlTokenType("beetl[lplaceholder]");
+	BeetlTokenType BT_RPLACEHOLDER = new BeetlTokenType("beetl[rplaceholder]");
 
-	IElementType BT_LDELIMITER = new BeetlTokenType("beetl[<%]");
-	IElementType BT_RDELIMITER = new BeetlTokenType("beetl[%>]");
+	BeetlTokenType BT_LDELIMITER = new BeetlTokenType("beetl[<%]");
+	BeetlTokenType BT_RDELIMITER = new BeetlTokenType("beetl[%>]");
 
-	IElementType BT_HTML_TAG_END = new BeetlTokenType("beetl[html_tag_end]");
-	IElementType BT_HTML_TAG_START = new BeetlTokenType("beetl[html_tag_start]");
+	BeetlTokenType BT_HTML_TAG_END = new BeetlTokenType("beetl[html_tag_end]");
+	BeetlTokenType BT_HTML_TAG_START = new BeetlTokenType("beetl[html_tag_start]");
 
-	IElementType BT_AJAX = new BeetlTokenType("beetl[#ajax]");
-	IElementType BT_ASSIGN = new BeetlTokenType("beetl[=]");
-	IElementType BT_AT = new BeetlTokenType("beetl[@]");
-	IElementType BT_BIT_AND = new BeetlTokenType("beetl[&]");
-	IElementType BT_BIT_AND_ASSIGN = new BeetlTokenType("beetl[&=]");
-	IElementType BT_BIT_OR = new BeetlTokenType("beetl[|]");
-	IElementType BT_BIT_OR_ASSIGN = new BeetlTokenType("beetl[|=]");
-	IElementType BT_BIT_XOR = new BeetlTokenType("beetl[^]");
-	IElementType BT_BIT_XOR_ASSIGN = new BeetlTokenType("beetl[^=]");
-	IElementType BT_BREAK = new BeetlTokenType("beetl[break]");
-	IElementType BT_CASE = new BeetlTokenType("beetl[case]");
-	IElementType BT_CATCH = new BeetlTokenType("beetl[catch]");
-	IElementType BT_COLON = new BeetlTokenType("beetl[:]");
-	IElementType BT_COMMA = new BeetlTokenType("beetl[,]");
-	IElementType BT_COND_AND = new BeetlTokenType("beetl[&&]");
-	IElementType BT_COND_OR = new BeetlTokenType("beetl[||]");
-	IElementType BT_CONST = new BeetlTokenType("beetl[const]");
-	IElementType BT_CONTINUE = new BeetlTokenType("beetl[continue]");
-	IElementType BT_DECREASE = new BeetlTokenType("beetl[--]");
-	IElementType BT_DEFAULT = new BeetlTokenType("beetl[default]");
-	IElementType BT_DIRECTIVE = new BeetlTokenType("beetl[directive]");
-	IElementType BT_DOT = new BeetlTokenType("beetl[.]");
-	IElementType BT_ELSE = new BeetlTokenType("beetl[else]");
-	IElementType BT_ELSE_FOR = new BeetlTokenType("beetl[elsefor]");
-	IElementType BT_EQ = new BeetlTokenType("beetl[==]");
-	IElementType BT_FALSE = new BeetlTokenType("beetl[false]");
-	IElementType BT_FOR = new BeetlTokenType("beetl[for]");
-	IElementType BT_FOR_IN = new BeetlTokenType("beetl[in]");
-	IElementType BT_FRAGMENT = new BeetlTokenType("beetl[#fragment]");
-	IElementType BT_GREATER = new BeetlTokenType("beetl[>]");
-	IElementType BT_GREATER_OR_EQUAL = new BeetlTokenType("beetl[>=]");
+	BeetlTokenType BT_AJAX = new BeetlTokenType("beetl[#ajax]");
+	BeetlTokenType BT_ASSIGN = new BeetlTokenType("beetl[=]");
+	BeetlTokenType BT_AT = new BeetlTokenType("beetl[@]");
+	BeetlTokenType BT_BIT_AND = new BeetlTokenType("beetl[&]");
+	BeetlTokenType BT_BIT_AND_ASSIGN = new BeetlTokenType("beetl[&=]");
+	BeetlTokenType BT_BIT_OR = new BeetlTokenType("beetl[|]");
+	BeetlTokenType BT_BIT_OR_ASSIGN = new BeetlTokenType("beetl[|=]");
+	BeetlTokenType BT_BIT_XOR = new BeetlTokenType("beetl[^]");
+	BeetlTokenType BT_BIT_XOR_ASSIGN = new BeetlTokenType("beetl[^=]");
+	BeetlTokenType BT_BREAK = new BeetlTokenType("beetl[break]");
+	BeetlTokenType BT_CASE = new BeetlTokenType("beetl[case]");
+	BeetlTokenType BT_CATCH = new BeetlTokenType("beetl[catch]");
+	BeetlTokenType BT_COLON = new BeetlTokenType("beetl[:]");
+	BeetlTokenType BT_COMMA = new BeetlTokenType("beetl[,]");
+	BeetlTokenType BT_COND_AND = new BeetlTokenType("beetl[&&]");
+	BeetlTokenType BT_COND_OR = new BeetlTokenType("beetl[||]");
+	BeetlTokenType BT_CONST = new BeetlTokenType("beetl[const]");
+	BeetlTokenType BT_CONTINUE = new BeetlTokenType("beetl[continue]");
+	BeetlTokenType BT_DECREASE = new BeetlTokenType("beetl[--]");
+	BeetlTokenType BT_DEFAULT = new BeetlTokenType("beetl[default]");
+	BeetlTokenType BT_DIRECTIVE = new BeetlTokenType("beetl[directive]");
+	BeetlTokenType BT_DOT = new BeetlTokenType("beetl[.]");
+	BeetlTokenType BT_ELSE = new BeetlTokenType("beetl[else]");
+	BeetlTokenType BT_ELSE_FOR = new BeetlTokenType("beetl[elsefor]");
+	BeetlTokenType BT_EQ = new BeetlTokenType("beetl[==]");
+	BeetlTokenType BT_FALSE = new BeetlTokenType("beetl[false]");
+	BeetlTokenType BT_FOR = new BeetlTokenType("beetl[for]");
+	BeetlTokenType BT_FOR_IN = new BeetlTokenType("beetl[in]");
+	BeetlTokenType BT_FRAGMENT = new BeetlTokenType("beetl[#fragment]");
+	BeetlTokenType BT_GREATER = new BeetlTokenType("beetl[>]");
+	BeetlTokenType BT_GREATER_OR_EQUAL = new BeetlTokenType("beetl[>=]");
 
-	IElementType BT_IF = new BeetlTokenType("beetl[if]");
-	IElementType BT_INCREASE = new BeetlTokenType("beetl[++]");
-	IElementType BT_INTERFACE = new BeetlTokenType("beetl[interface]");
-	IElementType BT_LBRACE = new BeetlTokenType("beetl[{]");
-	IElementType BT_LBRACK = new BeetlTokenType("beetl[[]");
+	BeetlTokenType BT_IF = new BeetlTokenType("beetl[if]");
+	BeetlTokenType BT_INCREASE = new BeetlTokenType("beetl[++]");
+	BeetlTokenType BT_INTERFACE = new BeetlTokenType("beetl[interface]");
+	BeetlTokenType BT_LBRACE = new BeetlTokenType("beetl[{]");
+	BeetlTokenType BT_LBRACK = new BeetlTokenType("beetl[[]");
 
 
-	IElementType BT_LESS = new BeetlTokenType("beetl[<]");
-	IElementType BT_LESS_OR_EQUAL = new BeetlTokenType("beetl[<=]");
+	BeetlTokenType BT_LESS = new BeetlTokenType("beetl[<]");
+	BeetlTokenType BT_LESS_OR_EQUAL = new BeetlTokenType("beetl[<=]");
 
-	IElementType BT_LPAREN = new BeetlTokenType("beetl[(]");
-	IElementType BT_RPAREN = new BeetlTokenType("beetl[)]");
+	BeetlTokenType BT_LPAREN = new BeetlTokenType("beetl[(]");
+	BeetlTokenType BT_RPAREN = new BeetlTokenType("beetl[)]");
 
-	IElementType BT_MINUS = new BeetlTokenType("beetl[-]");
-	IElementType BT_MINUS_ASSIGN = new BeetlTokenType("beetl[-=]");
-	IElementType BT_MUL = new BeetlTokenType("beetl[*]");
-	IElementType BT_MUL_ASSIGN = new BeetlTokenType("beetl[*=]");
-	IElementType BT_NOT = new BeetlTokenType("beetl[!]");
-	IElementType BT_NOT_EQ = new BeetlTokenType("beetl[!=]");
-	IElementType BT_NULL = new BeetlTokenType("beetl[null]");
-	IElementType BT_NUMBER = new BeetlTokenType("beetl[number]");
-	IElementType BT_PLUS = new BeetlTokenType("beetl[+]");
-	IElementType BT_PLUS_ASSIGN = new BeetlTokenType("beetl[+=]");
-	IElementType BT_QUESTOIN = new BeetlTokenType("beetl[?]");
-	IElementType BT_QUOTIENT = new BeetlTokenType("beetl[/]");
-	IElementType BT_QUOTIENT_ASSIGN = new BeetlTokenType("beetl[/=]");
-	IElementType BT_RBRACE = new BeetlTokenType("beetl[}]");
-	IElementType BT_RBRACK = new BeetlTokenType("beetl[]]");
+	BeetlTokenType BT_MINUS = new BeetlTokenType("beetl[-]");
+	BeetlTokenType BT_MINUS_ASSIGN = new BeetlTokenType("beetl[-=]");
+	BeetlTokenType BT_MUL = new BeetlTokenType("beetl[*]");
+	BeetlTokenType BT_MUL_ASSIGN = new BeetlTokenType("beetl[*=]");
+	BeetlTokenType BT_NOT = new BeetlTokenType("beetl[!]");
+	BeetlTokenType BT_NOT_EQ = new BeetlTokenType("beetl[!=]");
+	BeetlTokenType BT_NULL = new BeetlTokenType("beetl[null]");
+	BeetlTokenType BT_NUMBER = new BeetlTokenType("beetl[number]");
+	BeetlTokenType BT_PLUS = new BeetlTokenType("beetl[+]");
+	BeetlTokenType BT_PLUS_ASSIGN = new BeetlTokenType("beetl[+=]");
+	BeetlTokenType BT_QUESTOIN = new BeetlTokenType("beetl[?]");
+	BeetlTokenType BT_QUOTIENT = new BeetlTokenType("beetl[/]");
+	BeetlTokenType BT_QUOTIENT_ASSIGN = new BeetlTokenType("beetl[/=]");
+	BeetlTokenType BT_RBRACE = new BeetlTokenType("beetl[}]");
+	BeetlTokenType BT_RBRACK = new BeetlTokenType("beetl[]]");
 
-	IElementType BT_REMAINDER = new BeetlTokenType("beetl[%]");
-	IElementType BT_REMAINDER_ASSIGN = new BeetlTokenType("beetl[%=]");
-	IElementType BT_RETURN = new BeetlTokenType("beetl[return]");
-	IElementType BT_SELECT = new BeetlTokenType("beetl[select]");
-	IElementType BT_SEMICOLON = new BeetlTokenType("beetl[;]");
-	IElementType BT_SHIFT_LEFT = new BeetlTokenType("beetl[<<]");
-	IElementType BT_SHIFT_RIGHT = new BeetlTokenType("beetl[>>]");
+	BeetlTokenType BT_REMAINDER = new BeetlTokenType("beetl[%]");
+	BeetlTokenType BT_REMAINDER_ASSIGN = new BeetlTokenType("beetl[%=]");
+	BeetlTokenType BT_RETURN = new BeetlTokenType("beetl[return]");
+	BeetlTokenType BT_SELECT = new BeetlTokenType("beetl[select]");
+	BeetlTokenType BT_SEMICOLON = new BeetlTokenType("beetl[;]");
+	BeetlTokenType BT_SHIFT_LEFT = new BeetlTokenType("beetl[<<]");
+	BeetlTokenType BT_SHIFT_RIGHT = new BeetlTokenType("beetl[>>]");
 
-	IElementType BT_SWITCH = new BeetlTokenType("beetl[switch]");
-	IElementType BT_TRUE = new BeetlTokenType("beetl[true]");
-	IElementType BT_TRY = new BeetlTokenType("beetl[try]");
-	IElementType BT_TYPE_ = new BeetlTokenType("beetl[@type]");
-	IElementType BT_VAR = new BeetlTokenType("beetl[var]");
-	IElementType BT_VIRTUAL = new BeetlTokenType("beetl[.~]");
-	IElementType BT_WHILE = new BeetlTokenType("beetl[while]");
+	BeetlTokenType BT_SWITCH = new BeetlTokenType("beetl[switch]");
+	BeetlTokenType BT_TRUE = new BeetlTokenType("beetl[true]");
+	BeetlTokenType BT_TRY = new BeetlTokenType("beetl[try]");
+	BeetlTokenType BT_TYPE_ = new BeetlTokenType("beetl[@type]");
+	BeetlTokenType BT_VAR = new BeetlTokenType("beetl[var]");
+	BeetlTokenType BT_VIRTUAL = new BeetlTokenType("beetl[.~]");
+	BeetlTokenType BT_WHILE = new BeetlTokenType("beetl[while]");
 
-	IElementType BT_IDENTIFIER = new BeetlTokenType("beetl[identifier]");
-	IElementType BT_INT = new BeetlTokenType("beetl[integer]");
-	IElementType BT_ATTRIBUTE_NAME = new BeetlTokenType("beetl[attribute_name]");
-	IElementType BT_PLACEHOLDER_VALUE = new BeetlTokenType("beetl[placeholder_value]");
-	IElementType BT_FLOAT = new BeetlTokenType("beetl[float]");
-	IElementType BT_OCT = new BeetlTokenType("beetl[oct]");
-	IElementType BT_ATTRIBUTE_VALUE = new BeetlTokenType("beetl[attribute_value]");
-	IElementType BT_HEX = new BeetlTokenType("beetl[hex]");
-	IElementType BT_STRING = new BeetlTokenType("beetl[string]");
+	BeetlTokenType BT_IDENTIFIER = new BeetlTokenType("beetl[identifier]");
+	BeetlTokenType BT_INT = new BeetlTokenType("beetl[integer]");
+	BeetlTokenType BT_ATTRIBUTE_NAME = new BeetlTokenType("beetl[attribute_name]");
+	BeetlTokenType BT_PLACEHOLDER_VALUE = new BeetlTokenType("beetl[placeholder_value]");
+	BeetlTokenType BT_FLOAT = new BeetlTokenType("beetl[float]");
+	BeetlTokenType BT_OCT = new BeetlTokenType("beetl[oct]");
+	BeetlTokenType BT_ATTRIBUTE_VALUE = new BeetlTokenType("beetl[attribute_value]");
+	BeetlTokenType BT_HEX = new BeetlTokenType("beetl[hex]");
+	BeetlTokenType BT_STRING = new BeetlTokenType("beetl[string]");
 
 	class Classes {
 
