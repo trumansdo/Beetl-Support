@@ -41,7 +41,7 @@ import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.VIRTUAL_ROOT;
 import static com.intellij.ibeetl.lang.lexer.BeetlTokenTypes.*;
 import static com.intellij.ibeetl.lang.parser.BeetlPrattRegistry.REGISTRY;
 import static com.intellij.ibeetl.lang.parser.BeetlPrattRegistry.registerParser;
-import static com.intellij.ibeetl.lang.parser.BeetlPsiElementTypes.BEETL_BLOCK;
+import static com.intellij.ibeetl.lang.parser.BeetlPsiElementTypes.*;
 
 public class BeetlParser extends PrattParser {
 	/* 定义整个语法解析中的等级层次。这里只是定义了一种跨度，在具体的解析等级时，需要在所属等级向上调整 */
@@ -104,8 +104,7 @@ public class BeetlParser extends PrattParser {
 		 * PrattParsingUtil.searchFor(prattBuilder, false, BT_RDELIMITER);在当前的token位置开始向前搜索，直到搜索到指定的token位置。
 		 *    第二个参数是否消费搜索到的指定token，也就是搜索到指定token后，向前推进一位。
 		 * */
-		registerParser(BTL_TEMPLATE_HTML_TEXT, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_LDELIMITER, 1, new TokenParser() {
+		registerParser(BT_LDELIMITER, -1, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
@@ -117,8 +116,33 @@ public class BeetlParser extends PrattParser {
 				return true;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
 			}
 		});
-
-		registerParser(BT_IDENTIFIER, 1, new AppendTokenParser() {
+		registerParser(BT_LPLACEHOLDER, -1, new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				MutableMarker mark = prattBuilder.mark();
+				prattBuilder.advance();
+//				todo 解析占位符子解析器等级要改
+				prattBuilder.createChildBuilder(INIT_LEVEL).parse();
+				PrattParsingUtil.searchFor(prattBuilder, false, BT_RPLACEHOLDER);
+				prattBuilder.checkToken(BT_RPLACEHOLDER);
+				mark.finish(INTERPOLATION);
+				return true;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
+			}
+		});
+		registerParser(BT_HTML_TAG_START, -1, new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				MutableMarker mark = prattBuilder.mark();
+				prattBuilder.advance();
+//				todo 解析HTML标签子解析器等级要改
+				prattBuilder.createChildBuilder(INIT_LEVEL).parse();
+				PrattParsingUtil.searchFor(prattBuilder, false, BT_HTML_TAG_END);
+				prattBuilder.checkToken(BT_HTML_TAG_END);
+				mark.finish(HTML_TAG);
+				return true;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
+			}
+		});
+		registerParser(BT_IDENTIFIER, CONSTANT_LEVEL, new AppendTokenParser() {
 			@Nullable
 			@Override
 			protected IElementType parseAppend(PrattBuilder prattBuilder) {
@@ -131,26 +155,25 @@ public class BeetlParser extends PrattParser {
 		registerParser(BT_RBRACE, 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_LBRACK, 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_RBRACK, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_LPLACEHOLDER, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_RPLACEHOLDER, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_PLACEHOLDER_VALUE, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_HTML_TAG_START, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_HTML_TAG_END, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_ASSIGN, 1, TokenParser.infix(11, BeetlPsiElementTypes.VAR_DEFINIED));
+		registerParser(BT_ASSIGN, 1, TokenParser.infix(11, BeetlPsiElementTypes.ASSIGNMENT_EXPRESSION));
 		registerParser(BT_ATTRIBUTE_NAME, 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_ATTRIBUTE_VALUE, 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_SEMICOLON, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_INT, 12, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_PLUS, 57, TokenParser.infix(10, BeetlPsiElementTypes.BINARY_EXPRESSION));
-		registerParser(BT_INCREASE, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_DOT, 1, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_PLUS, EXPRESSION_LEVEL, TokenParser.infix(10, BeetlPsiElementTypes.BINARY_EXPRESSION));
+		registerParser(BT_INCREASE, EXPRESSION_LEVEL, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_DOT, 11, TokenParser.infix(12, BeetlPsiElementTypes.REFERENCE_EXPRESSION));
 
+		registerParser(BT_INT, CONSTANT_LEVEL, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_FLOAT, CONSTANT_LEVEL, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_OCT, CONSTANT_LEVEL, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_HEX, CONSTANT_LEVEL, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_STRING, CONSTANT_LEVEL, AppendTokenParser.JUST_APPEND);
 		/**
 		 * 因为有可能将换行作为定界符，所以没有在ParserDefinition中将换行加入到空白符集。因为空白符在解析时会被忽视。所以这里暂定为直接加到语法树中。
 		* */
 		registerParser(NEW_LINE, CONSTANT_LEVEL, AppendTokenParser.JUST_APPEND);
 		registerParser(BeetlTokenSets.KEYWORDS.getTypes(), CONSTANT_LEVEL, AppendTokenParser.JUST_APPEND);
+		registerParser(BTL_TEMPLATE_HTML_TEXT, -1, AppendTokenParser.JUST_APPEND);
 	}
 
 }

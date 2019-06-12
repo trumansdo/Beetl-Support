@@ -80,7 +80,7 @@ public class BeetlLexer extends LookAheadLexer {
 				beetlFlex.start(bufferSequence, ternary.index + ternary.length, end, ternary.lexicalState);
 				super.addToken(ternary.index + ternary.length, ternary.token);
 			}else if (currentToken==BT_ATTRIBUTE_VALUE && ternary.token==BT_LPLACEHOLDER && ternary.index < beetlFlex.getTokenEnd()){
-				isHtmlToPlace=true;
+				isHtmlToPlace=true;//在HTML标签中解析到占位符
 				ATTR_VALUE_END=baseLexer.getTokenEnd();
 				beetlFlex.start(bufferSequence, ternary.index, end, ternary.lexicalState);
 				super.addToken(curIndex, BT_ATTRIBUTE_VALUE);

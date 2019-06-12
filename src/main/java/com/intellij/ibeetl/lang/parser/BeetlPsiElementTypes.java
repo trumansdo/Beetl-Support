@@ -10,10 +10,14 @@ public interface BeetlPsiElementTypes {
 	BeetlIElementType NUMBER = new BeetlIElementType("Number");
 	BeetlIElementType IDENTIFIER = new BeetlIElementType("Identifier");
 	BeetlIElementType BEETL_BLOCK = new BeetlIElementType("BeetlSyntaxBlock");
+	BeetlIElementType INTERPOLATION = new BeetlIElementType("BeetlPlaceholder");
+	BeetlIElementType HTML_TAG = new BeetlIElementType("BeetlHtmlTagFunction");
 	BeetlIElementType BINARY_EXPRESSION = new BeetlIElementType("BinaryExpression") {
 		public PsiElement createPsiElement(ASTNode node) {
 			return new BeetlBinaryExpression(node);
 		}
 	};
-	BeetlIElementType VAR_DEFINIED = new BeetlIElementType("VarDefinied");
+
+	BeetlIElementType ASSIGNMENT_EXPRESSION = new BeetlIElementType("AssignmentExpression");
+	BeetlIElementType REFERENCE_EXPRESSION = new BeetlIElementType("ReferenceExpression");
 }
