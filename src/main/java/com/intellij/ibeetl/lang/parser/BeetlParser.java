@@ -145,24 +145,23 @@ public class BeetlParser extends PrattParser {
 				return true;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
 			}
 		});
-		registerParser(BT_IDENTIFIER, CONSTANT_LEVEL, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_IDENTIFIER, CONSTANT_LEVEL, new AppendTokenParser() {
+			@Nullable
+			@Override
+			protected IElementType parseAppend(PrattBuilder prattBuilder) {
+				return REFERENCE_EXPRESSION;
+			}
+		});
 		registerParser(BT_LPAREN, 2, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_RPAREN, 2, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_LBRACE, 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_RBRACE, 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_LBRACK, 2, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_RBRACK, 2, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_ASSIGN, 1, PathPattern.path().left(StandardPatterns.object(BT_IDENTIFIER)), TokenParser.infix(1, BeetlPsiElementTypes.ASSIGNMENT_EXPRESSION));
+		registerParser(BT_ASSIGN, 1, PathPattern.path().left(StandardPatterns.object(REFERENCE_EXPRESSION)), TokenParser.infix(1, BeetlPsiElementTypes.ASSIGNMENT_EXPRESSION));
 		registerParser(BT_ATTRIBUTE_NAME, 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_ATTRIBUTE_VALUE, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_SEMICOLON, CONSTANT_LEVEL, new AppendTokenParser() {
-			@Nullable
-			@Override
-			protected IElementType parseAppend(PrattBuilder prattBuilder) {
-				prattBuilder.withLowestPriority(Integer.MAX_VALUE);
-				return null;
-			}
-		});
+		registerParser(BT_SEMICOLON, 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_PLUS, EXPRESSION_LEVEL, TokenParser.infix(10, BeetlPsiElementTypes.BINARY_EXPRESSION));
 		registerParser(BT_INCREASE, EXPRESSION_LEVEL, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_DOT, 11, PathPattern.path().left(or(object(BT_IDENTIFIER),object(REFERENCE_EXPRESSION))), new ReducingParser() {
@@ -182,13 +181,7 @@ public class BeetlParser extends PrattParser {
 		/**
 		 * 因为有可能将换行作为定界符，所以没有在ParserDefinition中将换行加入到空白符集。因为空白符在解析时会被忽视。所以这里暂定为直接加到语法树中。
 		* */
-		registerParser(NEW_LINE, CONSTANT_LEVEL, new TokenParser() {
-			@Override
-			public boolean parseToken(PrattBuilder prattBuilder) {
-
-				return false;
-			}
-		});
+		registerParser(NEW_LINE, CONSTANT_LEVEL, AppendTokenParser.JUST_APPEND);
 		registerParser(BeetlTokenSets.KEYWORDS.getTypes(), CONSTANT_LEVEL, AppendTokenParser.JUST_APPEND);
 		registerParser(BTL_TEMPLATE_HTML_TEXT, -1, AppendTokenParser.JUST_APPEND);
 	}
