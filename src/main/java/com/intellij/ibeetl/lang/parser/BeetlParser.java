@@ -115,7 +115,7 @@ public class BeetlParser extends PrattParser {
 				prattBuilder.createChildBuilder(INIT_LEVEL).parse();
 				PrattParsingUtil.searchFor(prattBuilder, false, BT_RDELIMITER);
 				prattBuilder.checkToken(BT_RDELIMITER);
-				mark.finish(BEETL_BLOCK);
+				mark.finish(null);
 				return true;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
 			}
 		});
