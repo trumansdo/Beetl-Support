@@ -64,9 +64,13 @@ tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
 //将psiviewer插件复制到启动的idea中，等效于从本地安装插件
-task copyTask(type: Copy) {
+/*task copyTask(type: Copy) {
     from 'PsiViewer.jar'
     into 'idea-sandbox/plugins'
+}*/
+task copyTask(type: Copy) {
+    from 'action.script'
+    into 'idea-sandbox/system/plugins'
 }
 runIde.dependsOn copyTask
 
