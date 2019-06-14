@@ -31,6 +31,7 @@
 
 package com.intellij.ibeetl.lang.parser;
 
+import com.intellij.ibeetl.lang.base.BeetlLazyIElementType;
 import com.intellij.ibeetl.lang.lexer.BeetlTokenSets;
 import com.intellij.lang.pratt.*;
 import com.intellij.patterns.StandardPatterns;
@@ -43,6 +44,8 @@ import static com.intellij.ibeetl.lang.lexer.BeetlTokenTypes.*;
 import static com.intellij.ibeetl.lang.parser.BeetlPrattRegistry.REGISTRY;
 import static com.intellij.ibeetl.lang.parser.BeetlPrattRegistry.registerParser;
 import static com.intellij.ibeetl.lang.parser.BeetlPsiElementTypes.*;
+import static com.intellij.lang.pratt.PathPattern.path;
+import static com.intellij.lang.pratt.TokenParser.infix;
 import static com.intellij.patterns.StandardPatterns.object;
 import static com.intellij.patterns.StandardPatterns.or;
 
@@ -145,26 +148,49 @@ public class BeetlParser extends PrattParser {
 				return true;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
 			}
 		});
-		registerParser(BT_IDENTIFIER, CONSTANT_LEVEL, new AppendTokenParser() {
+		registerParser(BT_IDENTIFIER, 100, new AppendTokenParser() {
 			@Nullable
 			@Override
 			protected IElementType parseAppend(PrattBuilder prattBuilder) {
 				return REFERENCE_EXPRESSION;
 			}
 		});
+		/*圆括号*/
 		registerParser(BT_LPAREN, 2, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_RPAREN, 2, AppendTokenParser.JUST_APPEND);
+		/*大括号*/
 		registerParser(BT_LBRACE, 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_RBRACE, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_LBRACK, 2, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_RBRACK, 2, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_ASSIGN, 1, PathPattern.path().left(StandardPatterns.object(REFERENCE_EXPRESSION)), TokenParser.infix(1, BeetlPsiElementTypes.ASSIGNMENT_EXPRESSION));
+		/*中括号*/
+		registerParser(BT_LBRACK, 90, PathPattern.path().up(), new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				MutableMarker mark = prattBuilder.mark();
+				prattBuilder.advance();
+				prattBuilder.createChildBuilder(89).parse();
+				PrattParsingUtil.searchFor(prattBuilder, false,BT_RBRACK);
+				prattBuilder.checkToken(BT_RBRACK);
+				mark.finish(ARRAY_DEFINITION);
+				return true;
+			}
+		});
+
+		registerParser(BT_VAR, 80, TokenParser.infix(85, VAR_DEFINITION_EXPRESSION));
+		registerParser(BT_ASSIGN, 87, path().left(StandardPatterns.object(REFERENCE_EXPRESSION)), infix(89, BeetlPsiElementTypes.ASSIGNMENT_EXPRESSION));
 		registerParser(BT_ATTRIBUTE_NAME, 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_ATTRIBUTE_VALUE, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_SEMICOLON, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_PLUS, EXPRESSION_LEVEL, TokenParser.infix(10, BeetlPsiElementTypes.BINARY_EXPRESSION));
-		registerParser(BT_INCREASE, EXPRESSION_LEVEL, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_DOT, 11, PathPattern.path().left(or(object(BT_IDENTIFIER),object(REFERENCE_EXPRESSION))), new ReducingParser() {
+		registerParser(BT_SEMICOLON, 20, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_COMMA, 86, path().left(), new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				prattBuilder.advance();
+				prattBuilder.createChildBuilder(89).parse();
+				return true;
+			}
+		});
+		registerParser(BT_PLUS, 90, infix(90, BeetlPsiElementTypes.BINARY_EXPRESSION));
+		registerParser(BT_INCREASE, 90, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_DOT, 95, path().left(or(object(BT_IDENTIFIER),object(REFERENCE_EXPRESSION))), new ReducingParser() {
 			@Nullable
 			@Override
 			public IElementType parseFurther(PrattBuilder prattBuilder) {
@@ -173,16 +199,17 @@ public class BeetlParser extends PrattParser {
 			}
 		});
 
-		registerParser(BT_INT, CONSTANT_LEVEL, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_FLOAT, CONSTANT_LEVEL, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_OCT, CONSTANT_LEVEL, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_HEX, CONSTANT_LEVEL, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_STRING, CONSTANT_LEVEL, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_INT, 100, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_FLOAT, 100, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_OCT, 100, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_HEX, 100, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_STRING, 100, AppendTokenParser.JUST_APPEND);
 		/**
 		 * 因为有可能将换行作为定界符，所以没有在ParserDefinition中将换行加入到空白符集。因为空白符在解析时会被忽视。所以这里暂定为直接加到语法树中。
+		 * 慎重：不建议将换行及控制字符作为定界符，这代表不可预料的bug。推荐将可见字符作为定界符。
 		* */
-		registerParser(NEW_LINE, CONSTANT_LEVEL, AppendTokenParser.JUST_APPEND);
-		registerParser(BeetlTokenSets.KEYWORDS.getTypes(), CONSTANT_LEVEL, AppendTokenParser.JUST_APPEND);
+		registerParser(NEW_LINE, 100, AppendTokenParser.JUST_APPEND);
+		registerParser(BeetlTokenSets.KEYWORDS.getTypes(), -1, AppendTokenParser.JUST_APPEND);
 		registerParser(BTL_TEMPLATE_HTML_TEXT, -1, AppendTokenParser.JUST_APPEND);
 	}
 
