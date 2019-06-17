@@ -31,12 +31,13 @@
 
 package com.intellij.ibeetl.lang.parser;
 
-import com.intellij.ibeetl.lang.base.BeetlLazyIElementType;
 import com.intellij.ibeetl.lang.lexer.BeetlTokenSets;
 import com.intellij.lang.pratt.*;
 import com.intellij.patterns.StandardPatterns;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ListIterator;
 
 import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.BTL_TEMPLATE_HTML_TEXT;
 import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.VIRTUAL_ROOT;
@@ -46,6 +47,7 @@ import static com.intellij.ibeetl.lang.parser.BeetlPrattRegistry.registerParser;
 import static com.intellij.ibeetl.lang.parser.BeetlPsiElementTypes.*;
 import static com.intellij.lang.pratt.PathPattern.path;
 import static com.intellij.lang.pratt.TokenParser.infix;
+import static com.intellij.lang.pratt.TokenParser.postfix;
 import static com.intellij.patterns.StandardPatterns.object;
 import static com.intellij.patterns.StandardPatterns.or;
 
@@ -116,7 +118,6 @@ public class BeetlParser extends PrattParser {
 				MutableMarker mark = prattBuilder.mark();
 				prattBuilder.advance();
 				prattBuilder.createChildBuilder(INIT_LEVEL).parse();
-				PrattParsingUtil.searchFor(prattBuilder, false, BT_RDELIMITER);
 				prattBuilder.checkToken(BT_RDELIMITER);
 				mark.finish(null);
 				return true;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
@@ -129,7 +130,6 @@ public class BeetlParser extends PrattParser {
 				prattBuilder.advance();
 //				todo 解析占位符子解析器等级要改
 				prattBuilder.createChildBuilder(INIT_LEVEL).parse();
-				PrattParsingUtil.searchFor(prattBuilder, false, BT_RPLACEHOLDER);
 				prattBuilder.checkToken(BT_RPLACEHOLDER);
 				mark.finish(INTERPOLATION);
 				return true;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
@@ -142,45 +142,89 @@ public class BeetlParser extends PrattParser {
 				prattBuilder.advance();
 //				todo 解析HTML标签子解析器等级要改
 				prattBuilder.createChildBuilder(INIT_LEVEL).parse();
-				PrattParsingUtil.searchFor(prattBuilder, false, BT_HTML_TAG_END);
 				prattBuilder.checkToken(BT_HTML_TAG_END);
 				mark.finish(HTML_TAG);
 				return true;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
 			}
 		});
-		registerParser(BT_IDENTIFIER, 100, new AppendTokenParser() {
-			@Nullable
+		registerParser(BT_IDENTIFIER, 100, new TokenParser() {
 			@Override
-			protected IElementType parseAppend(PrattBuilder prattBuilder) {
-				return REFERENCE_EXPRESSION;
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				MutableMarker marker = prattBuilder.mark();
+				prattBuilder.advance();
+				marker.finish(REFERENCE_EXPRESSION);
+				return true;
 			}
 		});
 		/*圆括号*/
-		registerParser(BT_LPAREN, 2, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_RPAREN, 2, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_LPAREN, 90, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_RPAREN, 90, AppendTokenParser.JUST_APPEND);
 		/*大括号*/
-		registerParser(BT_LBRACE, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_RBRACE, 1, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_LBRACE, 90, new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				prattBuilder.advance();
+				prattBuilder.createChildBuilder(89).parse();
+				prattBuilder.checkToken(BT_RBRACE);
+				return true;
+			}
+		});
+		registerParser(BT_RBRACE, 90, postfix(SYNTAX_BODY));
 		/*中括号*/
-		registerParser(BT_LBRACK, 90, PathPattern.path().up(), new TokenParser() {
+		registerParser(BT_LBRACK, 90, path().up(), new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
 				prattBuilder.advance();
-				prattBuilder.createChildBuilder(89).parse();
-				PrattParsingUtil.searchFor(prattBuilder, false,BT_RBRACK);
-				prattBuilder.checkToken(BT_RBRACK);
-				mark.finish(ARRAY_DEFINITION);
+				while (!prattBuilder.isToken(BT_RBRACK) && !prattBuilder.isToken(BT_RPAREN) && !prattBuilder.isToken(BT_RBRACE) && !prattBuilder.isEof()
+						&& prattBuilder.createChildBuilder(89).parse()!=null){
+					prattBuilder.checkToken(BT_COMMA);
+				}
+				prattBuilder.assertToken(BT_RBRACK);
+				mark.finish(LIST_DEFINITION);
+				return true;
+			}
+		});
+		registerParser(BT_LBRACK, 90, path().left(REFERENCE_EXPRESSION), new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				prattBuilder.advance();
+				prattBuilder.createChildBuilder(94).parse();
+				prattBuilder.assertToken(BT_RBRACK);
+				prattBuilder.reduce(INDEX_EXPRESSION);
 				return true;
 			}
 		});
 
-		registerParser(BT_VAR, 80, TokenParser.infix(85, VAR_DEFINITION_EXPRESSION));
+		registerParser(BT_VAR, 80, new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				prattBuilder.advance();
+				while (prattBuilder.createChildBuilder(85).parse()!=null){
+					if(!prattBuilder.checkToken(BT_COMMA)){
+						break;
+					}
+				}
+				prattBuilder.reduce(VAR_DEFINITION_EXPRESSION);
+				return true;
+			}
+		});
 		registerParser(BT_ASSIGN, 87, path().left(StandardPatterns.object(REFERENCE_EXPRESSION)), infix(89, BeetlPsiElementTypes.ASSIGNMENT_EXPRESSION));
 		registerParser(BT_ATTRIBUTE_NAME, 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_ATTRIBUTE_VALUE, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_SEMICOLON, 20, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_COMMA, 86, path().left(), new TokenParser() {
+		registerParser(BT_SEMICOLON, 1, new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				prattBuilder.advance();
+				prattBuilder.createChildBuilder(0).parse();
+				return true;
+			}
+		});
+
+		registerParser(BT_PLUS, 90, infix(90, BeetlPsiElementTypes.BINARY_EXPRESSION));
+		registerParser(BT_INCREASE, 90, AppendTokenParser.JUST_APPEND);
+		/*冒号*/
+		registerParser(BT_COLON, 95, path().left().up(), new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				prattBuilder.advance();
@@ -188,8 +232,7 @@ public class BeetlParser extends PrattParser {
 				return true;
 			}
 		});
-		registerParser(BT_PLUS, 90, infix(90, BeetlPsiElementTypes.BINARY_EXPRESSION));
-		registerParser(BT_INCREASE, 90, AppendTokenParser.JUST_APPEND);
+		/*点号*/
 		registerParser(BT_DOT, 95, path().left(or(object(BT_IDENTIFIER),object(REFERENCE_EXPRESSION))), new ReducingParser() {
 			@Nullable
 			@Override
@@ -199,17 +242,47 @@ public class BeetlParser extends PrattParser {
 			}
 		});
 
-		registerParser(BT_INT, 100, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_FLOAT, 100, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_OCT, 100, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_HEX, 100, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_STRING, 100, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_INT, 100, new AppendTokenParser() {
+			@Nullable
+			@Override
+			protected IElementType parseAppend(PrattBuilder prattBuilder) {
+				return NUMBER;
+			}
+		});
+		registerParser(BT_FLOAT, 100,  new AppendTokenParser() {
+			@Nullable
+			@Override
+			protected IElementType parseAppend(PrattBuilder prattBuilder) {
+				return NUMBER;
+			}
+		});
+		registerParser(BT_OCT, 100,  new AppendTokenParser() {
+			@Nullable
+			@Override
+			protected IElementType parseAppend(PrattBuilder prattBuilder) {
+				return NUMBER;
+			}
+		});
+		registerParser(BT_HEX, 100,  new AppendTokenParser() {
+			@Nullable
+			@Override
+			protected IElementType parseAppend(PrattBuilder prattBuilder) {
+				return NUMBER;
+			}
+		});
+		registerParser(BT_STRING, 100,  new AppendTokenParser() {
+			@Nullable
+			@Override
+			protected IElementType parseAppend(PrattBuilder prattBuilder) {
+				return STRING_LITERAL;
+			}
+		});
 		/**
 		 * 因为有可能将换行作为定界符，所以没有在ParserDefinition中将换行加入到空白符集。因为空白符在解析时会被忽视。所以这里暂定为直接加到语法树中。
 		 * 慎重：不建议将换行及控制字符作为定界符，这代表不可预料的bug。推荐将可见字符作为定界符。
 		* */
 		registerParser(NEW_LINE, 100, AppendTokenParser.JUST_APPEND);
-		registerParser(BeetlTokenSets.KEYWORDS.getTypes(), -1, AppendTokenParser.JUST_APPEND);
+		registerParser(BeetlTokenSets.KEYWORDS.getTypes(), 1, AppendTokenParser.JUST_APPEND);
 		registerParser(BTL_TEMPLATE_HTML_TEXT, -1, AppendTokenParser.JUST_APPEND);
 	}
 
