@@ -56,17 +56,17 @@ public class BeetlParser extends PrattParser {
 	/**
 	 * 常量等级最高，可以出现在任意语法语句中。
 	 */
-	public static final int CONSTANT_LEVEL = 100;
+	public static final int CONSTANT_LEVEL = 1000;
 
 	/**
 	 * 一元表达式等级，大致包括自增、自减，对于安全表达式应该独立判断
 	 */
-	public static final int UNARY_LEVEL = 80;
+	public static final int UNARY_LEVEL = 800;
 
 	/**
 	 * 二元表达式等级，一元和二元表达式，可以互相混写，所以初始应该一致，后由确切的token来判断
 	 */
-	public static final int EXPRESSION_LEVEL = 80;
+	public static final int EXPRESSION_LEVEL = 800;
 	/**
 	 * 语句等级，包括但不限：定义，赋值，选择、分支、循环，函数调用等
 	 */
@@ -112,7 +112,7 @@ public class BeetlParser extends PrattParser {
 		 * PrattParsingUtil.searchFor(prattBuilder, false, BT_RDELIMITER);在当前的token位置开始向前搜索，直到搜索到指定的token位置。
 		 *    第二个参数是否消费搜索到的指定token，也就是搜索到指定token后，向前推进一位。
 		 * */
-		registerParser(BT_LDELIMITER, -1, new TokenParser() {
+		registerParser(BT_LDELIMITER, -10, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
@@ -123,7 +123,7 @@ public class BeetlParser extends PrattParser {
 				return true;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
 			}
 		});
-		registerParser(BT_LPLACEHOLDER, -1, new TokenParser() {
+		registerParser(BT_LPLACEHOLDER, -10, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
@@ -135,7 +135,7 @@ public class BeetlParser extends PrattParser {
 				return true;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
 			}
 		});
-		registerParser(BT_HTML_TAG_START, -1, new TokenParser() {
+		registerParser(BT_HTML_TAG_START, -10, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
@@ -147,7 +147,7 @@ public class BeetlParser extends PrattParser {
 				return true;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
 			}
 		});
-		registerParser(BT_IDENTIFIER, 100, new TokenParser() {
+		registerParser(BT_IDENTIFIER, 1000, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker marker = prattBuilder.mark();
@@ -157,27 +157,53 @@ public class BeetlParser extends PrattParser {
 			}
 		});
 		/*圆括号*/
-		registerParser(BT_LPAREN, 90, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_RPAREN, 90, AppendTokenParser.JUST_APPEND);
-		/*大括号*/
-		registerParser(BT_LBRACE, 90, new TokenParser() {
-			@Override
-			public boolean parseToken(PrattBuilder prattBuilder) {
-				prattBuilder.advance();
-				prattBuilder.createChildBuilder(89).parse();
-				prattBuilder.checkToken(BT_RBRACE);
-				return true;
-			}
-		});
-		registerParser(BT_RBRACE, 90, postfix(SYNTAX_BODY));
-		/*中括号*/
-		registerParser(BT_LBRACK, 90, path().up(), new TokenParser() {
+		registerParser(BT_LPAREN, 900,path().left(REFERENCE_EXPRESSION), new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
 				prattBuilder.advance();
 				while (!prattBuilder.isToken(BT_RBRACK) && !prattBuilder.isToken(BT_RPAREN) && !prattBuilder.isToken(BT_RBRACE) && !prattBuilder.isEof()
-						&& prattBuilder.createChildBuilder(89).parse()!=null){
+						&& prattBuilder.createChildBuilder(890).parse()!=null){
+					prattBuilder.checkToken(BT_COMMA);
+				}
+				prattBuilder.assertToken(BT_RPAREN);
+				mark.finish(PARAMETER_LIST);
+				return true;
+			}
+		});
+		/*大括号*/
+		registerParser(BT_LBRACE, 900,path().up(), new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				MutableMarker mark = prattBuilder.mark();
+				prattBuilder.advance();
+				while (!prattBuilder.isToken(BT_RBRACK) && !prattBuilder.isToken(BT_RPAREN) && !prattBuilder.isToken(BT_RBRACE) && !prattBuilder.isEof()
+						&& prattBuilder.createChildBuilder(890).parse()!=null){
+					prattBuilder.checkToken(BT_COMMA);
+				}
+				prattBuilder.checkToken(BT_RBRACE);
+				mark.finish(JSON_EXPRESSION);
+				return true;
+			}
+		});
+		registerParser(BT_LBRACE, 900,path().left(PARENTHESIZED_EXPRESSION), new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				MutableMarker mark = prattBuilder.mark();
+				PrattParsingUtil.searchFor(prattBuilder, BT_RBRACE);
+				mark.finish(SYNTAX_BODY);
+				return true;
+			}
+		});
+		registerParser(BT_RBRACE, 800, postfix(SYNTAX_BODY));
+		/*中括号*/
+		registerParser(BT_LBRACK, 900, path().up(), new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				MutableMarker mark = prattBuilder.mark();
+				prattBuilder.advance();
+				while (!prattBuilder.isToken(BT_RBRACK) && !prattBuilder.isToken(BT_RPAREN) && !prattBuilder.isToken(BT_RBRACE) && !prattBuilder.isEof()
+						&& prattBuilder.createChildBuilder(890).parse()!=null){
 					prattBuilder.checkToken(BT_COMMA);
 				}
 				prattBuilder.assertToken(BT_RBRACK);
@@ -185,23 +211,23 @@ public class BeetlParser extends PrattParser {
 				return true;
 			}
 		});
-		registerParser(BT_LBRACK, 90, path().left(REFERENCE_EXPRESSION), new TokenParser() {
+		registerParser(BT_LBRACK, 900, path().left(REFERENCE_EXPRESSION), new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				prattBuilder.advance();
-				prattBuilder.createChildBuilder(94).parse();
+				prattBuilder.createChildBuilder(940).parse();
 				prattBuilder.assertToken(BT_RBRACK);
 				prattBuilder.reduce(INDEX_EXPRESSION);
 				return true;
 			}
 		});
 
-		registerParser(BT_VAR, 80, new TokenParser() {
+		registerParser(BT_VAR, 800, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				prattBuilder.advance();
-				while (prattBuilder.createChildBuilder(85).parse()!=null){
-					if(!prattBuilder.checkToken(BT_COMMA)){
+				while (prattBuilder.createChildBuilder(850).parse()!=null){
+					if(!prattBuilder.checkToken(BT_COMMA) || prattBuilder.checkToken(BT_SEMICOLON)){
 						break;
 					}
 				}
@@ -209,10 +235,10 @@ public class BeetlParser extends PrattParser {
 				return true;
 			}
 		});
-		registerParser(BT_ASSIGN, 87, path().left(StandardPatterns.object(REFERENCE_EXPRESSION)), infix(89, BeetlPsiElementTypes.ASSIGNMENT_EXPRESSION));
-		registerParser(BT_ATTRIBUTE_NAME, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_ATTRIBUTE_VALUE, 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_SEMICOLON, 1, new TokenParser() {
+		registerParser(BT_ASSIGN, 870, path().left(StandardPatterns.object(REFERENCE_EXPRESSION)), infix(890, BeetlPsiElementTypes.ASSIGNMENT_EXPRESSION));
+		registerParser(BT_ATTRIBUTE_NAME, 10, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_ATTRIBUTE_VALUE, 10, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_SEMICOLON, 800, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				prattBuilder.advance();
@@ -221,19 +247,20 @@ public class BeetlParser extends PrattParser {
 			}
 		});
 
-		registerParser(BT_PLUS, 90, infix(90, BeetlPsiElementTypes.BINARY_EXPRESSION));
-		registerParser(BT_INCREASE, 90, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_PLUS, 900, infix(900, BeetlPsiElementTypes.BINARY_EXPRESSION));
+		registerParser(BT_INCREASE, 900, AppendTokenParser.JUST_APPEND);
 		/*冒号*/
-		registerParser(BT_COLON, 95, path().left().up(), new TokenParser() {
+		registerParser(BT_COLON, 950, path().left().up(), new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				prattBuilder.advance();
-				prattBuilder.createChildBuilder(89).parse();
+				prattBuilder.createChildBuilder(890).parse();
+				prattBuilder.reduce(KEY_VALUE_PAIR);
 				return true;
 			}
 		});
 		/*点号*/
-		registerParser(BT_DOT, 95, path().left(or(object(BT_IDENTIFIER),object(REFERENCE_EXPRESSION))), new ReducingParser() {
+		registerParser(BT_DOT, 950, path().left(or(object(BT_IDENTIFIER),object(REFERENCE_EXPRESSION))), new ReducingParser() {
 			@Nullable
 			@Override
 			public IElementType parseFurther(PrattBuilder prattBuilder) {
@@ -242,35 +269,37 @@ public class BeetlParser extends PrattParser {
 			}
 		});
 
-		registerParser(BT_INT, 100, new AppendTokenParser() {
+		registerParser(BT_LESS, 950, AppendTokenParser.JUST_APPEND);
+
+		registerParser(BT_INT, 1000, new AppendTokenParser() {
 			@Nullable
 			@Override
 			protected IElementType parseAppend(PrattBuilder prattBuilder) {
 				return NUMBER;
 			}
 		});
-		registerParser(BT_FLOAT, 100,  new AppendTokenParser() {
+		registerParser(BT_FLOAT, 1000,  new AppendTokenParser() {
 			@Nullable
 			@Override
 			protected IElementType parseAppend(PrattBuilder prattBuilder) {
 				return NUMBER;
 			}
 		});
-		registerParser(BT_OCT, 100,  new AppendTokenParser() {
+		registerParser(BT_OCT, 1000,  new AppendTokenParser() {
 			@Nullable
 			@Override
 			protected IElementType parseAppend(PrattBuilder prattBuilder) {
 				return NUMBER;
 			}
 		});
-		registerParser(BT_HEX, 100,  new AppendTokenParser() {
+		registerParser(BT_HEX, 1000,  new AppendTokenParser() {
 			@Nullable
 			@Override
 			protected IElementType parseAppend(PrattBuilder prattBuilder) {
 				return NUMBER;
 			}
 		});
-		registerParser(BT_STRING, 100,  new AppendTokenParser() {
+		registerParser(BT_STRING, 1000,  new AppendTokenParser() {
 			@Nullable
 			@Override
 			protected IElementType parseAppend(PrattBuilder prattBuilder) {
@@ -281,9 +310,10 @@ public class BeetlParser extends PrattParser {
 		 * 因为有可能将换行作为定界符，所以没有在ParserDefinition中将换行加入到空白符集。因为空白符在解析时会被忽视。所以这里暂定为直接加到语法树中。
 		 * 慎重：不建议将换行及控制字符作为定界符，这代表不可预料的bug。推荐将可见字符作为定界符。
 		* */
-		registerParser(NEW_LINE, 100, AppendTokenParser.JUST_APPEND);
-		registerParser(BeetlTokenSets.KEYWORDS.getTypes(), 1, AppendTokenParser.JUST_APPEND);
-		registerParser(BTL_TEMPLATE_HTML_TEXT, -1, AppendTokenParser.JUST_APPEND);
+		registerParser(NEW_LINE, 1000, AppendTokenParser.JUST_APPEND);
+		registerParser(HTML_NEW_LINE, 1000, AppendTokenParser.JUST_APPEND);
+		registerParser(BeetlTokenSets.KEYWORDS.getTypes(), 10, AppendTokenParser.JUST_APPEND);
+		registerParser(BTL_TEMPLATE_HTML_TEXT, -10, AppendTokenParser.JUST_APPEND);
 	}
 
 }
