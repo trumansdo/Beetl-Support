@@ -77,10 +77,14 @@ NUM_FLOAT = (
 Java允许的首字母非数字标识符
 */
 IDENTIFIER = [:jletter:] [:jletterdigit:]*
-ATTRIBUTE_NAME = ([:jletterdigit:] | "-")+
-ATTRIBUTE_VALUE = ("\"" ([^\\\n\r])* "\"") | ("'" ([^\\\n\r])* "'")
 
-STRING_NO_WRAP = ("\"" ([^\\\n\r])* "\"") | ("'" ([^\\\n\r])* "'")
+STRING = ("\"" ( {ESCAPE_SEQUENCE} | [^\"\'\\\n\r] )* "\"")
+		| ("'" ( {ESCAPE_SEQUENCE} | [^\"\'\\\n\r] )* "'")
+
+ATTRIBUTE_NAME = ([:jletterdigit:] | "-")+
+ATTRIBUTE_VALUE = {STRING}
+
+
 /*双引号和单引号，暂时没用*/
 QUOTE_STR = [\u0022\u0027]
 
@@ -91,8 +95,6 @@ OCTAL_ESCAPE = "\\" [0-3]? [0-7]? [0-7]
 /*转义序列*/
 ESCAPE_SEQUENCE = "\\" [btnfr\"\'\\] | {UNICODE_ESCAPE} | {OCTAL_ESCAPE}
 
-STRING = ("\"" ( {ESCAPE_SEQUENCE} | [^\"\'\\\n\r] )* "\"")
-		| ("'" ( {ESCAPE_SEQUENCE} | [^\"\'\\\n\r] )* "'")
 
 %state BTL_LEX
 %state BTL_HTML_LEX
@@ -289,7 +291,7 @@ MAYBE_SEMICOLON：表明当前匹配的字符之后可能具有的词法状态
     "@"                                       { return BeetlTokenTypes.BT_AT; }
 
 	{IDENTIFIER}                              { return BeetlTokenTypes.BT_IDENTIFIER; }
-    {STRING_NO_WRAP}                          { return BeetlTokenTypes.BT_STRING; }
+    {STRING}                                  { return BeetlTokenTypes.BT_STRING; }
 	{NUM_INT}                                 { return BeetlTokenTypes.BT_INT; }
 
     .                                         { return BeetlTokenTypes.TEMPORARY; }

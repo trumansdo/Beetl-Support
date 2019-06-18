@@ -10,7 +10,7 @@ public interface BeetlPsiElementTypes {
 	/*数值*/
 	BeetlIElementType NUMBER = new BeetlIElementType("Number");
 	/*字符字面量*/
-	BeetlIElementType STRING_LITERAL = new BeetlIElementType("Number");
+	BeetlIElementType STRING_LITERAL = new BeetlIElementType("StringLiteral");
 
 	/*占位符语法*/
 	BeetlIElementType INTERPOLATION = new BeetlIElementType("BeetlPlaceholder");
@@ -32,9 +32,17 @@ public interface BeetlPsiElementTypes {
 	BeetlIElementType ASSIGNMENT_EXPRESSION = new BeetlIElementType("AssignmentExpression");
 	/*引用语法*/
 	BeetlIElementType REFERENCE_EXPRESSION = new BeetlIElementType("ReferenceExpression");
-	/*圆括号：参数、if等语句的条件、普通优先级*/
-	BeetlIElementType PARENTHESIZED_EXPRESSION = new BeetlIElementType("ReferenceExpression");
-
-	BeetlIElementType SYNTAX_BODY = new BeetlIElementType("ReferenceExpression");
+	/*圆括号：if、select、等的条件表达式*/
+	BeetlIElementType PARENTHESIZED_EXPRESSION = new BeetlIElementType("ParenthesizedExpression");
+	/*圆括号：函数调用的参数列表*/
+	BeetlIElementType PARAMETER_LIST = new BeetlIElementType("ParameterList");
+	/*圆括号：安全输出*/
+	BeetlIElementType SAFETY_OUTPUT = new BeetlIElementType("SafetyOutput");
+	/*大括号的语法块*/
+	BeetlIElementType SYNTAX_BODY = new BeetlIElementType("SyntaxBody");
+	/*json定义*/
+	BeetlIElementType JSON_EXPRESSION = new BeetlIElementType("JsonExpression");
+	/*以冒号分隔的键值对*/
+	BeetlIElementType KEY_VALUE_PAIR = new BeetlIElementType("KeyValuePair");
 
 }
