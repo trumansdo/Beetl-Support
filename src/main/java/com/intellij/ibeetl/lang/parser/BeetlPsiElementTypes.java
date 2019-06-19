@@ -32,6 +32,8 @@ public interface BeetlPsiElementTypes {
 	BeetlIElementType ASSIGNMENT_EXPRESSION = new BeetlIElementType("AssignmentExpression");
 	/*引用语法*/
 	BeetlIElementType REFERENCE_EXPRESSION = new BeetlIElementType("ReferenceExpression");
+	/*方法调用*/
+	BeetlIElementType METHOD_CALLED = new BeetlIElementType("MethodCalled");
 	/*圆括号：if、select、等的条件表达式*/
 	BeetlIElementType PARENTHESIZED_EXPRESSION = new BeetlIElementType("ParenthesizedExpression");
 	/*圆括号：函数调用的参数列表*/

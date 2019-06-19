@@ -153,6 +153,7 @@ public class BeetlParser extends PrattParser {
 				MutableMarker marker = prattBuilder.mark();
 				prattBuilder.advance();
 				marker.finish(REFERENCE_EXPRESSION);
+				prattBuilder.createChildBuilder(790).parse();
 				return true;
 			}
 		});
@@ -168,6 +169,7 @@ public class BeetlParser extends PrattParser {
 				}
 				prattBuilder.assertToken(BT_RPAREN);
 				mark.finish(PARAMETER_LIST);
+				prattBuilder.getParent().reduce(METHOD_CALLED);
 				return true;
 			}
 		});
@@ -227,7 +229,7 @@ public class BeetlParser extends PrattParser {
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				prattBuilder.advance();
 				while (prattBuilder.createChildBuilder(850).parse()!=null){
-					if(!prattBuilder.checkToken(BT_COMMA) || prattBuilder.checkToken(BT_SEMICOLON)){
+					if(prattBuilder.checkToken(BT_SEMICOLON)){
 						break;
 					}
 				}
@@ -235,7 +237,7 @@ public class BeetlParser extends PrattParser {
 				return true;
 			}
 		});
-		registerParser(BT_ASSIGN, 870, path().left(StandardPatterns.object(REFERENCE_EXPRESSION)), infix(890, BeetlPsiElementTypes.ASSIGNMENT_EXPRESSION));
+		registerParser(BT_ASSIGN, 870, path().up(), infix(890, BeetlPsiElementTypes.ASSIGNMENT_EXPRESSION));
 		registerParser(BT_ATTRIBUTE_NAME, 10, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_ATTRIBUTE_VALUE, 10, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_SEMICOLON, 800, new TokenParser() {
