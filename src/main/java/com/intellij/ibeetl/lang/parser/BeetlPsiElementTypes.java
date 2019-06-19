@@ -16,12 +16,13 @@ public interface BeetlPsiElementTypes {
 	BeetlIElementType INTERPOLATION = new BeetlIElementType("BeetlPlaceholder");
 	/*HTML标签语法*/
 	BeetlIElementType HTML_TAG = new BeetlIElementType("BeetlHtmlTagFunction");
-	/*二元表达式*/
+	/*二元表达式（不包括逻辑表达式）*/
 	BeetlIElementType BINARY_EXPRESSION = new BeetlIElementType("BinaryExpression") {
 		public PsiElement createPsiElement(ASTNode node) {
 			return new BeetlBinaryExpression(node);
 		}
 	};
+	BeetlIElementType LOGICAL_EXPRESSION = new BeetlIElementType("LogicalExpression");
 	/*集合定义语法*/
 	BeetlIElementType LIST_DEFINITION = new BeetlIElementType("ListDefinition");
 	/*集合索引语法*/
@@ -38,7 +39,7 @@ public interface BeetlPsiElementTypes {
 	BeetlIElementType PARENTHESIZED_EXPRESSION = new BeetlIElementType("ParenthesizedExpression");
 	/*圆括号：函数调用的参数列表*/
 	BeetlIElementType PARAMETER_LIST = new BeetlIElementType("ParameterList");
-	/*圆括号：安全输出*/
+	/*圆括号：安全抑制表达式*/
 	BeetlIElementType SAFETY_OUTPUT = new BeetlIElementType("SafetyOutput");
 	/*大括号的语法块*/
 	BeetlIElementType SYNTAX_BODY = new BeetlIElementType("SyntaxBody");
