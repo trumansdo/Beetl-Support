@@ -147,18 +147,8 @@ public class BeetlParser extends PrattParser {
 				return true;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
 			}
 		});
-		registerParser(BT_IDENTIFIER, 1000, new TokenParser() {
-			@Override
-			public boolean parseToken(PrattBuilder prattBuilder) {
-				MutableMarker marker = prattBuilder.mark();
-				prattBuilder.advance();
-				marker.finish(REFERENCE_EXPRESSION);
-				prattBuilder.createChildBuilder(790).parse();
-				return true;
-			}
-		});
 		/*圆括号*/
-		registerParser(BT_LPAREN, 900,path().left(REFERENCE_EXPRESSION), new TokenParser() {
+		registerParser(BT_LPAREN, 900,path().up().left(or(object(BT_IDENTIFIER),object(REFERENCE_EXPRESSION))), new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
@@ -169,7 +159,6 @@ public class BeetlParser extends PrattParser {
 				}
 				prattBuilder.assertToken(BT_RPAREN);
 				mark.finish(PARAMETER_LIST);
-				prattBuilder.getParent().reduce(METHOD_CALLED);
 				return true;
 			}
 		});
@@ -179,11 +168,11 @@ public class BeetlParser extends PrattParser {
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
 				prattBuilder.advance();
-				while (!prattBuilder.isToken(BT_RBRACK) && !prattBuilder.isToken(BT_RPAREN) && !prattBuilder.isToken(BT_RBRACE) && !prattBuilder.isEof()
+				while (!prattBuilder.isEof() && !prattBuilder.isToken(BT_RBRACE)
 						&& prattBuilder.createChildBuilder(890).parse()!=null){
 					prattBuilder.checkToken(BT_COMMA);
 				}
-				prattBuilder.checkToken(BT_RBRACE);
+				prattBuilder.assertToken(BT_RBRACE);
 				mark.finish(JSON_EXPRESSION);
 				return true;
 			}
@@ -192,7 +181,7 @@ public class BeetlParser extends PrattParser {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
-				PrattParsingUtil.searchFor(prattBuilder, BT_RBRACE);
+				prattBuilder.createChildBuilder(0).parse();
 				mark.finish(SYNTAX_BODY);
 				return true;
 			}
@@ -204,7 +193,7 @@ public class BeetlParser extends PrattParser {
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
 				prattBuilder.advance();
-				while (!prattBuilder.isToken(BT_RBRACK) && !prattBuilder.isToken(BT_RPAREN) && !prattBuilder.isToken(BT_RBRACE) && !prattBuilder.isEof()
+				while (!prattBuilder.isToken(BT_RBRACK) && !prattBuilder.isEof()
 						&& prattBuilder.createChildBuilder(890).parse()!=null){
 					prattBuilder.checkToken(BT_COMMA);
 				}
@@ -223,33 +212,45 @@ public class BeetlParser extends PrattParser {
 				return true;
 			}
 		});
-
+		registerParser(BT_IDENTIFIER, 1000, new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				MutableMarker marker = prattBuilder.mark();
+				prattBuilder.advance();
+				if(prattBuilder.isToken(BT_LPAREN)){
+					prattBuilder.createChildBuilder(890).parse();
+					marker.finish(METHOD_CALLED);
+				}else {
+					marker.finish(REFERENCE_EXPRESSION);
+				}
+				return true;
+			}
+		});
 		registerParser(BT_VAR, 800, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
+				MutableMarker mark = prattBuilder.mark();
 				prattBuilder.advance();
-				while (prattBuilder.createChildBuilder(850).parse()!=null){
-					if(prattBuilder.checkToken(BT_SEMICOLON)){
-						break;
-					}
+				while (!prattBuilder.isEof() && !prattBuilder.isToken(BT_SEMICOLON) && prattBuilder.createChildBuilder(850).parse()!=null){
+					prattBuilder.checkToken(BT_COMMA);
 				}
-				prattBuilder.reduce(VAR_DEFINITION_EXPRESSION);
+				mark.finish(VAR_DEFINITION_EXPRESSION);
 				return true;
 			}
 		});
-		registerParser(BT_ASSIGN, 870, path().up(), infix(890, BeetlPsiElementTypes.ASSIGNMENT_EXPRESSION));
+		registerParser(new IElementType[]{BT_ASSIGN,BT_PLUS_ASSIGN,BT_MINUS_ASSIGN,BT_MUL_ASSIGN,BT_QUOTIENT_ASSIGN}, 870, path().left(StandardPatterns.object(REFERENCE_EXPRESSION)), infix(890, BeetlPsiElementTypes.ASSIGNMENT_EXPRESSION));
 		registerParser(BT_ATTRIBUTE_NAME, 10, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_ATTRIBUTE_VALUE, 10, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_SEMICOLON, 800, new TokenParser() {
+		registerParser(BT_SEMICOLON, 10, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				prattBuilder.advance();
-				prattBuilder.createChildBuilder(0).parse();
+				prattBuilder.createChildBuilder(10).parse();
 				return true;
 			}
 		});
 
-		registerParser(BT_PLUS, 900, infix(900, BeetlPsiElementTypes.BINARY_EXPRESSION));
+		registerParser(new IElementType[]{BT_PLUS,BT_MINUS,BT_MUL,BT_REMAINDER,BT_QUOTIENT}, 900, infix(900, BeetlPsiElementTypes.BINARY_EXPRESSION));
 		registerParser(BT_INCREASE, 900, AppendTokenParser.JUST_APPEND);
 		/*冒号*/
 		registerParser(BT_COLON, 950, path().left().up(), new TokenParser() {
@@ -266,12 +267,12 @@ public class BeetlParser extends PrattParser {
 			@Nullable
 			@Override
 			public IElementType parseFurther(PrattBuilder prattBuilder) {
-				prattBuilder.assertToken(BT_IDENTIFIER);
 				return REFERENCE_EXPRESSION;
 			}
 		});
-
-		registerParser(BT_LESS, 950, AppendTokenParser.JUST_APPEND);
+		/*逻辑表达式*/
+		registerParser(new IElementType[]{BT_LESS,BT_LESS_OR_EQUAL,BT_GREATER,BT_GREATER_OR_EQUAL,BT_EQ,BT_NOT_EQ}, 895,
+				path().left(or(object(BT_IDENTIFIER),object(REFERENCE_EXPRESSION),object(NUMBER))),infix(895,LOGICAL_EXPRESSION));
 
 		registerParser(BT_INT, 1000, new AppendTokenParser() {
 			@Nullable
@@ -314,7 +315,7 @@ public class BeetlParser extends PrattParser {
 		* */
 		registerParser(NEW_LINE, 1000, AppendTokenParser.JUST_APPEND);
 		registerParser(HTML_NEW_LINE, 1000, AppendTokenParser.JUST_APPEND);
-		registerParser(BeetlTokenSets.KEYWORDS.getTypes(), 10, AppendTokenParser.JUST_APPEND);
+		registerParser(new IElementType[]{BT_BREAK, BT_RETURN, BT_CONTINUE, BT_DEFAULT, BT_INTERFACE, BT_CONST, BT_DIRECTIVE, BT_TYPE_, BT_VAR, BT_AJAX, BT_FRAGMENT, BT_FOR_IN}, 800, AppendTokenParser.JUST_APPEND);
 		registerParser(BTL_TEMPLATE_HTML_TEXT, -10, AppendTokenParser.JUST_APPEND);
 	}
 
