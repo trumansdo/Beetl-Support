@@ -308,7 +308,7 @@ public class BeetlParser extends PrattParser {
 			}
 		});
 
-		registerParser(new IElementType[]{BT_IF, BT_FOR, BT_WHILE, BT_SWITCH, BT_SELECT}, 800, new TokenParser() {
+		registerParser(BT_IF, 895, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
@@ -318,7 +318,48 @@ public class BeetlParser extends PrattParser {
 				return true;
 			}
 		});
-
+		registerParser(BT_FOR, 895, new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				MutableMarker mark = prattBuilder.mark();
+				prattBuilder.advance();
+				prattBuilder.createChildBuilder(890).parse();
+				mark.finish(FOR_STATEMENT);
+				return true;
+			}
+		});
+		registerParser(BT_WHILE, 895, new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				MutableMarker mark = prattBuilder.mark();
+				prattBuilder.advance();
+				prattBuilder.createChildBuilder(890).parse();
+				mark.finish(WHILE_STATEMENT);
+				return true;
+			}
+		});
+		registerParser(BT_SWITCH, 895, new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				MutableMarker mark = prattBuilder.mark();
+				prattBuilder.advance();
+				prattBuilder.createChildBuilder(890).parse();
+				mark.finish(SWITCH_STATEMENT);
+				return true;
+			}
+		});
+		registerParser(BT_SELECT, 895, new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				MutableMarker mark = prattBuilder.mark();
+				prattBuilder.advance();
+				prattBuilder.createChildBuilder(890).parse();
+				mark.finish(SELECT_STATEMENT);
+				return true;
+			}
+		});
+		/*ajax片段*/
+		registerParser(new IElementType[]{BT_AJAX, BT_FRAGMENT}, -10, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_INT, 1000, new AppendTokenParser() {
 			@Nullable
 			@Override
@@ -360,7 +401,7 @@ public class BeetlParser extends PrattParser {
 		 * */
 		registerParser(NEW_LINE, 1000, AppendTokenParser.JUST_APPEND);
 		registerParser(HTML_NEW_LINE, 1000, AppendTokenParser.JUST_APPEND);
-		registerParser(new IElementType[]{BT_BREAK, BT_RETURN, BT_CONTINUE, BT_DEFAULT, BT_INTERFACE, BT_CONST, BT_DIRECTIVE, BT_TYPE_, BT_VAR, BT_AJAX, BT_FRAGMENT, BT_FOR_IN}, 800, AppendTokenParser.JUST_APPEND);
+		registerParser(new IElementType[]{BT_BREAK, BT_RETURN, BT_CONTINUE, BT_DEFAULT, BT_DIRECTIVE, BT_VAR, BT_FOR_IN}, 800, AppendTokenParser.JUST_APPEND);
 		registerParser(BTL_TEMPLATE_HTML_TEXT, -10, AppendTokenParser.JUST_APPEND);
 
 		registerParser(ERROR_ELEMENT, 1000, new TokenParser() {
