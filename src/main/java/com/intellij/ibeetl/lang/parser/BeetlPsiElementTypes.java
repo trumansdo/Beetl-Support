@@ -51,4 +51,7 @@ public interface BeetlPsiElementTypes {
 	/*if语句*/
 	BeetlIElementType IF_STATEMENT = new BeetlIElementType("IfStatement");
 	BeetlIElementType WHILE_STATEMENT = new BeetlIElementType("WhileStatement");
+	BeetlIElementType FOR_STATEMENT = new BeetlIElementType("ForStatement");
+	BeetlIElementType SELECT_STATEMENT = new BeetlIElementType("SelectStatement");
+	BeetlIElementType SWITCH_STATEMENT = new BeetlIElementType("SwitchStatement");
 }
