@@ -4,13 +4,14 @@ import com.intellij.ibeetl.lang.base.BeetlIElementType;
 import com.intellij.ibeetl.lang.psi.elements.BeetlBinaryExpression;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
 
 public interface BeetlPsiElementTypes {
 	/*数值*/
 	BeetlIElementType NUMBER = new BeetlIElementType("Number");
 	/*字符字面量*/
 	BeetlIElementType STRING_LITERAL = new BeetlIElementType("StringLiteral");
+	/*自叠加运算：自增自减*/
+	BeetlIElementType SELF_OVERLAY_EXPRESSION = new BeetlIElementType("SelfOverlayExpression");
 
 	/*占位符语法*/
 	BeetlIElementType INTERPOLATION = new BeetlIElementType("BeetlPlaceholder");
@@ -47,5 +48,7 @@ public interface BeetlPsiElementTypes {
 	BeetlIElementType JSON_EXPRESSION = new BeetlIElementType("JsonExpression");
 	/*以冒号分隔的键值对*/
 	BeetlIElementType KEY_VALUE_PAIR = new BeetlIElementType("KeyValuePair");
-
+	/*if语句*/
+	BeetlIElementType IF_STATEMENT = new BeetlIElementType("IfStatement");
+	BeetlIElementType WHILE_STATEMENT = new BeetlIElementType("WhileStatement");
 }
