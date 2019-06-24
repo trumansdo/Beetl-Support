@@ -54,4 +54,5 @@ public interface BeetlPsiElementTypes {
 	BeetlIElementType FOR_STATEMENT = new BeetlIElementType("ForStatement");
 	BeetlIElementType SELECT_STATEMENT = new BeetlIElementType("SelectStatement");
 	BeetlIElementType SWITCH_STATEMENT = new BeetlIElementType("SwitchStatement");
+	BeetlIElementType CASE_SEGMENT = new BeetlIElementType("CaseSegment");
 }
