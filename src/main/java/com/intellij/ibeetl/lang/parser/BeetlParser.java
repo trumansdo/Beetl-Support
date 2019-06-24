@@ -358,6 +358,17 @@ public class BeetlParser extends PrattParser {
 				return true;
 			}
 		});
+		registerParser(BT_CASE, 895, new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				MutableMarker mark = prattBuilder.mark();
+				prattBuilder.advance();
+				prattBuilder.createChildBuilder(890).parse();
+				mark.finish(CASE_SEGMENT);
+				return true;
+			}
+		});
+		
 		/*ajax片段*/
 		registerParser(new IElementType[]{BT_AJAX, BT_FRAGMENT}, -10, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_INT, 1000, new AppendTokenParser() {
