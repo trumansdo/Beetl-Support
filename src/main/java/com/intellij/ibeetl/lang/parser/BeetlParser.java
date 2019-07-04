@@ -47,6 +47,9 @@ import static com.intellij.lang.pratt.TokenParser.postfix;
 import static com.intellij.patterns.StandardPatterns.*;
 import static com.intellij.psi.TokenType.ERROR_ELEMENT;
 
+/**
+ * 定界符不作为语法的一部分，会更好构建语法树。但是得考虑到后期的错误修正，这个难度可能会更大。
+ */
 public class BeetlParser extends PrattParser {
 	/* 定义整个语法解析中的等级层次。这里只是定义了一种跨度，在具体的解析等级时，需要在所属等级向上调整。但是......我没用到这些常量。哈哈红红火火恍恍惚惚 */
 	/**
@@ -368,31 +371,11 @@ public class BeetlParser extends PrattParser {
 				return true;
 			}
 		});
-		
+
 		/*ajax片段*/
 		registerParser(new IElementType[]{BT_AJAX, BT_FRAGMENT}, -10, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_INT, 1000, new AppendTokenParser() {
-			@Nullable
-			@Override
-			protected IElementType parseAppend(PrattBuilder prattBuilder) {
-				return NUMBER;
-			}
-		});
-		registerParser(BT_FLOAT, 1000, new AppendTokenParser() {
-			@Nullable
-			@Override
-			protected IElementType parseAppend(PrattBuilder prattBuilder) {
-				return NUMBER;
-			}
-		});
-		registerParser(BT_OCT, 1000, new AppendTokenParser() {
-			@Nullable
-			@Override
-			protected IElementType parseAppend(PrattBuilder prattBuilder) {
-				return NUMBER;
-			}
-		});
-		registerParser(BT_HEX, 1000, new AppendTokenParser() {
+
+		registerParser(new IElementType[]{BT_INT, BT_FLOAT, BT_OCT, BT_HEX}, 1000, new AppendTokenParser() {
 			@Nullable
 			@Override
 			protected IElementType parseAppend(PrattBuilder prattBuilder) {
