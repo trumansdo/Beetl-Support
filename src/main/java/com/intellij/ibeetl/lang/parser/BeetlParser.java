@@ -96,17 +96,9 @@ public class BeetlParser extends PrattParser {
 		 * PrattParsingUtil.searchFor(prattBuilder, false, BT_RDELIMITER);在当前的token位置开始向前搜索，直到搜索到指定的token位置。
 		 *    第二个参数是否消费搜索到的指定token，也就是搜索到指定token后，向前推进一位。
 		 * */
-		registerParser(BT_LDELIMITER, -10, new TokenParser() {
-			@Override
-			public boolean parseToken(PrattBuilder prattBuilder) {
-				MutableMarker mark = prattBuilder.mark();
-				prattBuilder.advance();
-				prattBuilder.createChildBuilder(INIT_LEVEL).parse();
-				prattBuilder.checkToken(BT_RDELIMITER);
-				mark.finish(null);
-				return true;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
-			}
-		});
+		registerParser(BT_LDELIMITER, 1000, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_RDELIMITER, 1000, AppendTokenParser.JUST_APPEND);
+
 		registerParser(BT_LPLACEHOLDER, -10, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
@@ -197,7 +189,6 @@ public class BeetlParser extends PrattParser {
 				return true;
 			}
 		});
-		registerParser(BT_RBRACE, 9, postfix(SYNTAX_BODY));
 		/*中括号：集合定义*/
 		registerParser(BT_LBRACK, 900, path().up(), new TokenParser() {
 			@Override
@@ -395,8 +386,8 @@ public class BeetlParser extends PrattParser {
 		 * */
 		registerParser(NEW_LINE, 1000, AppendTokenParser.JUST_APPEND);
 		registerParser(HTML_NEW_LINE, 1000, AppendTokenParser.JUST_APPEND);
-		registerParser(new IElementType[]{BT_BREAK, BT_RETURN, BT_CONTINUE, BT_DEFAULT, BT_DIRECTIVE, BT_VAR, BT_FOR_IN}, 800, AppendTokenParser.JUST_APPEND);
-		registerParser(BTL_TEMPLATE_HTML_TEXT, -10, AppendTokenParser.JUST_APPEND);
+		registerParser(new IElementType[]{BT_BREAK, BT_RETURN, BT_CONTINUE, BT_DEFAULT, BT_VAR, BT_FOR_IN}, 800, AppendTokenParser.JUST_APPEND);
+		registerParser(BTL_TEMPLATE_HTML_TEXT, 1000, AppendTokenParser.JUST_APPEND);
 
 		registerParser(ERROR_ELEMENT, 1000, new TokenParser() {
 			@Override
