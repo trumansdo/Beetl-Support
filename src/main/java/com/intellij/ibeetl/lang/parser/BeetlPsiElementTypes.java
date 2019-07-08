@@ -10,7 +10,7 @@ public interface BeetlPsiElementTypes {
 	BeetlIElementType NUMBER = new BeetlIElementType("Number");
 	/*字符字面量*/
 	BeetlIElementType STRING_LITERAL = new BeetlIElementType("StringLiteral");
-	/*自叠加运算：自增自减*/
+	/*废弃：自叠加运算：自增自减*/
 	BeetlIElementType SELF_OVERLAY_EXPRESSION = new BeetlIElementType("SelfOverlayExpression");
 
 	/*占位符语法*/
@@ -50,9 +50,19 @@ public interface BeetlPsiElementTypes {
 	BeetlIElementType KEY_VALUE_PAIR = new BeetlIElementType("KeyValuePair");
 	/*if语句*/
 	BeetlIElementType IF_STATEMENT = new BeetlIElementType("IfStatement");
+	/*while 语句*/
 	BeetlIElementType WHILE_STATEMENT = new BeetlIElementType("WhileStatement");
+	/*for 语句*/
 	BeetlIElementType FOR_STATEMENT = new BeetlIElementType("ForStatement");
+	/*select语句*/
 	BeetlIElementType SELECT_STATEMENT = new BeetlIElementType("SelectStatement");
+	/*switch语句*/
 	BeetlIElementType SWITCH_STATEMENT = new BeetlIElementType("SwitchStatement");
+	/*case 段*/
 	BeetlIElementType CASE_SEGMENT = new BeetlIElementType("CaseSegment");
+	/*ajax 语法*/
+	BeetlIElementType AJAX_STATEMENT = new BeetlIElementType("AjaxStatement");
+	/*case 以及 ajax 词 后的标记语法块*/
+	BeetlIElementType SYMBOL_BODY = new BeetlIElementType("SymbolBody");
+
 }

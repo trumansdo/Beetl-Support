@@ -30,7 +30,6 @@ public class BeetlSyntaxHighlighter extends SyntaxHighlighterBase {
 		fillMap(BeetlTokenSets.PARENTHS, BTL_PARENTHS);
 		fillMap(BeetlTokenSets.BRACKETS, BTL_BRACKETS);
 		fillMap(BeetlTokenSets.BRACES, BTL_BRACES);
-		fillMap(BeetlTokenSets.DELIMITERS, BTL_DELIMITERS);
 
 		putTokenType(BT_DOT, BTL_DOT);
 		putTokenType(BT_SEMICOLON, BTL_SEMICOLON);

@@ -23,6 +23,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <fileTypeFactory implementation="com.intellij.ibeetl.lang.BeetlFileTypeFactory"/>
         <lang.parserDefinition language="btl" implementationClass="com.intellij.ibeetl.lang.BeetlParserDefinition"/>
+	    <externalAnnotator language="btl" implementationClass="com.intellij.ibeetl.lang.BeetlExternalAnnotator"/>
         <!--
         两个fileview一样。根据模板语言的开发步骤：
         1、自定义模板flex，并把模板语言之外的外部语言识别为一个template data  type

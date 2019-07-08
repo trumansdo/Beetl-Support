@@ -21,8 +21,8 @@ import static com.intellij.psi.TokenType.ERROR_ELEMENT;
  */
 public class BeetlLexer extends LookAheadLexer {
 	/*定义所有的定界符，HTML标签标识符，占位符*/
-	public static final String DELIMITER_LEFT="<%";
-	public static final String DELIMITER_RIGHT="%>";
+	public static final String DELIMITER_LEFT="@";
+	public static final String DELIMITER_RIGHT="\n";
 	public static final String HTML_START1 ="<#";
 	public static final String HTML_START2 ="</#";
 	public static final String HTML_END1=">";

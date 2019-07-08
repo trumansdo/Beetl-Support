@@ -33,10 +33,10 @@ package com.intellij.ibeetl.lang.parser;
 
 import com.intellij.lang.pratt.*;
 import com.intellij.psi.tree.IElementType;
+import com.sun.jna.platform.win32.WinDef;
 import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.BTL_TEMPLATE_HTML_TEXT;
-import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.VIRTUAL_ROOT;
+import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.*;
 import static com.intellij.ibeetl.lang.lexer.BeetlTokenTypes.*;
 import static com.intellij.ibeetl.lang.parser.BeetlPrattRegistry.REGISTRY;
 import static com.intellij.ibeetl.lang.parser.BeetlPrattRegistry.registerParser;
@@ -105,7 +105,7 @@ public class BeetlParser extends PrattParser {
 				MutableMarker mark = prattBuilder.mark();
 				prattBuilder.advance();
 //				todo 解析占位符子解析器等级要改
-				prattBuilder.createChildBuilder(INIT_LEVEL).parse();
+				prattBuilder.createChildBuilder(0).parse();
 				prattBuilder.checkToken(BT_RPLACEHOLDER);
 				mark.finish(INTERPOLATION);
 				return true;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
@@ -117,7 +117,7 @@ public class BeetlParser extends PrattParser {
 				MutableMarker mark = prattBuilder.mark();
 				prattBuilder.advance();
 //				todo 解析HTML标签子解析器等级要改
-				prattBuilder.createChildBuilder(INIT_LEVEL).parse();
+				prattBuilder.createChildBuilder(0).parse();
 				prattBuilder.checkToken(BT_HTML_TAG_END);
 				mark.finish(HTML_TAG);
 				return true;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
@@ -154,11 +154,12 @@ public class BeetlParser extends PrattParser {
 					}
 					prattBuilder.checkToken(BT_SEMICOLON);
 				}
+				prattBuilder.checkToken(BT_RPAREN);
 				mark.finish(PARENTHESIZED_EXPRESSION);
 				return true;
 			}
 		});
-		/*大括号*/
+		/*大括号，json形式的语法*/
 		registerParser(BT_LBRACE, 900, path().up(), new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
@@ -178,6 +179,17 @@ public class BeetlParser extends PrattParser {
 				return true;
 			}
 		});
+		/*冒号，一种json的k:v*/
+		registerParser(BT_COLON, 950, path().left().up().left(or(object(BT_LBRACE), object(BT_COMMA))), new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				prattBuilder.advance();
+				prattBuilder.createChildBuilder(890).parse();
+				prattBuilder.reduce(KEY_VALUE_PAIR);
+				return true;
+			}
+		});
+		/*大括号，html函数或者if等语句的语法体*/
 		registerParser(BT_LBRACE, 900, path().left(PARENTHESIZED_EXPRESSION), new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
@@ -243,7 +255,7 @@ public class BeetlParser extends PrattParser {
 		});
 		registerParser(BT_ATTRIBUTE_NAME, 10, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_ATTRIBUTE_VALUE, 10, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_SEMICOLON, 10, new TokenParser() {
+		registerParser(BT_SEMICOLON, 110, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				prattBuilder.advance();
@@ -252,18 +264,9 @@ public class BeetlParser extends PrattParser {
 			}
 		});
 		/*自增自减语法*/
-		registerParser(new IElementType[]{BT_INCREASE, BT_DECREASE}, 950, path().up(), infix(950, SELF_OVERLAY_EXPRESSION));
-		registerParser(new IElementType[]{BT_INCREASE, BT_DECREASE}, 950, path().left(), postfix(SELF_OVERLAY_EXPRESSION));
-		/*冒号*/
-		registerParser(BT_COLON, 950, path().left().up(), new TokenParser() {
-			@Override
-			public boolean parseToken(PrattBuilder prattBuilder) {
-				prattBuilder.advance();
-				prattBuilder.createChildBuilder(890).parse();
-				prattBuilder.reduce(KEY_VALUE_PAIR);
-				return true;
-			}
-		});
+//		registerParser(new IElementType[]{BT_INCREASE, BT_DECREASE}, 950, path().up(), infix(950, SELF_OVERLAY_EXPRESSION));
+		registerParser(new IElementType[]{BT_INCREASE, BT_DECREASE}, 950, AppendTokenParser.JUST_APPEND);
+
 		/*点号*/
 		registerParser(BT_DOT, 950, path().left(or(object(BT_IDENTIFIER), object(REFERENCE_EXPRESSION))), new ReducingParser() {
 			@Nullable
@@ -272,6 +275,22 @@ public class BeetlParser extends PrattParser {
 				return REFERENCE_EXPRESSION;
 			}
 		});
+		/*感叹号，安全表达式  ref!*/
+		registerParser(BT_NOT, 950, path().left(or(object(BT_IDENTIFIER), object(REFERENCE_EXPRESSION))).up(), postfix(SAFETY_OUTPUT));
+		/*感叹号，绝对安全表达式：!(ref)*/
+		registerParser(BT_NOT, 950, path().up(), new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				MutableMarker mark = prattBuilder.mark();
+				prattBuilder.advance();
+				if(!prattBuilder.isToken(BT_LPAREN)){
+					return true;
+				}
+				mark.finish(SAFETY_OUTPUT);
+				return true;
+			}
+		});
+
 		/*二元运算符*/
 		registerParser(new IElementType[]{BT_PLUS, BT_MINUS, BT_MUL, BT_REMAINDER, BT_QUOTIENT, BT_COND_AND, BT_COND_OR}, 950,
 				path().left(or(object(BT_IDENTIFIER), object(REFERENCE_EXPRESSION), object(NUMBER))), new TokenParser() {
@@ -302,69 +321,87 @@ public class BeetlParser extends PrattParser {
 			}
 		});
 
-		registerParser(BT_IF, 895, new TokenParser() {
+		registerParser(BT_IF, 100, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
 				prattBuilder.advance();
-				prattBuilder.createChildBuilder(890).parse();
+				prattBuilder.createChildBuilder(100).parse();
 				mark.finish(IF_STATEMENT);
 				return true;
 			}
 		});
-		registerParser(BT_FOR, 895, new TokenParser() {
+		registerParser(BT_FOR, 100, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
 				prattBuilder.advance();
-				prattBuilder.createChildBuilder(890).parse();
+				prattBuilder.createChildBuilder(100).parse();
 				mark.finish(FOR_STATEMENT);
 				return true;
 			}
 		});
-		registerParser(BT_WHILE, 895, new TokenParser() {
+		registerParser(BT_WHILE, 100, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
 				prattBuilder.advance();
-				prattBuilder.createChildBuilder(890).parse();
+				prattBuilder.createChildBuilder(100).parse();
 				mark.finish(WHILE_STATEMENT);
 				return true;
 			}
 		});
-		registerParser(BT_SWITCH, 895, new TokenParser() {
+		registerParser(BT_SWITCH, 100, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
 				prattBuilder.advance();
-				prattBuilder.createChildBuilder(890).parse();
+				prattBuilder.createChildBuilder(100).parse();
 				mark.finish(SWITCH_STATEMENT);
 				return true;
 			}
 		});
-		registerParser(BT_SELECT, 895, new TokenParser() {
+		registerParser(BT_SELECT, 100, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
 				prattBuilder.advance();
-				prattBuilder.createChildBuilder(890).parse();
+				prattBuilder.createChildBuilder(100).parse();
 				mark.finish(SELECT_STATEMENT);
 				return true;
 			}
 		});
-		registerParser(BT_CASE, 895, new TokenParser() {
+		registerParser(BT_CASE, 100, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
 				prattBuilder.advance();
-				prattBuilder.createChildBuilder(890).parse();
+				prattBuilder.createChildBuilder(100).parse();
 				mark.finish(CASE_SEGMENT);
 				return true;
 			}
 		});
-
+		/*冒号，第二种是case 及ajax 后标记语法块*/
+		registerParser(BT_COLON, 950, path().left().up().left(BT_CASE), new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				prattBuilder.advance();
+				prattBuilder.createChildBuilder(100).parse();
+				prattBuilder.reduce(SYMBOL_BODY);
+				return true;
+			}
+		});
 		/*ajax片段*/
-		registerParser(new IElementType[]{BT_AJAX, BT_FRAGMENT}, -10, AppendTokenParser.JUST_APPEND);
+		registerParser(new IElementType[]{BT_AJAX, BT_FRAGMENT}, 100, new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				MutableMarker mark = prattBuilder.mark();
+				prattBuilder.advance();
+				prattBuilder.createChildBuilder(9).parse();
+				mark.finish(AJAX_STATEMENT);
+				return true;
+			}
+		});
 
 		registerParser(new IElementType[]{BT_INT, BT_FLOAT, BT_OCT, BT_HEX}, 1000, new AppendTokenParser() {
 			@Nullable

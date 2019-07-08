@@ -62,8 +62,8 @@ public interface BeetlTokenTypes {
 	BeetlTokenType BT_LPLACEHOLDER = new BeetlTokenType("beetl[lplaceholder]");
 	BeetlTokenType BT_RPLACEHOLDER = new BeetlTokenType("beetl[rplaceholder]");
 
-	BeetlTokenType BT_LDELIMITER = new BeetlTokenType("beetl[<%]");
-	BeetlTokenType BT_RDELIMITER = new BeetlTokenType("beetl[%>]");
+	BeetlTokenType BT_LDELIMITER = new BeetlTokenType("beetl[ldelimiter]");
+	BeetlTokenType BT_RDELIMITER = new BeetlTokenType("beetl[rdelimiter]");
 
 	BeetlTokenType BT_HTML_TAG_END = new BeetlTokenType("beetl[html_tag_end]");
 	BeetlTokenType BT_HTML_TAG_START = new BeetlTokenType("beetl[html_tag_start]");
