@@ -41,10 +41,13 @@ public class BeetlColorSettingsPage implements ColorSettingsPage {
 	@NotNull
 	@Override
 	public String getDemoText() {
-		return "<%\n var a=123,b='123',c=[1,2,3],d={'key':123,'key':'123'};\n if(var i=0;i<c.~size;i++){\n print(i); \n} \n%>\n" +
+		String text = "<% var a=123,b='123',c=[1,2,3],d={'key':123,'key':'123'}; %>\n" +
+				"<% if(var i=0;i<c.~size;i++){ %>\n" +
+				"<% \t print(i); %>\n" +
+				"<% } %>\n" +
 				"/*block comment*/\n" +
-				"//line comment" +
-				"";
+				"//line comment";
+		return null;
 	}
 
 	@Nullable
@@ -56,7 +59,7 @@ public class BeetlColorSettingsPage implements ColorSettingsPage {
 	@NotNull
 	@Override
 	public AttributesDescriptor[] getAttributeDescriptors() {
-		return new AttributesDescriptor[0];
+		return ATTRIBUTES_DESCRIPTOR_LIST.toArray(new AttributesDescriptor[0]);
 	}
 
 	@NotNull
