@@ -33,10 +33,10 @@ package com.intellij.ibeetl.lang.parser;
 
 import com.intellij.lang.pratt.*;
 import com.intellij.psi.tree.IElementType;
-import com.sun.jna.platform.win32.WinDef;
 import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.*;
+import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.BTL_TEMPLATE_HTML_TEXT;
+import static com.intellij.ibeetl.lang.lexer.BeetlIElementTypes.VIRTUAL_ROOT;
 import static com.intellij.ibeetl.lang.lexer.BeetlTokenTypes.*;
 import static com.intellij.ibeetl.lang.parser.BeetlPrattRegistry.REGISTRY;
 import static com.intellij.ibeetl.lang.parser.BeetlPrattRegistry.registerParser;
@@ -83,7 +83,7 @@ public class BeetlParser extends PrattParser {
 		/*
 		 * PrattBuilder常用方法解释：
 		 * prattBuilder.advance(); 先将当前的token加入左兄弟元素集合中，并且向前推动token流。该方法的作用是推进token流，直接将token返回给解析器包装为ASTNode。
-		 * prattBuilder.createChildBuilder(INIT_LEVEL).parse(); 以指定优先级创建一个子解析器，子解析器将只能解析高于指定优先级的token
+		 * prattBuilder.createChildBuilder(INIT_LEVEL).parse(); 以指定优先级创建一个子解析器，子解析器将只能解析高于指定优先级的token。这个返回值若为null，说明子表达式不是一个完整的节点。
 		 * prattBuilder.checkToken(BT_RDELIMITER); 先判断当前的token是否是指定token，为真调用advance()方法。
 		 *
 		 * MutableMarker常用方法解释：
@@ -98,26 +98,25 @@ public class BeetlParser extends PrattParser {
 		 * */
 		registerParser(BT_LDELIMITER, 1000, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_RDELIMITER, 1000, AppendTokenParser.JUST_APPEND);
-
-		registerParser(BT_LPLACEHOLDER, -10, new TokenParser() {
+		/*占位符*/
+		registerParser(BT_LPLACEHOLDER, 400, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
 				prattBuilder.advance();
-//				todo 解析占位符子解析器等级要改
-				prattBuilder.createChildBuilder(0).parse();
+				prattBuilder.createChildBuilder(400).parse();
 				prattBuilder.checkToken(BT_RPLACEHOLDER);
 				mark.finish(INTERPOLATION);
 				return true;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
 			}
 		});
+		/*HTML标签*/
 		registerParser(BT_HTML_TAG_START, -10, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
 				prattBuilder.advance();
-//				todo 解析HTML标签子解析器等级要改
-				prattBuilder.createChildBuilder(0).parse();
+				prattBuilder.createChildBuilder(100).parse();
 				prattBuilder.checkToken(BT_HTML_TAG_END);
 				mark.finish(HTML_TAG);
 				return true;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
@@ -148,8 +147,9 @@ public class BeetlParser extends PrattParser {
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
 				prattBuilder.advance();
-				while (!prattBuilder.isEof() && !prattBuilder.checkToken(BT_RPAREN) && prattBuilder.createChildBuilder(790).parse() != null) {
-					if (prattBuilder.checkToken(BT_RPAREN)) {
+				while (!prattBuilder.isEof() && !prattBuilder.checkToken(BT_RPAREN)) {
+					IElementType elementType = prattBuilder.createChildBuilder(790).parse();
+					if (prattBuilder.isToken(BT_RPAREN)) {
 						break;
 					}
 					prattBuilder.checkToken(BT_SEMICOLON);
@@ -244,7 +244,7 @@ public class BeetlParser extends PrattParser {
 			}
 		});
 		/*赋值语法*/
-		registerParser(new IElementType[]{BT_ASSIGN, BT_PLUS_ASSIGN, BT_MINUS_ASSIGN, BT_MUL_ASSIGN, BT_QUOTIENT_ASSIGN}, 870, path().left(object(REFERENCE_EXPRESSION)), new TokenParser() {
+		registerParser(new IElementType[]{BT_ASSIGN, BT_PLUS_ASSIGN, BT_MINUS_ASSIGN, BT_MUL_ASSIGN, BT_QUOTIENT_ASSIGN}, 870, path().left(or(object(REFERENCE_EXPRESSION),object(BT_IDENTIFIER))), new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				prattBuilder.advance();
@@ -253,8 +253,9 @@ public class BeetlParser extends PrattParser {
 				return true;
 			}
 		});
-		registerParser(BT_ATTRIBUTE_NAME, 10, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_ATTRIBUTE_VALUE, 10, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_ATTRIBUTE_NAME, 1000, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_ASSIGN,870, path().left(BT_ATTRIBUTE_NAME), infix(100, NAME_VALUE_PAIR));
+		registerParser(BT_ATTRIBUTE_VALUE, 1000, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_SEMICOLON, 110, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
@@ -283,10 +284,12 @@ public class BeetlParser extends PrattParser {
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
 				prattBuilder.advance();
-				if(!prattBuilder.isToken(BT_LPAREN)){
+				if (prattBuilder.isToken(BT_LPAREN)) {
+					prattBuilder.createChildBuilder(890).parse();
+					mark.finish(SAFETY_OUTPUT);
 					return true;
 				}
-				mark.finish(SAFETY_OUTPUT);
+				mark.finish(null);
 				return true;
 			}
 		});

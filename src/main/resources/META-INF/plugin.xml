@@ -37,6 +37,7 @@
 	    <lang.formatter language="btl"
 	                    implementationClass="com.intellij.ibeetl.lang.psi.formatter.BeetlFormattingModelBuilder"/>
 	    <colorSettingsPage implementation="com.intellij.ibeetl.lang.highlight.BeetlColorSettingsPage"/>
+	    <applicationConfigurable instance="com.intellij.ibeetl.setting.BeetlConfigure"/>
     </extensions>
     <actions>
     </actions>

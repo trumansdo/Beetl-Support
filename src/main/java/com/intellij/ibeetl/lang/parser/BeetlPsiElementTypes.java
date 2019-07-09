@@ -48,6 +48,8 @@ public interface BeetlPsiElementTypes {
 	BeetlIElementType JSON_EXPRESSION = new BeetlIElementType("JsonExpression");
 	/*以冒号分隔的键值对*/
 	BeetlIElementType KEY_VALUE_PAIR = new BeetlIElementType("KeyValuePair");
+	/*以等于号分隔的属性值对*/
+	BeetlIElementType NAME_VALUE_PAIR = new BeetlIElementType("NameValuePair");
 	/*if语句*/
 	BeetlIElementType IF_STATEMENT = new BeetlIElementType("IfStatement");
 	/*while 语句*/
