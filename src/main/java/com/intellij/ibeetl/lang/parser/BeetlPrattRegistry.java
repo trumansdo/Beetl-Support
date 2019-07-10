@@ -12,6 +12,7 @@ import java.util.stream.Stream;
  * pratt  解析器的注册中心。pratt  解析器是一个组合解析器，将解析任务给不同的token parser实现组合解析。更容易实现解析器
  */
 public class BeetlPrattRegistry {
+	/*先注册的先查找*/
 	public static final PrattRegistry REGISTRY = new PrattRegistry();
 
 

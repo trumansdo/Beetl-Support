@@ -113,7 +113,7 @@ public class BeetlParser extends PrattParser {
 			}
 		});
 		/*HTML标签*/
-		registerParser(BT_HTML_TAG_START, -10, new TokenParser() {
+		registerParser(BT_HTML_TAG_START, 400, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
@@ -277,7 +277,17 @@ public class BeetlParser extends PrattParser {
 		});
 		/*html标签中的name  value对语法*/
 		registerParser(BT_ATTRIBUTE_NAME, 1000, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_ASSIGN, 870, path().left(BT_ATTRIBUTE_NAME), infix(100, NAME_VALUE_PAIR));
+		registerParser(BT_ASSIGN, 870, path().left(BT_ATTRIBUTE_NAME), new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				MutableMarker mark = prattBuilder.mark();
+				prattBuilder.advance();
+				prattBuilder.createChildBuilder(100).parse();
+				mark.finish(NAME_VALUE_PAIR);
+				return true;
+			}
+		});
+
 		registerParser(BT_ATTRIBUTE_VALUE, 1000, AppendTokenParser.JUST_APPEND);
 
 		registerParser(BT_SEMICOLON, 110, new TokenParser() {
