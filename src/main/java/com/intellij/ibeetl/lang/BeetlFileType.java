@@ -23,12 +23,7 @@ public class BeetlFileType extends LanguageFileType implements TemplateLanguageF
 
 	private BeetlFileType() {
 		super(BeetlLanguage.INSTANCE);
-		FileTypeEditorHighlighterProviders.INSTANCE.addExplicitExtension(this, new EditorHighlighterProvider() {
-			@Override
-			public EditorHighlighter getEditorHighlighter(@Nullable Project project, @NotNull FileType fileType, @Nullable VirtualFile virtualFile, @NotNull EditorColorsScheme colors) {
-				return new BeetlEditorHighlighter(project, virtualFile, colors);
-			}
-		});
+		FileTypeEditorHighlighterProviders.INSTANCE.addExplicitExtension(this, (project, fileType, virtualFile, colors) -> new BeetlEditorHighlighter(project, virtualFile, colors));
 	}
 
 	@NotNull

@@ -6,6 +6,7 @@ import com.intellij.ibeetl.lang.lexer.BeetlIElementTypes;
 import com.intellij.ibeetl.lang.psi.fileview.BeetlFileViewProvider;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.ex.util.LayerDescriptor;
 import com.intellij.openapi.editor.ex.util.LayeredLexerEditorHighlighter;
 import com.intellij.openapi.fileTypes.FileTypes;
@@ -33,7 +34,17 @@ public class BeetlEditorHighlighter extends LayeredLexerEditorHighlighter {
 	/*确定更新不同语言layer的条件*/
 	@Override
 	protected boolean updateLayers() {
-		return false;
+		return true;
+	}
+
+	/**
+	 * 没看源码。。不知道啥用途，暂定永远返回true
+	 * @param e
+	 * @return
+	 */
+	@Override
+	protected boolean updateLayers(@NotNull DocumentEvent e) {
+		return super.updateLayers(e);
 	}
 
 	private SyntaxHighlighter getHighlighter(Project project, VirtualFile virtualFile) {

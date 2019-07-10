@@ -40,8 +40,12 @@ public interface BeetlPsiElementTypes {
 	BeetlIElementType PARENTHESIZED_EXPRESSION = new BeetlIElementType("ParenthesizedExpression");
 	/*圆括号：函数调用的参数列表*/
 	BeetlIElementType PARAMETER_LIST = new BeetlIElementType("ParameterList");
-	/*圆括号：安全抑制表达式*/
+	/*圆括号：安全输出表达式*/
 	BeetlIElementType SAFETY_OUTPUT = new BeetlIElementType("SafetyOutput");
+	/*三元表达式为true的部分*/
+	BeetlIElementType TERNARY_TRUE = new BeetlIElementType("TernaryTrue");
+	/*三元表达式为false的部分*/
+	BeetlIElementType TERNARY_FALSE = new BeetlIElementType("TernaryFalse");
 	/*大括号的语法块*/
 	BeetlIElementType SYNTAX_BODY = new BeetlIElementType("SyntaxBody");
 	/*json定义*/
@@ -52,10 +56,12 @@ public interface BeetlPsiElementTypes {
 	BeetlIElementType NAME_VALUE_PAIR = new BeetlIElementType("NameValuePair");
 	/*if语句*/
 	BeetlIElementType IF_STATEMENT = new BeetlIElementType("IfStatement");
+	BeetlIElementType ELSE_STATEMENT = new BeetlIElementType("ElseStatement");
 	/*while 语句*/
 	BeetlIElementType WHILE_STATEMENT = new BeetlIElementType("WhileStatement");
 	/*for 语句*/
 	BeetlIElementType FOR_STATEMENT = new BeetlIElementType("ForStatement");
+	BeetlIElementType ELSEFOR_STATEMENT = new BeetlIElementType("ElseForStatement");
 	/*select语句*/
 	BeetlIElementType SELECT_STATEMENT = new BeetlIElementType("SelectStatement");
 	/*switch语句*/
