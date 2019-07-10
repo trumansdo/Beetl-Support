@@ -19,7 +19,9 @@
     <!-- uncomment to enable plugin in all products
     <depends>com.intellij.modules.lang</depends>
     -->
-
+	<!--<depends optional="true">com.intellij.spring</depends>-->
+	<!--<depends optional="true">com.intellij.spring.boot</depends>-->
+	<!--<depends optional="true">com.intellij.database</depends>-->
     <extensions defaultExtensionNs="com.intellij">
         <fileTypeFactory implementation="com.intellij.ibeetl.lang.BeetlFileTypeFactory"/>
         <lang.parserDefinition language="btl" implementationClass="com.intellij.ibeetl.lang.BeetlParserDefinition"/>
@@ -37,8 +39,18 @@
 	    <lang.formatter language="btl"
 	                    implementationClass="com.intellij.ibeetl.lang.psi.formatter.BeetlFormattingModelBuilder"/>
 	    <colorSettingsPage implementation="com.intellij.ibeetl.lang.highlight.BeetlColorSettingsPage"/>
+	    <!--beetl配置页面-->
 	    <applicationConfigurable instance="com.intellij.ibeetl.setting.BeetlConfigure"/>
+	    <!--应用服务-->
+	    <!--<applicationService serviceInterface="com.intellij.ibeetl.setting.BeetlSetting" serviceImplementation="com.intellij.ibeetl.setting.BeetlSetting"/>-->
+
     </extensions>
     <actions>
     </actions>
+	<application-components>
+		<component>
+			<interface-class>com.intellij.openapi.components.PersistentStateComponent</interface-class>
+			<implementation-class>com.intellij.ibeetl.setting.BeetlSetting</implementation-class>
+		</component>
+	</application-components>
 </idea-plugin>

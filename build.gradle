@@ -34,6 +34,7 @@ dependencies {
 intellij {
     version '183.4284.148'
     type 'IC'
+//    plugins = ['spring', 'springboot'] //'DatabaseTools'
     pluginName 'Beetl-Support'
     sandboxDirectory "${rootProject.rootDir}/idea-sandbox"
     updateSinceUntilBuild false
