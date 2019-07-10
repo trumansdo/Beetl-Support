@@ -254,7 +254,15 @@ public class BeetlParser extends PrattParser {
 			}
 		});
 		registerParser(BT_ATTRIBUTE_NAME, 1000, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_ASSIGN,870, path().left(BT_ATTRIBUTE_NAME), infix(100, NAME_VALUE_PAIR));
+		registerParser(BT_ASSIGN, 870, path().left(BT_ATTRIBUTE_NAME), new TokenParser() {
+			@Override
+			public boolean parseToken(PrattBuilder prattBuilder) {
+				MutableMarker mark = prattBuilder.mark();
+				prattBuilder.createChildBuilder(100).parse();
+				mark.finish(NAME_VALUE_PAIR);
+				return true;
+			}
+		});
 		registerParser(BT_ATTRIBUTE_VALUE, 1000, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_SEMICOLON, 110, new TokenParser() {
 			@Override
