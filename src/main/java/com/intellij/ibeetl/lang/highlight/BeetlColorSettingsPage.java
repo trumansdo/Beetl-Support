@@ -1,7 +1,6 @@
 package com.intellij.ibeetl.lang.highlight;
 
 import com.intellij.ibeetl.BeetlBundle;
-import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
@@ -17,12 +16,14 @@ import java.util.List;
 import java.util.Map;
 
 import static com.intellij.ibeetl.lang.highlight.BeetlSyntaxHighlighterColors.*;
+import static com.intellij.ibeetl.setting.BeetlConfigure.*;
 
 /**
  * beetl 颜色配置页
  */
 public class BeetlColorSettingsPage implements ColorSettingsPage {
 	private static final List<AttributesDescriptor> ATTRIBUTES_DESCRIPTOR_LIST = ContainerUtil.<AttributesDescriptor>newArrayList();
+
 	@Nullable
 	@Override
 	public Icon getIcon() {
@@ -41,13 +42,14 @@ public class BeetlColorSettingsPage implements ColorSettingsPage {
 	@NotNull
 	@Override
 	public String getDemoText() {
-		String text = "<% var a=123,b='123',c=[1,2,3],d={'key':123,'key':'123'}; %>\n" +
-				"<% if(var i=0;i<c.~size;i++){ %>\n" +
-				"<% \t print(i); %>\n" +
-				"<% } %>\n" +
+		String text = DELIMITER_STATEMENT_START + " var a=123,b='123',c=[1,2,3],d={'key':123,'key':'123'}; " + DELIMITER_STATEMENT_END + "\n" +
+				DELIMITER_STATEMENT_START + " if(var i=0;i<c.~size;i++){ " + DELIMITER_STATEMENT_END + "\n" +
+				DELIMITER_STATEMENT_START + " \t print(i); " + DELIMITER_STATEMENT_END + "\n" +
+				DELIMITER_STATEMENT_START + " } " + DELIMITER_STATEMENT_END + "\n" +
 				"/*block comment*/\n" +
-				"//line comment";
-		return null;
+				"//line comment\n" +
+				"<" + HTML_TAG_FLAG + "tagname att_name=\"ss" + DELIMITER_PLACEHOLDER_START + "date,dateformat=''" + DELIMITER_PLACEHOLDER_END + "ss\"/>";
+		return text;
 	}
 
 	@Nullable
@@ -73,21 +75,23 @@ public class BeetlColorSettingsPage implements ColorSettingsPage {
 	public String getDisplayName() {
 		return BeetlBundle.message("file.type.description");
 	}
+
 	static {
-		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("keywords", BTL_KEYWORD));
-		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("operations", BTL_OPERATIONS));
-		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("string", BTL_STRING));
-		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("literal", BTL_LITERALS));
-		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("delimiters", BTL_DELIMITERS));
-		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("placeholders", BTL_PLACEHOLDERS));
-		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("parenths", BTL_PARENTHS));
-		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("brackets", BTL_BRACKETS));
-		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("braces", BTL_BRACES));
-		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("semicolon", BTL_SEMICOLON));
-		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("comma", BTL_COMMA));
-		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("identifier", BTL_IDENT));
-		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("attribute_name", BTL_REFERENCE));
-		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("line_comment", BTL_LINE_COMMENT));
-		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("multiline_comment", BTL_BLOCK_COMMENT));
+		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("DELIMITERS", BTL_DELIMITERS));
+		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("HTMLTAG", BTL_HTMLTAGS));
+		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("PLACEHOLDERS", BTL_PLACEHOLDERS));
+		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("KEYWORDS", BTL_KEYWORD));
+		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("OPERATIONS", BTL_OPERATIONS));
+		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("STRING", BTL_STRING));
+		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("LITERAL", BTL_LITERALS));
+		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("PARENTHS", BTL_PARENTHS));
+		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("BRACKETS", BTL_BRACKETS));
+		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("BRACES", BTL_BRACES));
+		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("SEMICOLON", BTL_SEMICOLON));
+		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("COMMA", BTL_COMMA));
+		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("IDENTIFIER", BTL_IDENT));
+		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("ATTRIBUTE_NAME", BTL_REFERENCE));
+		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("LINE_COMMENT", BTL_LINE_COMMENT));
+		ATTRIBUTES_DESCRIPTOR_LIST.add(new AttributesDescriptor("BLOCK_COMMENT", BTL_BLOCK_COMMENT));
 	}
 }

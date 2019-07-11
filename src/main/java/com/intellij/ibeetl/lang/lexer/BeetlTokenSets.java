@@ -18,7 +18,8 @@ public interface BeetlTokenSets {
 	TokenSet KEYWORDS = TokenSet.create(new IElementType[]{BT_BREAK, BT_RETURN, BT_CONTINUE, BT_DEFAULT, BT_INTERFACE, BT_SWITCH, BT_SELECT, BT_CASE, BT_CONST, BT_IF,
 			BT_FOR, BT_ELSE_FOR, BT_ELSE, BT_WHILE, BT_DIRECTIVE, BT_TYPE_, BT_VAR, BT_TRY, BT_CATCH, BT_AJAX, BT_FRAGMENT, BT_FOR_IN});
 
-	TokenSet DELIMITERS = TokenSet.create(new IElementType[]{BT_LDELIMITER, BT_RDELIMITER, BT_HTML_TAG_START, BT_HTML_TAG_END});
+	TokenSet DELIMITERS = TokenSet.create(new IElementType[]{BT_LDELIMITER, BT_RDELIMITER});
+	TokenSet HTMLTAGS = TokenSet.create(new IElementType[]{BT_HTML_TAG_START, BT_HTML_TAG_END});
 	TokenSet PLACEHOLDERS = TokenSet.create(new IElementType[]{BT_LPLACEHOLDER, BT_RPLACEHOLDER});
 
 	TokenSet PARENTHS = TokenSet.create(new IElementType[]{BT_LPAREN, BT_RPAREN});

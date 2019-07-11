@@ -101,16 +101,16 @@ public class BeetlParser extends PrattParser {
 		registerParser(BT_LDELIMITER, 1000, AppendTokenParser.JUST_APPEND);
 		registerParser(BT_RDELIMITER, 1000, AppendTokenParser.JUST_APPEND);
 		/*占位符*/
-		registerParser(BT_LPLACEHOLDER, 400, new TokenParser() {
+		registerParser(BT_LPLACEHOLDER, 410, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker outMark = prattBuilder.mark();
 				prattBuilder.advance();
-				prattBuilder.createChildBuilder(400).parse();
+				prattBuilder.createChildBuilder(410).parse();
 				boolean isComma = prattBuilder.checkToken(BT_COMMA);
 				MutableMarker formatMark = prattBuilder.mark();
 				if (isComma) {
-					prattBuilder.createChildBuilder(400).parse();
+					prattBuilder.createChildBuilder(410).parse();
 					formatMark.finish(PLACEHOLDER_FORMAT);
 				} else {
 					formatMark.drop();

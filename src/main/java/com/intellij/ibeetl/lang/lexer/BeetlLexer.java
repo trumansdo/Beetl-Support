@@ -20,7 +20,8 @@ import static com.intellij.psi.TokenType.ERROR_ELEMENT;
 
 
 /**
- * 具有前瞻性的词法解析器。
+ * 具有前瞻性的词法解析器。但是我的词法器的设计。。是为了语法构建方便，所以不是很好。
+ * 在一个纯粹的语言中。不应该这么设计。
  */
 public class BeetlLexer extends LookAheadLexer {
 	/*定义所有的定界符，HTML标签标识符，占位符*/
@@ -35,6 +36,7 @@ public class BeetlLexer extends LookAheadLexer {
 
 	public static final Map<String, Ternary> MARKS_MAP = new HashMap<>();
 	public final Ternary BAD = new Ternary(BAD_CHARACTER, YYINITIAL);
+	/*如果是从HTML标签词法转到占位符词法，值为1；反过来值为-1*/
 	public byte isHtmlToPlace = 0;
 
 	static {
@@ -48,6 +50,9 @@ public class BeetlLexer extends LookAheadLexer {
 		MARKS_MAP.put(PLACEHOLDER_RIGHT, new Ternary(BT_RPLACEHOLDER, YYINITIAL));
 	}
 
+	/**
+	 * 提供给beetl的配置页面保存时，同时更改词法解析器的对应常量
+	 */
 	public static void resetConfig() {
 		/*定义所有的定界符，HTML标签标识符，占位符*/
 		DELIMITER_LEFT = DELIMITER_STATEMENT_START;
@@ -131,8 +136,8 @@ public class BeetlLexer extends LookAheadLexer {
 			} else {
 				if (-1 == isHtmlToPlace) {
 					int attr_value_end = StrUtil.indexOfAny(bufferSequence, curIndex, "\"", "'");
-					attr_value_end = attr_value_end == -1 ? end : attr_value_end;
-					beetlFlex.start(bufferSequence, attr_value_end+1, end, BTL_HTML_LEX);
+					attr_value_end = attr_value_end == -1 ? end : attr_value_end+1;
+					beetlFlex.start(bufferSequence, attr_value_end, end, BTL_HTML_LEX);
 					super.addToken(attr_value_end, BT_ATTRIBUTE_VALUE);
 					isHtmlToPlace = 0;
 				} else {

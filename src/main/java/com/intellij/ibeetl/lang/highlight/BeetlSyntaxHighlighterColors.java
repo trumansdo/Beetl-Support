@@ -18,6 +18,8 @@ public class BeetlSyntaxHighlighterColors {
 	public static TextAttributesKey BTL_NUMBER = TextAttributesKey.createTextAttributesKey("BTL_NUMBER", JavaHighlightingColors.NUMBER);
 	/*定界符*/
 	public static TextAttributesKey BTL_DELIMITERS = TextAttributesKey.createTextAttributesKey("BTL_DELIMITERS", DefaultLanguageHighlighterColors.CONSTANT);
+	/*html标签*/
+	public static TextAttributesKey BTL_HTMLTAGS = TextAttributesKey.createTextAttributesKey("BTL_HTMLTAGS", DefaultLanguageHighlighterColors.CONSTANT);
 	/*占位符*/
 	public static TextAttributesKey BTL_PLACEHOLDERS = TextAttributesKey.createTextAttributesKey("BTL_PLACEHOLDERS", DefaultLanguageHighlighterColors.MARKUP_ATTRIBUTE);
 	/*圆括号*/
