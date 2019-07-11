@@ -26,6 +26,7 @@ public class BeetlSyntaxHighlighter extends SyntaxHighlighterBase {
 		fillMap(BeetlTokenSets.LITERAL, BTL_LITERALS);
 		fillMap(BeetlTokenSets.NUMBER, BTL_NUMBER);
 		fillMap(BeetlTokenSets.DELIMITERS, BTL_DELIMITERS);
+		fillMap(BeetlTokenSets.HTMLTAGS, BTL_HTMLTAGS);
 		fillMap(BeetlTokenSets.PLACEHOLDERS, BTL_PLACEHOLDERS);
 		fillMap(BeetlTokenSets.PARENTHS, BTL_PARENTHS);
 		fillMap(BeetlTokenSets.BRACKETS, BTL_BRACKETS);
