@@ -15,6 +15,7 @@ public interface BeetlPsiElementTypes {
 
 	/*占位符语法*/
 	BeetlIElementType INTERPOLATION = new BeetlIElementType("BeetlPlaceholder");
+	BeetlIElementType PLACEHOLDER_FORMAT = new BeetlIElementType("PlaceholderFormat");
 	/*HTML标签语法*/
 	BeetlIElementType HTML_TAG = new BeetlIElementType("BeetlHtmlTagFunction");
 	/*二元表达式（不包括逻辑表达式）*/

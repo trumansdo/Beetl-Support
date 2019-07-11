@@ -104,12 +104,20 @@ public class BeetlParser extends PrattParser {
 		registerParser(BT_LPLACEHOLDER, 400, new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
-				MutableMarker mark = prattBuilder.mark();
+				MutableMarker outMark = prattBuilder.mark();
 				prattBuilder.advance();
 				prattBuilder.createChildBuilder(400).parse();
-				prattBuilder.checkToken(BT_RPLACEHOLDER);
-				mark.finish(INTERPOLATION);
-				return true;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
+				boolean isComma = prattBuilder.checkToken(BT_COMMA);
+				MutableMarker formatMark = prattBuilder.mark();
+				if (isComma) {
+					prattBuilder.createChildBuilder(400).parse();
+					formatMark.finish(PLACEHOLDER_FORMAT);
+				} else {
+					formatMark.drop();
+				}
+				boolean flag = prattBuilder.assertToken(BT_RPLACEHOLDER);
+				outMark.finish(INTERPOLATION);
+				return flag;//返回值只是决定是否继续当前解析器解析过程，false为终止解析。
 			}
 		});
 		/*HTML标签*/
@@ -276,13 +284,13 @@ public class BeetlParser extends PrattParser {
 			}
 		});
 		/*html标签中的name  value对语法*/
-		registerParser(BT_ATTRIBUTE_NAME, 1000, AppendTokenParser.JUST_APPEND);
-		registerParser(BT_ASSIGN, 870, path().left(BT_ATTRIBUTE_NAME), new TokenParser() {
+		registerParser(BT_ATTRIBUTE_NAME, 400, AppendTokenParser.JUST_APPEND);
+		registerParser(BT_ASSIGN, 400, path().left(BT_ATTRIBUTE_NAME), new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
 				prattBuilder.advance();
-				prattBuilder.createChildBuilder(100).parse();
+				prattBuilder.createChildBuilder(400).parse();
 				mark.finish(NAME_VALUE_PAIR);
 				return true;
 			}
