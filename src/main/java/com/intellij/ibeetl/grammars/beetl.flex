@@ -82,7 +82,8 @@ STRING = ("\"" ( {ESCAPE_SEQUENCE} | [^\"\'\\\n\r] )* "\"")
 		| ("'" ( {ESCAPE_SEQUENCE} | [^\"\'\\\n\r] )* "'")
 
 ATTRIBUTE_NAME = ([:jletterdigit:] | "-")+
-ATTRIBUTE_VALUE = {STRING}
+ATTRIBUTE_VALUE = ("\"" ( {ESCAPE_SEQUENCE} | [^\"\\\n\r] )* "\"")
+                  | ("'" ( {ESCAPE_SEQUENCE} | [^\'\\\n\r] )* "'")
 
 
 /*双引号和单引号，暂时没用*/

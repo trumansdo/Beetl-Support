@@ -5,6 +5,7 @@ import com.intellij.ibeetl.lang.BeetlFileType;
 import com.intellij.ibeetl.lang.lexer.BeetlIElementTypes;
 import com.intellij.ibeetl.lang.psi.fileview.BeetlFileViewProvider;
 import com.intellij.lang.Language;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.ex.util.LayerDescriptor;
@@ -31,20 +32,28 @@ public class BeetlEditorHighlighter extends LayeredLexerEditorHighlighter {
 
 	}
 
-	/*确定更新不同语言layer的条件*/
+
 	@Override
 	protected boolean updateLayers() {
 		return true;
 	}
 
 	/**
-	 * 没看源码。。不知道啥用途，暂定永远返回true
+	 * 是否增量进行词法高亮.
+	 * 例如：freemarker的增量大致逻辑是：当出现不同的语法< 和 [  时，会全量处理。当只是写${} 语法时，增量更新。
+	 * 但是beetl。。。。很难区分。所以偷个懒，直接全量了。
 	 * @param e
-	 * @return
+	 * @return true  全量；false增量;
 	 */
 	@Override
 	protected boolean updateLayers(@NotNull DocumentEvent e) {
-		return super.updateLayers(e);
+//		Document document = e.getDocument(); 当前文档
+//		CharSequence oldFragment = e.getOldFragment(); 如果是删除文字，则是删除的字符串；如果是添加文字，则是""
+//		int oldLength = e.getOldLength(); 对应oldFragment的长度
+//		CharSequence newFragment = e.getNewFragment(); 如果是删除文字，则是""；如果是添加文字，则是添加的字符串
+//		int newLength = e.getNewLength(); 对应newFragment的长度
+//		int offset = e.getOffset(); 最后光标的偏移位置
+		return this.updateLayers();
 	}
 
 	private SyntaxHighlighter getHighlighter(Project project, VirtualFile virtualFile) {

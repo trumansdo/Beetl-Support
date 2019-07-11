@@ -1,6 +1,7 @@
 package com.intellij.ibeetl.lang.lexer;
 
 import com.intellij.ibeetl.generated.lexer._BeetlLexer;
+import com.intellij.ibeetl.utils.StrUtil;
 import com.intellij.lexer.FlexAdapter;
 import com.intellij.lexer.Lexer;
 import com.intellij.lexer.LookAheadLexer;
@@ -34,8 +35,7 @@ public class BeetlLexer extends LookAheadLexer {
 
 	public static final Map<String, Ternary> MARKS_MAP = new HashMap<>();
 	public final Ternary BAD = new Ternary(BAD_CHARACTER, YYINITIAL);
-	public boolean isHtmlToPlace = false;
-	public int ATTR_VALUE_END = Integer.MIN_VALUE;
+	public byte isHtmlToPlace = 0;
 
 	static {
 		MARKS_MAP.put(DELIMITER_LEFT, new Ternary(BT_LDELIMITER, BTL_LEX));
@@ -47,7 +47,8 @@ public class BeetlLexer extends LookAheadLexer {
 		MARKS_MAP.put(PLACEHOLDER_LEFT, new Ternary(BT_LPLACEHOLDER, BTL_PLACEHOLDER));
 		MARKS_MAP.put(PLACEHOLDER_RIGHT, new Ternary(BT_RPLACEHOLDER, YYINITIAL));
 	}
-	public static void resetConfig(){
+
+	public static void resetConfig() {
 		/*定义所有的定界符，HTML标签标识符，占位符*/
 		DELIMITER_LEFT = DELIMITER_STATEMENT_START;
 		DELIMITER_RIGHT = "".equals(StringUtils.trimToEmpty(DELIMITER_STATEMENT_END)) ? "\n" : DELIMITER_STATEMENT_END;
@@ -67,6 +68,7 @@ public class BeetlLexer extends LookAheadLexer {
 		MARKS_MAP.put(PLACEHOLDER_LEFT, new Ternary(BT_LPLACEHOLDER, BTL_PLACEHOLDER));
 		MARKS_MAP.put(PLACEHOLDER_RIGHT, new Ternary(BT_RPLACEHOLDER, YYINITIAL));
 	}
+
 	public BeetlLexer() {
 		super(new FlexAdapter(new _BeetlLexer()));
 	}
@@ -123,32 +125,38 @@ public class BeetlLexer extends LookAheadLexer {
 				beetlFlex.start(bufferSequence, curIndex + ternary.length, end, ternary.lexicalState);
 				super.addToken(curIndex + ternary.length, ternary.token);
 			} else if (currentToken == BT_ATTRIBUTE_VALUE && ternary.token == BT_LPLACEHOLDER && ternary.index < beetlFlex.getTokenEnd()) {
-				isHtmlToPlace = true;//在HTML标签中的字符串中解析到开始占位符
-				ATTR_VALUE_END = baseLexer.getTokenEnd();
 				beetlFlex.start(bufferSequence, ternary.index, end, ternary.lexicalState);
 				super.addToken(ternary.index, BT_ATTRIBUTE_VALUE);
+				isHtmlToPlace = 1;
 			} else {
-				if (ATTR_VALUE_END != Integer.MIN_VALUE) {
-					beetlFlex.start(bufferSequence, ATTR_VALUE_END, end, BTL_HTML_LEX);
-					super.addToken(ATTR_VALUE_END, BT_ATTRIBUTE_VALUE);
-					ATTR_VALUE_END = Integer.MIN_VALUE;
+				if (-1 == isHtmlToPlace) {
+					int attr_value_end = StrUtil.indexOfAny(bufferSequence, curIndex, "\"", "'");
+					attr_value_end = attr_value_end == -1 ? end : attr_value_end;
+					beetlFlex.start(bufferSequence, attr_value_end+1, end, BTL_HTML_LEX);
+					super.addToken(attr_value_end, BT_ATTRIBUTE_VALUE);
+					isHtmlToPlace = 0;
 				} else {
 					super.advanceLexer(baseLexer);
 				}
 			}
 		} else if (lexicalState == BTL_PLACEHOLDER) {/*占位符词法状态*/
 			Ternary ternary = searchTernary(bufferSequence, curIndex, new CharSequence[]{PLACEHOLDER_LEFT, PLACEHOLDER_RIGHT});
-			if (curIndex == ternary.index) {/*相等就说明当前位置正好是占位符结束*/
-				if (isHtmlToPlace && ternary.token == BT_RPLACEHOLDER) {
+			if (curIndex == ternary.index) {/*相等就说明当前位置正好是占位符*/
+				if (1 == isHtmlToPlace && ternary.token == BT_RPLACEHOLDER) {
 					beetlFlex.start(bufferSequence, curIndex + ternary.length, end, BTL_HTML_LEX);
 					super.addToken(curIndex + ternary.length, ternary.token);
-					isHtmlToPlace = false;
+					isHtmlToPlace = -1;
 				} else {
 					beetlFlex.start(bufferSequence, curIndex + ternary.length, end, ternary.lexicalState);
 					super.addToken(curIndex + ternary.length, ternary.token);
 				}
 			} else {
-				super.advanceLexer(baseLexer);
+				if (currentToken == BAD_CHARACTER || currentToken == TEMPORARY) {
+					beetlFlex.start(bufferSequence, end+1, end, BTL_PLACEHOLDER);
+					super.addToken(end, BT_STRING);
+				}else {
+					super.advanceLexer(baseLexer);
+				}
 			}
 		} else {
 			super.advanceLexer(baseLexer);
