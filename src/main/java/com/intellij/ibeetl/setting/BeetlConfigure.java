@@ -1,6 +1,6 @@
 package com.intellij.ibeetl.setting;
 
-import com.intellij.ibeetl.BeetlBundle;
+import com.intellij.ibeetl.lang.BeetlExternalAnnotator;
 import com.intellij.ibeetl.lang.lexer.BeetlLexer;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
@@ -10,14 +10,20 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+import static com.intellij.ibeetl.BeetlBundle.message;
+import static org.apache.commons.lang3.StringUtils.replacePattern;
+
+/**
+ * 向idea注册配置页
+ */
 public class BeetlConfigure implements SearchableConfigurable {
-	public static String DELIMITER_PLACEHOLDER_START = BeetlBundle.message("DELIMITER_PLACEHOLDER_START");
-	public static String DELIMITER_PLACEHOLDER_END = BeetlBundle.message("DELIMITER_PLACEHOLDER_END");
+	public static String DELIMITER_PLACEHOLDER_START = message("DELIMITER_PLACEHOLDER_START");
+	public static String DELIMITER_PLACEHOLDER_END = message("DELIMITER_PLACEHOLDER_END");
 
-	public static String DELIMITER_STATEMENT_START = BeetlBundle.message("DELIMITER_STATEMENT_START");
-	public static String DELIMITER_STATEMENT_END = BeetlBundle.message("DELIMITER_STATEMENT_END");
+	public static String DELIMITER_STATEMENT_START = message("DELIMITER_STATEMENT_START");
+	public static String DELIMITER_STATEMENT_END = message("DELIMITER_STATEMENT_END");
 
-	public static String HTML_TAG_FLAG = BeetlBundle.message("HTML_TAG_FLAG");
+	public static String HTML_TAG_FLAG = message("HTML_TAG_FLAG");
 
 	private BeetlSettingForm beetlSettingForm;
 
@@ -48,33 +54,49 @@ public class BeetlConfigure implements SearchableConfigurable {
 		return beetlSettingForm.mainPanel;
 	}
 
+	/**
+	 * 懒得一个个纠正然后判断了。也就几个配置，直接每次保存算了。
+	 *
+	 * @return
+	 */
 	@Override
 	public boolean isModified() {
-		return !DELIMITER_STATEMENT_START.equals(beetlSettingForm.lsstartField.getText())
+		return true;
+		/*return !DELIMITER_STATEMENT_START.equals(beetlSettingForm.lsstartField.getText())
 				|| !DELIMITER_STATEMENT_END.equals(beetlSettingForm.rsstartField.getText())
 				|| !DELIMITER_PLACEHOLDER_START.equals(beetlSettingForm.lpstartField.getText())
 				|| !DELIMITER_PLACEHOLDER_END.equals(beetlSettingForm.rpstartField.getText())
 				|| !HTML_TAG_FLAG.equals(beetlSettingForm.htagField.getText())
-				;
+				;*/
 	}
 
 	@Override
 	public void apply() throws ConfigurationException {
-		DELIMITER_STATEMENT_START = beetlSettingForm.lsstartField.getText();
-		DELIMITER_STATEMENT_END = beetlSettingForm.rsstartField.getText();
-		DELIMITER_PLACEHOLDER_START = beetlSettingForm.lpstartField.getText();
-		DELIMITER_PLACEHOLDER_END = beetlSettingForm.rpstartField.getText();
-		HTML_TAG_FLAG = beetlSettingForm.htagField.getText();
+		DELIMITER_STATEMENT_START = replacePattern(beetlSettingForm.lsstartField.getText(), "\\s", "");
+		DELIMITER_STATEMENT_END = replacePattern(beetlSettingForm.rsstartField.getText(), "\\s", "");
+		DELIMITER_PLACEHOLDER_START = replacePattern(beetlSettingForm.lpstartField.getText(), "\\s", "");
+		DELIMITER_PLACEHOLDER_END = replacePattern(beetlSettingForm.rpstartField.getText(), "\\s", "");
+		HTML_TAG_FLAG = replacePattern(beetlSettingForm.htagField.getText(), "\\s", "");
+
+		DELIMITER_PLACEHOLDER_START = DELIMITER_PLACEHOLDER_START.isEmpty() ? message("DELIMITER_PLACEHOLDER_START") : DELIMITER_PLACEHOLDER_START;
+		DELIMITER_PLACEHOLDER_END = DELIMITER_PLACEHOLDER_END.isEmpty() ? message("DELIMITER_PLACEHOLDER_END") : DELIMITER_PLACEHOLDER_END;
+
+		DELIMITER_STATEMENT_START = DELIMITER_STATEMENT_START.isEmpty() ? message("DELIMITER_STATEMENT_START") : DELIMITER_STATEMENT_START;
+		DELIMITER_STATEMENT_END = DELIMITER_STATEMENT_END.isEmpty() ? "\n" : DELIMITER_STATEMENT_END;
+
+		HTML_TAG_FLAG = HTML_TAG_FLAG.isEmpty() ? message("HTML_TAG_FLAG") : HTML_TAG_FLAG;
+
 		BeetlLexer.resetConfig();
+		BeetlExternalAnnotator.resetConfig();
 	}
 
 	@Override
 	public void reset() {
-		beetlSettingForm.lsstartField.setText(DELIMITER_STATEMENT_START);
-		beetlSettingForm.rsstartField.setText(DELIMITER_STATEMENT_END);
-		beetlSettingForm.lpstartField.setText(DELIMITER_PLACEHOLDER_START);
-		beetlSettingForm.rpstartField.setText(DELIMITER_PLACEHOLDER_END);
-		beetlSettingForm.htagField.setText(HTML_TAG_FLAG);
+		beetlSettingForm.lsstartField.setText(replacePattern(DELIMITER_STATEMENT_START, "\\s", ""));
+		beetlSettingForm.rsstartField.setText(replacePattern(DELIMITER_STATEMENT_END, "\\s", ""));
+		beetlSettingForm.lpstartField.setText(replacePattern(DELIMITER_PLACEHOLDER_START, "\\s", ""));
+		beetlSettingForm.rpstartField.setText(replacePattern(DELIMITER_PLACEHOLDER_END, "\\s", ""));
+		beetlSettingForm.htagField.setText(replacePattern(HTML_TAG_FLAG, "\\s", ""));
 	}
 
 	@Override

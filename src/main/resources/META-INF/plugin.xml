@@ -25,7 +25,6 @@
     <extensions defaultExtensionNs="com.intellij">
         <fileTypeFactory implementation="com.intellij.ibeetl.lang.BeetlFileTypeFactory"/>
         <lang.parserDefinition language="btl" implementationClass="com.intellij.ibeetl.lang.BeetlParserDefinition"/>
-	    <externalAnnotator language="btl" implementationClass="com.intellij.ibeetl.lang.BeetlExternalAnnotator"/>
         <!--
         两个fileview一样。根据模板语言的开发步骤：
         1、自定义模板flex，并把模板语言之外的外部语言识别为一个template data  type
@@ -43,14 +42,17 @@
 	    <applicationConfigurable instance="com.intellij.ibeetl.setting.BeetlConfigure"/>
 	    <!--应用服务-->
 	    <!--<applicationService serviceInterface="com.intellij.ibeetl.setting.BeetlSetting" serviceImplementation="com.intellij.ibeetl.setting.BeetlSetting"/>-->
-
+	    <externalAnnotator language="btl" implementationClass="com.intellij.ibeetl.lang.BeetlExternalAnnotator"/>
+	    <localInspection groupPath="Beetl" language="btl" shortName="BeetlExternalLint" bundle="messages.BeetlBundle" key="inspection.beetl.external_lint.display.name"
+	                     groupKey="group.names.beetl.issues" enabledByDefault="false" level="ERROR" unfair="true"
+	                     implementationClass="com.intellij.ibeetl.lang.codeInspection.BeetlExternalInsepction"/>
     </extensions>
     <actions>
     </actions>
-	<application-components>
+	<project-components>
 		<component>
 			<interface-class>com.intellij.openapi.components.PersistentStateComponent</interface-class>
 			<implementation-class>com.intellij.ibeetl.setting.BeetlSetting</implementation-class>
 		</component>
-	</application-components>
+	</project-components>
 </idea-plugin>

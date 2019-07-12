@@ -16,7 +16,7 @@ import static com.intellij.ibeetl.setting.BeetlConfigure.*;
 
 @State(
 		name = "BeetlSetting",
-		storages = @Storage(file = "$APP_CONFIG$/beetl.xml"))
+		storages = @Storage(file = "$PROJECT_CONFIG_DIR$/beetl.xml"))
 public class BeetlSetting implements PersistentStateComponent<Element> {
 
 	private Logger logger=Logger.getInstance("#com.intellij.ibeetl.persistent");

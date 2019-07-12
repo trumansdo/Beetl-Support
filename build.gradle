@@ -29,6 +29,7 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile group: 'com.ibeetl', name: 'beetl', version: '3.0.8.RELEASE'
 }
 
 intellij {
