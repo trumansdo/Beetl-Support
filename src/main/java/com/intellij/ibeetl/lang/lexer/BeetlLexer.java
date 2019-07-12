@@ -25,14 +25,14 @@ import static com.intellij.psi.TokenType.ERROR_ELEMENT;
  */
 public class BeetlLexer extends LookAheadLexer {
 	/*定义所有的定界符，HTML标签标识符，占位符*/
-	public static String DELIMITER_LEFT = DELIMITER_STATEMENT_START;
-	public static String DELIMITER_RIGHT = "".equals(StringUtils.trimToEmpty(DELIMITER_STATEMENT_END)) ? "\n" : DELIMITER_STATEMENT_END;
-	public static String HTML_START1 = "<" + HTML_TAG_FLAG;
-	public static String HTML_START2 = "</" + HTML_TAG_FLAG;
-	public static String HTML_END1 = ">";
-	public static String HTML_END2 = "/>";
-	public static String PLACEHOLDER_LEFT = DELIMITER_PLACEHOLDER_START;
-	public static String PLACEHOLDER_RIGHT = DELIMITER_PLACEHOLDER_END;
+	public static String DELIMITER_LEFT;
+	public static String DELIMITER_RIGHT;
+	public static String HTML_START1;
+	public static String HTML_START2;
+	public static String HTML_END1;
+	public static String HTML_END2;
+	public static String PLACEHOLDER_LEFT;
+	public static String PLACEHOLDER_RIGHT;
 
 	public static final Map<String, Ternary> MARKS_MAP = new HashMap<>();
 	public final Ternary BAD = new Ternary(BAD_CHARACTER, YYINITIAL);
@@ -40,14 +40,7 @@ public class BeetlLexer extends LookAheadLexer {
 	public byte isHtmlToPlace = 0;
 
 	static {
-		MARKS_MAP.put(DELIMITER_LEFT, new Ternary(BT_LDELIMITER, BTL_LEX));
-		MARKS_MAP.put(DELIMITER_RIGHT, new Ternary(BT_RDELIMITER, YYINITIAL));
-		MARKS_MAP.put(HTML_START1, new Ternary(BT_HTML_TAG_START, BTL_HTML_LEX));
-		MARKS_MAP.put(HTML_START2, new Ternary(BT_HTML_TAG_START, BTL_HTML_LEX));
-		MARKS_MAP.put(HTML_END1, new Ternary(BT_HTML_TAG_END, YYINITIAL));
-		MARKS_MAP.put(HTML_END2, new Ternary(BT_HTML_TAG_END, YYINITIAL));
-		MARKS_MAP.put(PLACEHOLDER_LEFT, new Ternary(BT_LPLACEHOLDER, BTL_PLACEHOLDER));
-		MARKS_MAP.put(PLACEHOLDER_RIGHT, new Ternary(BT_RPLACEHOLDER, YYINITIAL));
+		resetConfig();
 	}
 
 	/**
@@ -56,7 +49,7 @@ public class BeetlLexer extends LookAheadLexer {
 	public static void resetConfig() {
 		/*定义所有的定界符，HTML标签标识符，占位符*/
 		DELIMITER_LEFT = DELIMITER_STATEMENT_START;
-		DELIMITER_RIGHT = "".equals(StringUtils.trimToEmpty(DELIMITER_STATEMENT_END)) ? "\n" : DELIMITER_STATEMENT_END;
+		DELIMITER_RIGHT = DELIMITER_STATEMENT_END;
 		HTML_START1 = "<" + HTML_TAG_FLAG;
 		HTML_START2 = "</" + HTML_TAG_FLAG;
 		HTML_END1 = ">";
@@ -136,7 +129,7 @@ public class BeetlLexer extends LookAheadLexer {
 			} else {
 				if (-1 == isHtmlToPlace) {
 					int attr_value_end = StrUtil.indexOfAny(bufferSequence, curIndex, "\"", "'");
-					attr_value_end = attr_value_end == -1 ? end : attr_value_end+1;
+					attr_value_end = attr_value_end == -1 ? end : attr_value_end + 1;
 					beetlFlex.start(bufferSequence, attr_value_end, end, BTL_HTML_LEX);
 					super.addToken(attr_value_end, BT_ATTRIBUTE_VALUE);
 					isHtmlToPlace = 0;
@@ -157,9 +150,9 @@ public class BeetlLexer extends LookAheadLexer {
 				}
 			} else {
 				if (currentToken == BAD_CHARACTER || currentToken == TEMPORARY) {
-					beetlFlex.start(bufferSequence, end+1, end, BTL_PLACEHOLDER);
+					beetlFlex.start(bufferSequence, end + 1, end, BTL_PLACEHOLDER);
 					super.addToken(end, BT_STRING);
-				}else {
+				} else {
 					super.advanceLexer(baseLexer);
 				}
 			}
