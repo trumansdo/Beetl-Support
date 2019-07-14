@@ -4,6 +4,7 @@ import com.intellij.ibeetl.lang.BeetlExternalAnnotator;
 import com.intellij.ibeetl.lang.lexer.BeetlLexer;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -82,7 +83,7 @@ public class BeetlConfigure implements SearchableConfigurable {
 		DELIMITER_PLACEHOLDER_END = DELIMITER_PLACEHOLDER_END.isEmpty() ? message("DELIMITER_PLACEHOLDER_END") : DELIMITER_PLACEHOLDER_END;
 
 		DELIMITER_STATEMENT_START = DELIMITER_STATEMENT_START.isEmpty() ? message("DELIMITER_STATEMENT_START") : DELIMITER_STATEMENT_START;
-		DELIMITER_STATEMENT_END = DELIMITER_STATEMENT_END.isEmpty() ? "\n" : DELIMITER_STATEMENT_END;
+		DELIMITER_STATEMENT_END = DELIMITER_STATEMENT_END.isEmpty() ? StringUtils.LF : DELIMITER_STATEMENT_END;
 
 		HTML_TAG_FLAG = HTML_TAG_FLAG.isEmpty() ? message("HTML_TAG_FLAG") : HTML_TAG_FLAG;
 
