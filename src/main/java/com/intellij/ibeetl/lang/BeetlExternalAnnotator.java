@@ -2,11 +2,14 @@ package com.intellij.ibeetl.lang;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.ExternalAnnotator;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.containers.ContainerUtil;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.beetl.core.Configuration;
 import org.beetl.core.GroupTemplate;
 import org.beetl.core.exception.BeetlException;
@@ -15,14 +18,8 @@ import org.beetl.core.resource.StringTemplateResourceLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static com.intellij.ibeetl.setting.BeetlConfigure.*;
 
@@ -32,17 +29,17 @@ import static com.intellij.ibeetl.setting.BeetlConfigure.*;
  * collectInformation > doAnnotate > apply
  */
 public class BeetlExternalAnnotator extends ExternalAnnotator<BeetlExternalAnnotator.Info, BeetlExternalAnnotator.Result> {
-
+	
 	private static Logger logger = Logger.getInstance(BeetlExternalAnnotator.class);
-
+	
 	private Editor editor;
-
+	
 	private static GroupTemplate groupTemplate;
-
+	
 	static {
 		resetConfig();
 	}
-
+	
 	public static void resetConfig() {
 		/*
 		 * 关于idea的classloader的几点：
@@ -50,13 +47,13 @@ public class BeetlExternalAnnotator extends ExternalAnnotator<BeetlExternalAnnot
 		 * 2. GroupTemplate.class.getClassLoader() 这种方式获取的classloader是idea为每一个plugin独立的classloader。也只有这种方式，才能加载到我们引入的第三方jar
 		 * 3. ClassLoader.getSystemClassLoader() 获取的classloader也是运行时idea环境的lib目录
 		 * */
+		
 		Thread currentThread = Thread.currentThread();
 		ClassLoader oldClassloader = currentThread.getContextClassLoader();
 		try {
 			currentThread.setContextClassLoader(GroupTemplate.class.getClassLoader());
 			StringTemplateResourceLoader resourceLoader = new StringTemplateResourceLoader();
-			Configuration cfg = null;
-			cfg = Configuration.defaultConfiguration();
+			Configuration cfg = Configuration.defaultConfiguration();
 			cfg.setStatementStart(DELIMITER_STATEMENT_START);
 			cfg.setStatementEnd(DELIMITER_STATEMENT_END);
 			cfg.setPlaceholderStart(DELIMITER_PLACEHOLDER_START);
@@ -69,17 +66,26 @@ public class BeetlExternalAnnotator extends ExternalAnnotator<BeetlExternalAnnot
 			currentThread.setContextClassLoader(oldClassloader);
 		}
 	}
-
+	
 	@Nullable
 	@Override
 	public Info collectInformation(@NotNull PsiFile file) {
 		if (null == groupTemplate) resetConfig();
-		String text = editor.getDocument().getText();
-		BeetlException beetlException = groupTemplate.validateTemplate(text);
+		/*在idea中，线程模型是单线程的，如果要读写应该按照下面代码，将操作给ui线程。
+		 * 如果isValid() 是false，则表示当前文件不应该操作。
+		 * */
+		String content = ApplicationManager.getApplication()
+				                 .runReadAction((Computable<String>) () -> file.isValid() ? editor.getDocument().getText() : null);
+		if (StringUtils.isBlank(content)) return null;
+		String oldLine = System.getProperty("line.separator");
+		System.setProperty("line.separator", StringUtils.LF);
+		BeetlException beetlException = groupTemplate.validateTemplate(content);
+		System.setProperty("line.separator", oldLine);
+		if (null == beetlException) return null;
 		ErrorInfo errorInfo = beetlException.toErrorInfo();
-		return super.collectInformation(file);
+		return new Info(file, errorInfo);
 	}
-
+	
 	/**
 	 * 无论是否出现语法错误，都经过beetl本身走一次校验
 	 *
@@ -94,69 +100,82 @@ public class BeetlExternalAnnotator extends ExternalAnnotator<BeetlExternalAnnot
 		this.editor = editor;
 		return this.collectInformation(file);
 	}
-
-	/**
-	 * 把错误信息转换为idea处理的Annotion
-	 * @param collectedInfo
-	 * @return
-	 */
+	
 	@Nullable
 	@Override
 	public Result doAnnotate(Info collectedInfo) {
-		return super.doAnnotate(collectedInfo);
+		String content = collectedInfo.getFile().getText();
+		String[] lines = content.split(StringUtils.LF);
+		List<Anno> annotations = new ArrayList<>();
+		ErrorInfo errorInfo = collectedInfo.getErrorInfo();
+		int errorTokenLine = errorInfo.getErrorTokenLine() - 1;
+		String errorTokenText = errorInfo.getErrorTokenText();
+		int startOffset = 0;
+		int endOffset = 0;
+		for (int i = 0; i < lines.length; i++) {
+			if (errorTokenLine > i) {
+				startOffset += lines[i].length();
+				continue;
+			}
+			int index = StringUtils.indexOf(lines[i], errorTokenText);
+			startOffset += i;
+			startOffset += index;
+			endOffset = startOffset + errorTokenText.length();
+			break;
+		}
+		TextRange textRange = new TextRange(startOffset, endOffset);
+		annotations.add(new Anno(textRange, errorInfo));
+		return new Result(annotations);
 	}
-
-	/**
-	 * 通过注册的各种Annotion的处理类，处理错误
-	 * 目前未做
-	 * @param file
-	 * @param annotationResult
-	 * @param holder
-	 */
+	
 	@Override
 	public void apply(@NotNull PsiFile file, Result annotationResult, @NotNull AnnotationHolder holder) {
-		super.apply(file, annotationResult, holder);
+		List<Anno> annotations = annotationResult.getAnnotations();
+		Anno anno = annotations.stream().findFirst().orElse(null);
+		holder.createErrorAnnotation(anno.getTextRange(), anno.getErrorInfo().getMsg());
 	}
-
+	
 	@Override
 	public String getPairedBatchInspectionShortName() {
 		return "BeetlExternalLint";
 	}
-
+	
 	public static final class Info {
 		@NotNull
 		private final PsiFile file;
-
+		@NotNull
+		private final ErrorInfo errorInfo;
+		
+		public Info(@NotNull PsiFile file, ErrorInfo errorInfo) {
+			this.file = file;
+			this.errorInfo = errorInfo;
+		}
+		
 		@NotNull
 		public final PsiFile getFile() {
 			return this.file;
 		}
-
-		public Info(@NotNull PsiFile file) {
-			this.file = file;
-		}
-
-
+		
 		@NotNull
-		public final Info copy(@NotNull PsiFile file) {
-			return new Info(file);
+		public final ErrorInfo getErrorInfo() {
+			return this.errorInfo;
 		}
-
+		
 		@Override
 		public String toString() {
-			return "Info(file=" + this.file + ")";
+			return "Info(file=" + this.file + ", errorInfo=" + errorInfo + ")";
 		}
-
+		
 		public int hashCode() {
 			return this.file != null ? this.file.hashCode() : 0;
 		}
-
+		
 		@Override
 		public boolean equals(@Nullable Object other) {
 			if (this != other) {
 				if (other instanceof Info) {
 					Info info = (Info) other;
-					if (this.file.equals(info.getFile())) {
+					if (this.file.equals(info.getFile()) && this.errorInfo.equals(info.getErrorInfo())) {
 						return true;
 					}
 				}
@@ -166,34 +185,74 @@ public class BeetlExternalAnnotator extends ExternalAnnotator<BeetlExternalAnnot
 			}
 		}
 	}
-
+	
+	public static final class Anno {
+		@NotNull
+		private final TextRange textRange;
+		@NotNull
+		private final ErrorInfo errorInfo;
+		
+		@NotNull
+		public TextRange getTextRange() {
+			return textRange;
+		}
+		
+		@NotNull
+		public final ErrorInfo getErrorInfo() {
+			return this.errorInfo;
+		}
+		
+		public Anno(TextRange textRange, @NotNull ErrorInfo errorInfo) {
+			this.textRange = textRange;
+			this.errorInfo = errorInfo;
+		}
+		
+		@NotNull
+		public String toString() {
+			return "Anno(textRange=" + this.textRange + ", errorInfo=" + this.errorInfo + ")";
+		}
+		
+		public int hashCode() {
+			return this.textRange.hashCode() + this.errorInfo.hashCode();
+		}
+		
+		public boolean equals(@Nullable Object other) {
+			if (this != other) {
+				if (other instanceof Anno) {
+					Anno anno = (Anno) other;
+					if (this.textRange.equals(anno.getTextRange()) && this.errorInfo.equals(anno.getErrorInfo())) {
+						return true;
+					}
+				}
+				return false;
+			} else {
+				return true;
+			}
+		}
+	}
+	
 	public static final class Result {
 		@NotNull
-		private final List annotations;
-
+		private final List<Anno> annotations;
+		
 		@NotNull
-		public final List getAnnotations() {
+		public final List<Anno> getAnnotations() {
 			return this.annotations;
 		}
-
-		public Result(@NotNull List annotations) {
+		
+		public Result(@NotNull List<Anno> annotations) {
 			this.annotations = annotations;
 		}
-
-		@NotNull
-		public final Result copy(@NotNull List annotations) {
-			return new Result(annotations);
-		}
-
+		
 		@NotNull
 		public String toString() {
 			return "Result(annotations=" + this.annotations + ")";
 		}
-
+		
 		public int hashCode() {
 			return this.annotations != null ? this.annotations.hashCode() : 0;
 		}
-
+		
 		public boolean equals(@Nullable Object other) {
 			if (this != other) {
 				if (other instanceof Result) {

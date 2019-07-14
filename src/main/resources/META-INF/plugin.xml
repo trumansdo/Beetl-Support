@@ -35,6 +35,7 @@
         <lang.fileViewProviderFactory language="btl" implementationClass="com.intellij.ibeetl.lang.psi.fileview.BeetlFileViewProviderFactory"/>
 	    <syntaxHighlighter key="btl" implementationClass="com.intellij.ibeetl.lang.highlight.BeetlSyntaxHighlighter"/>
         <lang.syntaxHighlighterFactory language="btl" implementationClass="com.intellij.ibeetl.lang.highlight.BeetlSyntaxHighlighterFactory"/>
+	    <lang.commenter language="btl" implementationClass="com.intellij.ibeetl.lang.BeetlCommenter"/>
 	    <lang.formatter language="btl"
 	                    implementationClass="com.intellij.ibeetl.lang.psi.formatter.BeetlFormattingModelBuilder"/>
 	    <colorSettingsPage implementation="com.intellij.ibeetl.lang.highlight.BeetlColorSettingsPage"/>
