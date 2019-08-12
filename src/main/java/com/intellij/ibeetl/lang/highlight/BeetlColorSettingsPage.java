@@ -8,6 +8,7 @@ import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
 import com.intellij.util.containers.ContainerUtil;
 import icons.BeetlIcons;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,10 +43,10 @@ public class BeetlColorSettingsPage implements ColorSettingsPage {
 	@NotNull
 	@Override
 	public String getDemoText() {
-		String text = DELIMITER_STATEMENT_START + " var a=123,b='123',c=[1,2,3],d={'key':123,'key':'123'}; " + DELIMITER_STATEMENT_END + "\n" +
-				DELIMITER_STATEMENT_START + " if(var i=0;i<c.~size;i++){ " + DELIMITER_STATEMENT_END + "\n" +
-				DELIMITER_STATEMENT_START + " \t print(i); " + DELIMITER_STATEMENT_END + "\n" +
-				DELIMITER_STATEMENT_START + " } " + DELIMITER_STATEMENT_END + "\n" +
+		String text = DELIMITER_STATEMENT_START + " var a=123,b='123',c=[1,2,3],d={'key':123,'key':'123'}; " + DELIMITER_STATEMENT_END + StringUtils.LF +
+				DELIMITER_STATEMENT_START + " if(var i=0;i<c.~size;i++){ " + DELIMITER_STATEMENT_END + StringUtils.LF +
+				DELIMITER_STATEMENT_START + " \t print(i); " + DELIMITER_STATEMENT_END + StringUtils.LF +
+				DELIMITER_STATEMENT_START + " } " + DELIMITER_STATEMENT_END + StringUtils.LF +
 				"/*block comment*/\n" +
 				"//line comment\n" +
 				"<" + HTML_TAG_FLAG + "tagname att_name=\"ss" + DELIMITER_PLACEHOLDER_START + "date,dateformat=''" + DELIMITER_PLACEHOLDER_END + "ss\"/>";
