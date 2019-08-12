@@ -44,7 +44,7 @@
 	    <!--<applicationService serviceInterface="com.intellij.ibeetl.setting.BeetlSetting" serviceImplementation="com.intellij.ibeetl.setting.BeetlSetting"/>-->
 	    <externalAnnotator language="btl" implementationClass="com.intellij.ibeetl.lang.BeetlExternalAnnotator"/>
 	    <localInspection groupPath="Beetl" language="btl" shortName="BeetlExternalLint" bundle="messages.BeetlBundle" key="inspection.beetl.external_lint.display.name"
-	                     groupKey="group.names.beetl.issues" enabledByDefault="false" level="ERROR" unfair="true"
+	                     groupKey="group.names.beetl.issues" enabledByDefault="true" level="ERROR" unfair="true"
 	                     implementationClass="com.intellij.ibeetl.lang.codeInspection.BeetlExternalInsepction"/>
     </extensions>
     <actions>

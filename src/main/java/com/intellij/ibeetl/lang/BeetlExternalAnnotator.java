@@ -9,6 +9,8 @@ import com.intellij.util.containers.ContainerUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.beetl.core.Configuration;
 import org.beetl.core.GroupTemplate;
+import org.beetl.core.exception.BeetlException;
+import org.beetl.core.exception.ErrorInfo;
 import org.beetl.core.resource.StringTemplateResourceLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -73,8 +75,8 @@ public class BeetlExternalAnnotator extends ExternalAnnotator<BeetlExternalAnnot
 	public Info collectInformation(@NotNull PsiFile file) {
 		if (null == groupTemplate) resetConfig();
 		String text = editor.getDocument().getText();
-		System.out.println(text);
-		groupTemplate.validateTemplate(text);
+		BeetlException beetlException = groupTemplate.validateTemplate(text);
+		ErrorInfo errorInfo = beetlException.toErrorInfo();
 		return super.collectInformation(file);
 	}
 
@@ -93,12 +95,24 @@ public class BeetlExternalAnnotator extends ExternalAnnotator<BeetlExternalAnnot
 		return this.collectInformation(file);
 	}
 
+	/**
+	 * 把错误信息转换为idea处理的Annotion
+	 * @param collectedInfo
+	 * @return
+	 */
 	@Nullable
 	@Override
 	public Result doAnnotate(Info collectedInfo) {
 		return super.doAnnotate(collectedInfo);
 	}
 
+	/**
+	 * 通过注册的各种Annotion的处理类，处理错误
+	 * 目前未做
+	 * @param file
+	 * @param annotationResult
+	 * @param holder
+	 */
 	@Override
 	public void apply(@NotNull PsiFile file, Result annotationResult, @NotNull AnnotationHolder holder) {
 		super.apply(file, annotationResult, holder);
@@ -192,52 +206,6 @@ public class BeetlExternalAnnotator extends ExternalAnnotator<BeetlExternalAnnot
 			} else {
 				return true;
 			}
-		}
-	}
-
-
-	public static class CustomClassLoader extends URLClassLoader {
-
-		private final Set excludes = new HashSet();
-
-		/**
-		 * @param libraries A list of jar files from where classes should
-		 *                  be loaded.
-		 * @param excludes  A set of classes which should be loaded from
-		 *                  the original classloader.
-		 */
-		CustomClassLoader(Collection libraries, Collection
-				excludes) {
-			// It is important to pass null as the parent classloader,
-			// else the system classloader is set as parent classloader.
-			super(getUrls(libraries), null);
-			this.excludes.addAll(excludes);
-		}
-
-		@Override
-
-		@SuppressWarnings({"NonSynchronizedMethodOverridesSynchronizedMethod"}
-		)
-		protected Class loadClass(String name, boolean resolve) throws
-				ClassNotFoundException {
-			return isExcluded(name) ?
-					getClass().getClassLoader().loadClass(name) : super.loadClass(name,
-					resolve);
-		}
-
-		private boolean isExcluded(String name) {
-			return name.startsWith("com.intellij.") ||
-					excludes.contains(name);
-		}
-
-		private static URL[] getUrls(Collection<File> files) {
-			return ContainerUtil.map2Array(files, URL.class, file -> {
-				try {
-					return file.toURI().toURL();
-				} catch (MalformedURLException e) {
-					return null;
-				}
-			});
 		}
 	}
 }
