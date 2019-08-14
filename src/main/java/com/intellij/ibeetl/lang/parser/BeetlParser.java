@@ -170,7 +170,7 @@ public class BeetlParser extends PrattParser {
 			}
 		});
 		/*大括号，json形式的语法*/
-		registerParser(BT_LBRACE, 900, path().up().left(and(not(object(BT_ELSE)), not(object(BT_ELSE_FOR)))), new TokenParser() {
+		registerParser(BT_LBRACE, 900, path().up().left(and(not(object(BT_ELSE)), not(object(BT_ELSE_FOR)), not(object(BT_COLON)))), new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
@@ -211,7 +211,7 @@ public class BeetlParser extends PrattParser {
 				return true;
 			}
 		});
-		registerParser(BT_LBRACE, 900, path().up().left(or(object(BT_ELSE), object(BT_ELSE_FOR))), new TokenParser() {
+		registerParser(BT_LBRACE, 900, path().up().left(or(object(BT_ELSE), object(BT_ELSE_FOR), object(BT_COLON))), new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				MutableMarker mark = prattBuilder.mark();
@@ -480,8 +480,8 @@ public class BeetlParser extends PrattParser {
 				return true;
 			}
 		});
-		/*冒号，第二种是case 及ajax 后标记语法块*/
-		registerParser(BT_COLON, 950, path().left().up().left(BT_CASE), new TokenParser() {
+		/*冒号，第二种是case和ajax语法块*/
+		registerParser(BT_COLON, 950, path().left().up().left(or(object(BT_AJAX),object( BT_FRAGMENT),object(BT_CASE))), new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				prattBuilder.advance();
