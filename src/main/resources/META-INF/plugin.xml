@@ -1,19 +1,26 @@
 <idea-plugin>
     <id>com.ibeetl.Beetl-Support</id>
     <name>Beetl-Support</name>
-    <vendor email="trumansdo@foxmail.com" url=""></vendor>
+    <vendor email="trumansdo@foxmail.com" url="https://gitee.com/eighttrigrams/Beetl-Support"></vendor>
 	<resource-bundle>messages.BeetlBundle</resource-bundle>
     <description><![CDATA[
-    辅助Beetl框架工作。<br>
-    <em>主要功能如下：</em>
+    Beetl Framework Support <br>
+    <em>Finished Feature：</em>
     <ul>
-        <li>1. 语法高亮</li>
-        <li>2. 代码提示</li>
+        <li>1. SyntaxHiglight</li>
+        <li>2. Beetl自定义定界符、占位符</li>
         <li>3. 错误提示</li>
-        <li>4. 格式化</li>
+        <li>4. 语法着色方案配置</li>
     </ul>
+    <pre>
+插件默认识别.btl 文件，若要修改为其他类型，请在idea 进行如下设置：
+Settings -> File Type ，右边找到 beetl, 在下面.btl 后添加自定义文件类型后缀。
+只支持beetl嵌入HTML语言中。 默认识别beetl默认定界符和占位符。
+可在Settings 中找到Beetl设置，自定义定界符和占位符配置
+    </pre>
     ]]></description>
-
+	<!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+	<idea-version since-build="171"/>
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
     <!-- uncomment to enable plugin in all products
@@ -22,6 +29,7 @@
 	<!--<depends optional="true">com.intellij.spring</depends>-->
 	<!--<depends optional="true">com.intellij.spring.boot</depends>-->
 	<!--<depends optional="true">com.intellij.database</depends>-->
+	<depends>com.intellij.modules.java</depends>
     <extensions defaultExtensionNs="com.intellij">
         <fileTypeFactory implementation="com.intellij.ibeetl.lang.BeetlFileTypeFactory"/>
         <lang.parserDefinition language="btl" implementationClass="com.intellij.ibeetl.lang.BeetlParserDefinition"/>
