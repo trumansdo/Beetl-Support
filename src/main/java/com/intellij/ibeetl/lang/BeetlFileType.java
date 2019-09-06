@@ -29,19 +29,19 @@ public class BeetlFileType extends LanguageFileType implements TemplateLanguageF
 	@NotNull
 	@Override
 	public String getName() {
-		return BeetlBundle.message("file.type.description");
+		return "Beetl";
 	}
 
 	@NotNull
 	@Override
 	public String getDescription() {
-		return BeetlBundle.message("file.type.description");
+		return "Beetl";
 	}
 
 	@NotNull
 	@Override
 	public String getDefaultExtension() {
-		return BeetlBundle.message("file.extension");
+		return "btl";
 	}
 
 	@Nullable

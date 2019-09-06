@@ -74,7 +74,7 @@ public class BeetlColorSettingsPage implements ColorSettingsPage {
 	@NotNull
 	@Override
 	public String getDisplayName() {
-		return BeetlBundle.message("file.type.description");
+		return "Beetl";
 	}
 
 	static {

@@ -88,15 +88,15 @@ public class BeetlLexer extends LookAheadLexer {
 		int lexicalState = baseLexer.getState();
 		if (null == currentToken) {
 			super.lookAhead(baseLexer);
-		} else if (currentToken == TEMPORARY && lexicalState == YYINITIAL) {/*当前token是非beetl词法状态并且是无法识别的token（既是TEMPORARY）*/
+		} else if (currentToken == TEMPORARY && lexicalState == YYINITIAL) {/*初始化词法状态下，除了空白符，任何字符都是无效的，因此才能通过字符串比较来识别自定义定界符和占位符*/
 			Ternary ternary = searchTernary(bufferSequence, curIndex, new CharSequence[]{DELIMITER_LEFT, HTML_START1, HTML_START2, PLACEHOLDER_LEFT});
-			if (curIndex == ternary.index) {/*相等就说明当前位置正好是定界符、占位符，HTML标签*/
-				beetlFlex.start(bufferSequence, curIndex + ternary.length, end, ternary.lexicalState);
-				super.addToken(curIndex + ternary.length, ternary.token);
+			if (BAD.equals(ternary)) {/*当前位置至剩下的字符中没有beetl语法*/
+				beetlFlex.start(bufferSequence, end, end, ternary.lexicalState);
+				super.addToken(end, BeetlIElementTypes.BTL_TEMPLATE_HTML_TEXT);
 			} else {
-				if (BAD.equals(ternary)) {/*当前位置至剩下的字符中没有beetl语法*/
-					beetlFlex.start(bufferSequence, end, end, ternary.lexicalState);
-					super.addToken(end, BeetlIElementTypes.BTL_TEMPLATE_HTML_TEXT);
+				if (curIndex == ternary.index) {/*相等就说明当前位置正好是定界符、占位符，HTML标签的开始*/
+					beetlFlex.start(bufferSequence, curIndex + ternary.length, end, ternary.lexicalState);
+					super.addToken(curIndex + ternary.length, ternary.token);
 				} else {
 					beetlFlex.start(bufferSequence, ternary.index, end, ternary.lexicalState);
 					super.addToken(ternary.index, BeetlIElementTypes.BTL_TEMPLATE_HTML_TEXT);
@@ -161,6 +161,9 @@ public class BeetlLexer extends LookAheadLexer {
 		}
 	}
 
+	/**
+	 * 从startPos位置开始搜索给定定界符和占位符出现的位置，且返回最近出现的定界符或者占位符。如果从未出现，就返回一个Ternary.BAD。
+	 */
 	private Ternary searchTernary(final CharSequence str, final int startPos, final CharSequence... searchStrs) {
 		if (str == null || searchStrs == null) {
 			return BAD;

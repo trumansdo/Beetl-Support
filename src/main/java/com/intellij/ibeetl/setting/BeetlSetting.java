@@ -48,10 +48,10 @@ public class BeetlSetting implements PersistentStateComponent<Element> {
 
 	@Override
 	public void loadState(@NotNull Element element) {
-		DELIMITER_PLACEHOLDER_START = Optional.ofNullable(element.getAttributeValue("DELIMITER_PLACEHOLDER_START")).orElse(BeetlBundle.message("DELIMITER_PLACEHOLDER_START"));
-		DELIMITER_PLACEHOLDER_END = Optional.ofNullable(element.getAttributeValue("DELIMITER_PLACEHOLDER_END")).orElse(BeetlBundle.message("DELIMITER_PLACEHOLDER_END"));
-		DELIMITER_STATEMENT_START = Optional.ofNullable(element.getAttributeValue("DELIMITER_STATEMENT_START")).orElse(BeetlBundle.message("DELIMITER_STATEMENT_START"));
-		DELIMITER_STATEMENT_END = Optional.ofNullable(element.getAttributeValue("DELIMITER_STATEMENT_END")).orElse(BeetlBundle.message("DELIMITER_STATEMENT_END"));
-		HTML_TAG_FLAG = Optional.ofNullable(element.getAttributeValue("HTML_TAG_FLAG")).orElse(BeetlBundle.message("HTML_TAG_FLAG"));
+		DELIMITER_PLACEHOLDER_START = Optional.ofNullable(element.getAttributeValue("DELIMITER_PLACEHOLDER_START")).orElse("${");
+		DELIMITER_PLACEHOLDER_END = Optional.ofNullable(element.getAttributeValue("DELIMITER_PLACEHOLDER_END")).orElse("}");
+		DELIMITER_STATEMENT_START = Optional.ofNullable(element.getAttributeValue("DELIMITER_STATEMENT_START")).orElse("<%");
+		DELIMITER_STATEMENT_END = Optional.ofNullable(element.getAttributeValue("DELIMITER_STATEMENT_END")).orElse("%>");
+		HTML_TAG_FLAG = Optional.ofNullable(element.getAttributeValue("HTML_TAG_FLAG")).orElse("#");
 	}
 }

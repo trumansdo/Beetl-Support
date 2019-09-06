@@ -11,20 +11,19 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-import static com.intellij.ibeetl.BeetlBundle.message;
 import static org.apache.commons.lang3.StringUtils.replacePattern;
 
 /**
  * 向idea注册配置页
  */
 public class BeetlConfigure implements SearchableConfigurable {
-	public static String DELIMITER_PLACEHOLDER_START = message("DELIMITER_PLACEHOLDER_START");
-	public static String DELIMITER_PLACEHOLDER_END = message("DELIMITER_PLACEHOLDER_END");
+	public static String DELIMITER_PLACEHOLDER_START = "${";
+	public static String DELIMITER_PLACEHOLDER_END = "}";
 
-	public static String DELIMITER_STATEMENT_START = message("DELIMITER_STATEMENT_START");
-	public static String DELIMITER_STATEMENT_END = message("DELIMITER_STATEMENT_END");
+	public static String DELIMITER_STATEMENT_START = "<%";
+	public static String DELIMITER_STATEMENT_END = "%>";
 
-	public static String HTML_TAG_FLAG = message("HTML_TAG_FLAG");
+	public static String HTML_TAG_FLAG = "#";
 
 	private BeetlSettingForm beetlSettingForm;
 
@@ -79,13 +78,13 @@ public class BeetlConfigure implements SearchableConfigurable {
 		DELIMITER_PLACEHOLDER_END = replacePattern(beetlSettingForm.rpstartField.getText(), "\\s", "");
 		HTML_TAG_FLAG = replacePattern(beetlSettingForm.htagField.getText(), "\\s", "");
 
-		DELIMITER_PLACEHOLDER_START = DELIMITER_PLACEHOLDER_START.isEmpty() ? message("DELIMITER_PLACEHOLDER_START") : DELIMITER_PLACEHOLDER_START;
-		DELIMITER_PLACEHOLDER_END = DELIMITER_PLACEHOLDER_END.isEmpty() ? message("DELIMITER_PLACEHOLDER_END") : DELIMITER_PLACEHOLDER_END;
+		DELIMITER_PLACEHOLDER_START = DELIMITER_PLACEHOLDER_START.isEmpty() ? "${" : DELIMITER_PLACEHOLDER_START;
+		DELIMITER_PLACEHOLDER_END = DELIMITER_PLACEHOLDER_END.isEmpty() ? "}" : DELIMITER_PLACEHOLDER_END;
 
-		DELIMITER_STATEMENT_START = DELIMITER_STATEMENT_START.isEmpty() ? message("DELIMITER_STATEMENT_START") : DELIMITER_STATEMENT_START;
+		DELIMITER_STATEMENT_START = DELIMITER_STATEMENT_START.isEmpty() ? "<%" : DELIMITER_STATEMENT_START;
 		DELIMITER_STATEMENT_END = DELIMITER_STATEMENT_END.isEmpty() ? StringUtils.LF : DELIMITER_STATEMENT_END;
 
-		HTML_TAG_FLAG = HTML_TAG_FLAG.isEmpty() ? message("HTML_TAG_FLAG") : HTML_TAG_FLAG;
+		HTML_TAG_FLAG = HTML_TAG_FLAG.isEmpty() ? "#" : HTML_TAG_FLAG;
 
 		BeetlLexer.resetConfig();
 		BeetlExternalAnnotator.resetConfig();

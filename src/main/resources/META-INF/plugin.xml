@@ -55,6 +55,7 @@ Settings -> File Type ，右边找到 beetl, 在下面.btl 后添加自定义文
 	    <localInspection groupPath="Beetl" language="btl" shortName="BeetlExternalLint" bundle="messages.BeetlBundle" key="inspection.beetl.external_lint.display.name"
 	                     groupKey="group.names.beetl.issues" enabledByDefault="true" level="ERROR" unfair="true"
 	                     implementationClass="com.intellij.ibeetl.lang.codeInspection.BeetlExternalInsepction"/>
+	    <fileBasedIndex implementation="com.intellij.ibeetl.lang.BeetlFileIndex"/>
 	    <completion.contributor language="Properties" implementationClass="com.intellij.ibeetl.lang.support.BeetlCompletionContributor"/>
     </extensions>
     <actions>
