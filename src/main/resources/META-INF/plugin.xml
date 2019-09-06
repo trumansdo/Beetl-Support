@@ -8,16 +8,18 @@
     <em>Finished Feature：</em>
     <ul>
         <li>1. SyntaxHiglight</li>
-        <li>2. Beetl自定义定界符、占位符</li>
-        <li>3. 错误提示</li>
-        <li>4. 语法着色方案配置</li>
+        <li>2. Customize Beetl settings: Delimiter、Placeholder、HTMLTAG</li>
+        <li>3. Syntax Error Tip</li>
+        <li>4. Syntax Color Scheme</li>
     </ul>
     <pre>
-插件默认识别.btl 文件，若要修改为其他类型，请在idea 进行如下设置：
-Settings -> File Type ，右边找到 beetl, 在下面.btl 后添加自定义文件类型后缀。
-只支持beetl嵌入HTML语言中。 默认识别beetl默认定界符和占位符。
-可在Settings 中找到Beetl设置，自定义定界符和占位符配置
+	The plugin configure be consistent with Beetl default configure.
+See detail to : http://ibeetl.com/guide/#beetl.
+Also you can change some configure. step like follow:
+File -> Settings , have a settings page of Beetl.
+	Default detect beetl-3.0.10 version syntax.
     </pre>
+
     ]]></description>
 	<!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
 	<idea-version since-build="171"/>
