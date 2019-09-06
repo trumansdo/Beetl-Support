@@ -1,19 +1,19 @@
 buildscript {
-    repositories {
-        maven{ url'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
-        maven{ url'http://maven.aliyun.com/nexus/content/groups/public/' }
-        maven {
-            url 'http://dl.bintray.com/jetbrains/intellij-plugin-service'
-        }
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
-        mavenCentral()
-    }
+	repositories {
+		maven { url 'http://maven.aliyun.com/nexus/content/repositories/jcenter' }
+		maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+		maven {
+			url 'http://dl.bintray.com/jetbrains/intellij-plugin-service'
+		}
+		maven {
+			url "https://oss.sonatype.org/content/repositories/snapshots/"
+		}
+		mavenCentral()
+	}
 }
 
 plugins {
-    id "org.jetbrains.intellij" version "0.4.2"
+	id "org.jetbrains.intellij" version "0.4.2"
 }
 
 apply plugin: 'java'
@@ -22,47 +22,47 @@ apply plugin: 'idea'
 sourceCompatibility = 1.8
 
 repositories {
-    maven{ url'http://maven.aliyun.com/nexus/content/groups/public/' }
-    maven{ url'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
-    mavenCentral()
+	maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+	maven { url 'http://maven.aliyun.com/nexus/content/repositories/jcenter' }
+	mavenCentral()
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile group: 'com.ibeetl', name: 'beetl', version: '3.0.10.RELEASE'
+	testCompile group: 'junit', name: 'junit', version: '4.12'
+	compile group: 'com.ibeetl', name: 'beetl', version: '3.0.10.RELEASE'
 }
 
 intellij {
-    version '183.4284.148'
-    type 'IC'
+	version '183.4284.148'
+	type 'IC'
 //    plugins = ['spring', 'springboot'] //'DatabaseTools'
-    pluginName 'Beetl-Support'
-    sandboxDirectory "${rootProject.rootDir}/idea-sandbox"
-    updateSinceUntilBuild false
-    downloadSources  false
+	pluginName 'Beetl-Support'
+	sandboxDirectory "${rootProject.rootDir}/idea-sandbox"
+	updateSinceUntilBuild false
+	downloadSources false
 }
 patchPluginXml {
-    changeNotes """
+	changeNotes """
       """
 }
 sourceSets {
-    main {
-        java.srcDirs 'src/main/java', 'gen'
-        java.exclude '**/grammar/debugger/**'
-        resources.srcDirs 'src/main/resources'
-    }
-    test {
-        java.srcDir 'testData'
-    }
+	main {
+		java.srcDirs 'src/main/java', 'gen'
+		java.exclude '**/grammar/debugger/**'
+		resources.srcDirs 'src/main/resources'
+	}
+	test {
+		java.srcDir 'testData'
+	}
 }
 processResources {
-    from('src/main/java') {
-        include '**/*.png'
-    }
+	from('src/main/java') {
+		include '**/*.png'
+	}
 }
 
 tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
+	options.encoding = "UTF-8"
 }
 //将psiviewer插件复制到启动的idea中，等效于从本地安装插件
 /*task copyTask(type: Copy) {
@@ -70,10 +70,10 @@ tasks.withType(JavaCompile) {
     into 'idea-sandbox/plugins'
 }*/
 task copyTask(type: Copy) {
-    from 'action.script'
-    into 'idea-sandbox/system/plugins'
+	from 'action.script'
+	into 'idea-sandbox/system/plugins'
 }
 runIde.dependsOn copyTask
 
 group 'com.ibeetl'
-version '1.0-SNAPSHOT'
+version '1.0.1-RELEASE'

@@ -26,3 +26,4 @@ hs_err_pid*
 /.idea/
 /idea-sandbox/
 !/PsiViewer.jar
+/gradle.properties
