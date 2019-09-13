@@ -481,7 +481,7 @@ public class BeetlParser extends PrattParser {
 			}
 		});
 		/*冒号，第二种是case和ajax语法块*/
-		registerParser(BT_COLON, 950, path().left().up().left(or(object(BT_AJAX),object( BT_FRAGMENT),object(BT_CASE))), new TokenParser() {
+		registerParser(BT_COLON, 950, path().left().up().left(or(object(BT_AJAX), object(BT_FRAGMENT), object(BT_CASE))), new TokenParser() {
 			@Override
 			public boolean parseToken(PrattBuilder prattBuilder) {
 				prattBuilder.advance();
@@ -523,6 +523,8 @@ public class BeetlParser extends PrattParser {
 		 * */
 		registerParser(NEW_LINE, 1000, AppendTokenParser.JUST_APPEND);
 		registerParser(HTML_NEW_LINE, 1000, AppendTokenParser.JUST_APPEND);
+		/*意外的token直接追加，例如位或位与*/
+		registerParser(new IElementType[]{BT_BIT_OR, BT_BIT_AND, BT_BIT_XOR, BT_SHIFT_RIGHT, BT_VIRTUAL, BT_AT, BT_BIT_OR_ASSIGN, BT_BIT_XOR_ASSIGN, BT_BIT_AND_ASSIGN}, 1000, AppendTokenParser.JUST_APPEND);
 		registerParser(new IElementType[]{BT_BREAK, BT_RETURN, BT_CONTINUE, BT_DEFAULT, BT_VAR, BT_FOR_IN}, 800, AppendTokenParser.JUST_APPEND);
 		registerParser(BTL_TEMPLATE_HTML_TEXT, 1000, AppendTokenParser.JUST_APPEND);
 
